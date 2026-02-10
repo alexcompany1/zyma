@@ -1,6 +1,7 @@
 ﻿<?php
 /**
  * carrito.php
+ * que te jodan
  * Muestra el carrito y crea el pedido.
  */
 

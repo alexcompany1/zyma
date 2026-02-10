@@ -1,6 +1,7 @@
 ﻿<?php
 /**
  * editar_carta.php
+ * tonto
  * Panel para editar productos.
  */
 
