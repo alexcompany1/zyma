@@ -12,12 +12,17 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
+    $confirmPassword = $_POST['confirm_password'] ?? '';
     $workerCode = trim($_POST['workerCode'] ?? '');
 
-    if (empty($email) || empty($password)) {
-        $error = "El email y la contraseña son obligatorios.";
+    if (empty($email) || empty($password) || empty($confirmPassword)) {
+        $error = "El email, la contraseña y su confirmación son obligatorios.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Formato de email inválido.";
+    } elseif (strlen($password) < 6) {
+        $error = "La contraseña debe tener al menos 6 caracteres.";
+    } elseif (!hash_equals($password, $confirmPassword)) {
+        $error = "Las contraseñas no coinciden.";
     } else {
         try {
             $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE email = :email");
@@ -78,6 +83,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Contraseña <span class="required">*</span>
         <input type="password" id="password" name="password" required minlength="6">
         <span class="optional-label">Mínimo 6 caracteres.</span>
+      </label>
+
+      <label for="confirm_password">
+        Confirmar contraseña <span class="required">*</span>
+        <input type="password" id="confirm_password" name="confirm_password" required minlength="6">
       </label>
 
       <label for="workerCode">

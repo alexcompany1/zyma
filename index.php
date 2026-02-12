@@ -1,22 +1,32 @@
-﻿<!DOCTYPE html>
+<?php
+if (!headers_sent()) {
+    header('Content-Type: text/html; charset=UTF-8');
+}
+?>
+<?php
+$basePath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/');
+if ($basePath === '.' || $basePath === '/') {
+  $basePath = '';
+}
+?>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zyma</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="<?= $basePath ?>/styles.css?v=20260211-5">
 </head>
 <body>
   <div class="container">
     <header class="landing-header">
       <div class="landing-bar">
-        <div class="landing-logo">
-          <span class="landing-logo-mark">Z</span>
+        <a href="<?= $basePath ?>/index.php" class="landing-logo">
           <span class="landing-logo-text">Zyma</span>
-        </div>
+        </a>
         <div class="landing-actions">
-          <a href="login.php" class="landing-link">Entrar</a>
-          <a href="registro.php" class="landing-cta">Crear cuenta</a>
+          <a href="<?= $basePath ?>/login.php" class="landing-link">Entrar</a>
+          <a href="<?= $basePath ?>/registro.php" class="landing-cta">Crear cuenta</a>
         </div>
       </div>
     </header>
@@ -32,8 +42,9 @@
       
       <!-- Botones principales -->
       <div class="btn-row center">
-        <a href="registro.php" class="register-btn">Crear cuenta</a>
-        <a href="login.php" class="login-btn">Ya tengo cuenta</a>
+        <a href="<?= $basePath ?>/registro.php" class="register-btn">Crear cuenta</a>
+        <a href="<?= $basePath ?>/login.php" class="login-btn">Ya tengo cuenta</a>
+        <a href="<?= $basePath ?>/acceso_invitado.php" class="login-btn">Ver carta sin cuenta</a>
       </div>
     </div>
 
@@ -47,5 +58,6 @@
       </p>
     </footer>
   </div>
+<script src="<?= $basePath ?>/assets/mobile-header.js?v=20260211-6"></script>
 </body>
 </html>
