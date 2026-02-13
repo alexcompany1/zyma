@@ -154,6 +154,25 @@ if (isset($_GET['accion']) && $_GET['accion'] === 'listo' && isset($_GET['id']))
     }
 }
 
+// Marcar como entregando
+if (isset($_GET['accion']) && $_GET['accion'] === 'entregando' && isset($_GET['id'])) {
+    $pedidoId = intval($_GET['id']);
+
+    try {
+        $stmt = $pdo->prepare("UPDATE pedidos SET estado = 'entregando' WHERE id_pedido = ? AND estado = 'preparando'");
+        $stmt->execute([$pedidoId]);
+
+        if ($stmt->rowCount() === 1) {
+            crear_notificacion($pdo, $pedidoId, "Tu pedido #{$pedidoId} está en camino de entrega.");
+        }
+
+        header('Location: gestionar_pedidos.php');
+        exit;
+    } catch (Exception $e) {
+        die("<h2 class='page-error'>Error al marcar como entregando: " . htmlspecialchars($e->getMessage()) . "</h2>");
+    }
+}
+
 // Marcar como entregado
 if (isset($_GET['accion']) && $_GET['accion'] === 'entregado' && isset($_GET['id'])) {
     $pedidoId = intval($_GET['id']);
@@ -285,6 +304,10 @@ try {
                         <a href="?accion=cancelar&id=<?= $pedido['id_pedido'] ?>" class="btn-estado btn-cancelar">Cancelar</a>
                     </div>
                 <?php elseif ($pedido['estado'] === 'preparando'): ?>
+                    <div class="btn-row">
+                        <a href="?accion=entregando&id=<?= $pedido['id_pedido'] ?>" class="btn-estado btn-entregando">Entregando</a>
+                    </div>
+                <?php elseif ($pedido['estado'] === 'entregando'): ?>
                     <div class="btn-row">
                         <a href="?accion=listo&id=<?= $pedido['id_pedido'] ?>" class="btn-estado btn-listo">Listo</a>
                     </div>
