@@ -1,4 +1,9 @@
-﻿<?php
+<?php
+if (!headers_sent()) {
+    header('Content-Type: text/html; charset=UTF-8');
+}
+?>
+<?php
 /**
  * confirmacion_pedido.php
  * Muestra el resumen del pedido.
@@ -21,10 +26,10 @@ if (!$pedido_id) {
 
 // Cargar pedido
 $stmt = $pdo->prepare("
-    SELECT p.id, p.total, p.fecha, u.email
+    SELECT p.id_pedido, p.total, p.fecha_hora, u.email
     FROM pedidos p
-    JOIN usuarios u ON p.usuario_id = u.id
-    WHERE p.id = :pedido_id AND p.usuario_id = :usuario_id
+    JOIN usuarios u ON p.id_usuario = u.id
+    WHERE p.id_pedido = :pedido_id AND p.id_usuario = :usuario_id
 ");
 $stmt->execute([
     ':pedido_id' => $pedido_id,
@@ -39,10 +44,10 @@ if (!$pedido) {
 
 // Cargar items
 $stmtItems = $pdo->prepare("
-    SELECT pi.producto_id, pi.cantidad, pi.precio_unitario, pr.nombre
+    SELECT pi.id_producto, pi.cantidad, pi.precio_unitario, pr.nombre
     FROM pedido_items pi
-    JOIN productos pr ON pi.producto_id = pr.id
-    WHERE pi.pedido_id = :pedido_id
+    JOIN productos pr ON pi.id_producto = pr.id
+    WHERE pi.id_pedido = :pedido_id
 ");
 $stmtItems->execute([':pedido_id' => $pedido_id]);
 $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
@@ -54,32 +59,49 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confirmación de Pedido - Zyma</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=20260211-5">
 </head>
 <body>
     
-<header>
+<?php
+  $display_name = trim($_SESSION['nombre'] ?? '');
+  if ($display_name === '') {
+    $display_name = strstr($_SESSION['email'] ?? '', '@', true) ?: ($_SESSION['email'] ?? '');
+  }
+?>
+<header class="landing-header">
+  <div class="landing-bar">
     <div class="profile-section">
-        <button class="profile-btn" id="profileBtn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="white">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c1.52 0 5.1 1.34 5.1 5v1H6.9v-1c0-3.66 3.58-5 5.1-5z"/>
-            </svg>
-        </button>
-        <div class="dropdown" id="dropdownMenu">
-            <a href="logout.php">Cerrar sesión</a>
+      <button class="profile-btn" id="profileBtn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="white">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4 1.79 4 4 4zm0 2c1.52 0 5.1 1.34 5.1 5v1H6.9v-1c0-3.66 3.58-5 5.1-5z"/>
+        </svg>
+      </button>
+      <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
+      <div class="dropdown" id="dropdownMenu">
+          <a href="perfil.php">Mi perfil</a>
+          <a href="logout.php">Cerrar sesion</a>
         </div>
     </div>
 
-    <div class="header-content">
-        <a href="usuario.php" class="logo">Zyma</a>
-    </div>
+    <a href="usuario.php" class="landing-logo">
+      <span class="landing-logo-text">Zyma</span>
+    </a>
 
-    <div class="cart-section">
-        <a href="carrito.php" class="cart-btn">
-            <img src="assets/cart-icon.png" alt="Carrito">
-            <span class="cart-count">0</span>
-        </a>
+        <div class="quick-menu-section">
+      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
+      <div class="dropdown quick-dropdown" id="quickDropdown">
+        <a href="usuario.php">Inicio</a>
+        <a href="carta.php">Ver carta</a>
+      </div>
     </div>
+    <div class="cart-section">
+      <a href="carrito.php" class="cart-btn">
+        <img src="assets/cart-icon.png" alt="Carrito">
+        <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
+      </a>
+    </div>
+  </div>
 </header>
 
 <div class="container">
@@ -90,8 +112,8 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
         </p>
 
         <div class="summary-box">
-            <h3 class="summary-title">Resumen del Pedido #<?= $pedido['id'] ?></h3>
-            <p>Fecha: <?= date('d/m/Y H:i', strtotime($pedido['fecha'])) ?></p>
+            <h3 class="summary-title">Resumen del Pedido #<?= $pedido['id_pedido'] ?></h3>
+            <p>Fecha: <?= date('d/m/Y H:i', strtotime($pedido['fecha_hora'])) ?></p>
 
             <table class="table-compact mt-2">
                 <thead>
@@ -141,6 +163,7 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
         }
     });
 </script>
+<script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
 </html>
 

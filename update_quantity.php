@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * update_quantity.php
  * Actualiza cantidad y totales.

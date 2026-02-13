@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * save_quantity.php
  * Guarda cantidad en sesion.

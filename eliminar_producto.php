@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * eliminar_producto.php
  * Quita un producto del carrito.

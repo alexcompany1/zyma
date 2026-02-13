@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * logout.php
  * Cierra la sesion y vuelve al inicio.

@@ -1,8 +1,14 @@
-﻿<?php
+<?php
 /**
  * config.php
  * Configuracion de base de datos y conexion PDO.
  */
+
+// Forzar UTF-8 en toda la salida PHP.
+ini_set('default_charset', 'UTF-8');
+if (!headers_sent()) {
+    header('Content-Type: text/html; charset=UTF-8');
+}
 
 // Host BD
 $host = 'localhost';
