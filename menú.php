@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+<?php
+if (!headers_sent()) {
+    header('Content-Type: text/html; charset=UTF-8');
+}
+?>
+<!DOCTYPE html>
 <html lang="es">
 
 <?php
@@ -50,18 +55,21 @@ $result_productos = $stmt->get_result();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Menú - Restaurante</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=20260211-5" />
     <script src="script.js" defer></script> <!-- JS del carrito -->
 </head>
 <body>
 
-    <header>
-        <h1>Menú del Restaurante</h1>
-        <?php if (tieneAccesoQR()): ?>
-            <p> Acceso desde QR confirmado. Puedes hacer pedidos</p>
-        <?php else: ?>
-            <p> Muestra solo carta (sin pedido) porque no has accedido vía QR</p>
-        <?php endif; ?>
+    <header class="landing-header">
+      <div class="landing-bar">
+        <a href="index.php" class="landing-logo">
+          <span class="landing-logo-text">Zyma</span>
+        </a>
+        <div class="landing-actions">
+          <a href="login.php" class="landing-link">Entrar</a>
+          <a href="registro.php" class="landing-cta">Crear cuenta</a>
+        </div>
+      </div>
     </header>
 
     <nav>
@@ -87,7 +95,7 @@ $result_productos = $stmt->get_result();
                         <img src="fotos/<?php echo sanitize($producto['imagen']); ?>" alt="Foto de <?php echo sanitize($producto['nombre']); ?>" class="foto-producto" />
                     <?php endif; ?>
                     <p><?php echo nl2br(sanitize($producto['descripcion'])); ?></p>
-                    <p><strong>Precio:</strong> <?php echo number_format($producto['precio'], 2, ',', '.') . ' €'; ?></p>
+                    <p><strong>Precio:</strong> <?php echo number_format($producto['precio'], 2, ',', '.') . ' ?'; ?></p>
 
                     <?php if (tieneAccesoQR()): ?>
                         <!-- Boton agregar -->
@@ -113,6 +121,7 @@ $result_productos = $stmt->get_result();
         <button id="btn-enviar-pedido">Enviar pedido</button>
     </aside>
 
+<script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
 </html>
 
