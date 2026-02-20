@@ -223,15 +223,15 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
           <?php endif; ?>
         </div>
 
-        <div style="display: flex; gap: 10px;">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
           <?php if ($guestMode): ?>
-            <a href="login.php" class="btn-add-cart" style="flex: 1;">Inicia sesion para pedir</a>
+            <a href="login.php" class="btn-add-cart" style="padding: 12px 40px; width: 100%;">Inicia sesion para pedir</a>
           <?php else: ?>
-            <form method="POST" style="flex: 1;">
+            <form method="POST">
               <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
-              <button type="submit" name="add_to_cart" class="btn-add-cart" style="width: 100%;">Anadir al carrito</button>
+              <button type="submit" name="add_to_cart" class="btn-add-cart" style="padding: 12px 40px; width: 100%;">Anadir al carrito</button>
             </form>
-            <a href="valoraciones.php?producto=<?= (int)$product['id'] ?>" class="btn-add-cart" style="flex: 0 0 auto; background-color: #6c757d; display: flex; align-items: center; justify-content: center; text-decoration: none; border: none; cursor: pointer; padding: 0 12px;">★ Resena</a>
+            <a href="valoraciones.php?producto=<?= (int)$product['id'] ?>" class="btn-add-cart" style="background-color: #c0392b; color: #ffd700; padding: 10px 20px; width: 100%; text-align: center;">★ Resena</a>
           <?php endif; ?>
         </div>
       </div>

@@ -256,92 +256,94 @@ if ($is_logged_in) {
 
                         <!-- Opiniones de otros usuarios -->
                         <?php if ($stats['total'] > 0): ?>
+                            <?php
+                                // Obtener todas las opiniones del producto ANTES de mostrar el botón
+                                $opiniones = [];
+                                try {
+                                    $stmt = $pdo->prepare("
+                                        SELECT v.id, v.puntuacion, v.comentario, v.fecha_creacion, u.nombre, u.email,
+                                               rv.respuesta, rv.fecha_creacion as fecha_respuesta
+                                        FROM valoraciones v
+                                        JOIN usuarios u ON v.id_usuario = u.id
+                                        LEFT JOIN respuestas_valoraciones rv ON v.id = rv.id_valoracion
+                                        WHERE v.id_producto = :id_producto
+                                        ORDER BY v.fecha_creacion DESC
+                                    ");
+                                    $stmt->execute([':id_producto' => $pid]);
+                                    $opiniones = $stmt->fetchAll();
+                                } catch (Exception $e) {
+                                    error_log("Error obteniendo opiniones: " . $e->getMessage());
+                                }
+                            ?>
                             <div class="product-recent-opinions">
-                                <button id="reviewToggle-<?= $pid ?>" class="review-toggle-btn" onclick="toggleReviewsDropdown(<?= $pid ?>, <?php echo json_encode($opiniones ?? []); ?>)" style="cursor: pointer; padding: 10px; background: linear-gradient(135deg, #d4af37, #f4e4a6); border-radius: 6px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; font-weight: 600; width: 100%; border: none; font-size: 1em;">
+                                <button id="reviewToggle-<?= $pid ?>" class="review-toggle-btn" onclick="toggleReviewsDropdown(<?= $pid ?>)" style="cursor: pointer; padding: 10px; background: linear-gradient(135deg, #d4af37, #f4e4a6); border-radius: 6px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; font-weight: 600; width: 100%; border: none; font-size: 1em;">
                                     Ver resenas (<?= $stats['total'] ?>)
                                 </button>
                                 <div id="reviewsDropdown-<?= $pid ?>" style="display: none; background: #f9f9f9; border: 1px solid #ddd; border-radius: 6px; padding: 15px; margin-top: 10px; max-height: 400px; overflow-y: auto;">
-                                <?php
-                                    $opiniones = [];
-                                    // Obtener todas las opiniones del producto con respuestas
-                                    try {
-                                        $stmt = $pdo->prepare("
-                                            SELECT v.id, v.puntuacion, v.comentario, v.fecha_creacion, u.nombre, u.email,
-                                                   rv.respuesta, rv.fecha_creacion as fecha_respuesta
-                                            FROM valoraciones v
-                                            JOIN usuarios u ON v.id_usuario = u.id
-                                            LEFT JOIN respuestas_valoraciones rv ON v.id = rv.id_valoracion
-                                            WHERE v.id_producto = :id_producto
-                                            ORDER BY v.fecha_creacion DESC
-                                        ");
-                                        $stmt->execute([':id_producto' => $pid]);
-                                        $opiniones = $stmt->fetchAll();
-                                        
-                                        foreach ($opiniones as $op):
-                                ?>
-                                            <div class="opinion-snippet">
-                                                <div class="opinion-header">
-                                                    <div class="opinion-user-info">
-                                                        <span class="opinion-name">
-                                                            <?= !empty($op['nombre']) 
-                                                                ? htmlspecialchars($op['nombre'])
-                                                                : htmlspecialchars(strstr($op['email'], '@', true));
-                                                            ?>
-                                                        </span>
-                                                        <span class="opinion-date">
-                                                            <?php
-                                                                $fecha = new DateTime($op['fecha_creacion']);
-                                                                echo $fecha->format('d/m/Y H:i');
-                                                            ?>
-                                                        </span>
-                                                    </div>
-                                                    <span class="opinion-stars">
-                                                        <?php for ($i = 1; $i <= 5; $i++): ?>
-                                                            <img src="assets/<?= $i <= $op['puntuacion'] ? 'estrellaSelecionada' : 'estrellaNegra' ?>.png" 
-                                                                 alt="Estrella" 
-                                                                 class="star-opinion-img"
-                                                                 title="<?= $op['puntuacion'] ?>/5">
-                                                        <?php endfor; ?>
+                                <?php if (count($opiniones) > 0): ?>
+                                    <?php foreach ($opiniones as $op): ?>
+                                        <div class="opinion-snippet">
+                                            <div class="opinion-header">
+                                                <div class="opinion-user-info">
+                                                    <span class="opinion-name">
+                                                        <?= !empty($op['nombre']) 
+                                                            ? htmlspecialchars($op['nombre'])
+                                                            : htmlspecialchars(strstr($op['email'], '@', true));
+                                                        ?>
+                                                    </span>
+                                                    <span class="opinion-date">
+                                                        <?php
+                                                            $fecha = new DateTime($op['fecha_creacion']);
+                                                            echo $fecha->format('d/m/Y H:i');
+                                                        ?>
                                                     </span>
                                                 </div>
-                                                <?php if (!empty($op['comentario'])): ?>
-                                                    <p class="opinion-text"><?= htmlspecialchars($op['comentario']) ?></p>
-                                                <?php endif; ?>
-                                                
-                                                <?php if (!empty($op['respuesta'])): ?>
-                                                    <div style="background: #e8f4f8; padding: 1rem; border-radius: 6px; margin-top: 1rem; border-left: 4px solid #2196F3;">
-                                                        <div style="font-weight: 700; color: #0c47a1; margin-bottom: 0.5rem;">
-                                                            [Respuesta del restaurante Zyma]:
-                                                        </div>
-                                                        <p style="color: #555; margin: 0; line-height: 1.5;">
-                                                            <?= htmlspecialchars($op['respuesta']) ?>
-                                                        </p>
-                                                        <small style="color: #999; display: block; margin-top: 0.5rem;">
-                                                            <?php
-                                                                $fecha = new DateTime($op['fecha_respuesta']);
-                                                                echo 'Respondido: ' . $fecha->format('d/m/Y H:i');
-                                                            ?>
-                                                        </small>
-                                                    </div>
-                                                <?php else: ?>
-                                                    <?php if ($is_worker): ?>
-                                                        <?php 
-                                                            $userName = $op['nombre'] ?: strstr($op['email'], '@', true);
-                                                            $userNameEscaped = htmlspecialchars(json_encode($userName), ENT_QUOTES, 'UTF-8');
-                                                        ?>
-                                                        <button class="btn-responder" onclick="openResponseModal(<?= $op['id'] ?>, <?= $userNameEscaped ?>)" style="margin-top: 0.5rem; background-color: #d4af37; color: #333; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em; font-weight: 500; display: inline-block;">
-                                                            Responder
-                                                        </button>
-                                                    <?php endif; ?>
-                                                <?php endif; ?>
+                                                <span class="opinion-stars">
+                                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                                        <img src="assets/<?= $i <= $op['puntuacion'] ? 'estrellaSelecionada' : 'estrellaNegra' ?>.png" 
+                                                             alt="Estrella" 
+                                                             class="star-opinion-img"
+                                                             title="<?= $op['puntuacion'] ?>/5">
+                                                    <?php endfor; ?>
+                                                </span>
                                             </div>
-                                        <?php
-                                        endforeach;
-                                    } catch (Exception $e) {
-                                        error_log("Error obteniendo opiniones: " . $e->getMessage());
-                                    }
-                                ?>
+                                            <?php if (!empty($op['comentario'])): ?>
+                                                <p class="opinion-text"><?= htmlspecialchars($op['comentario']) ?></p>
+                                            <?php endif; ?>
+                                            
+                                            <?php if (!empty($op['respuesta'])): ?>
+                                                <div style="background: #e8f4f8; padding: 1rem; border-radius: 6px; margin-top: 1rem; border-left: 4px solid #2196F3;">
+                                                    <div style="font-weight: 700; color: #0c47a1; margin-bottom: 0.5rem;">
+                                                        [Respuesta del restaurante Zyma]:
+                                                    </div>
+                                                    <p style="color: #555; margin: 0; line-height: 1.5;">
+                                                        <?= htmlspecialchars($op['respuesta']) ?>
+                                                    </p>
+                                                    <small style="color: #999; display: block; margin-top: 0.5rem;">
+                                                        <?php
+                                                            $fecha = new DateTime($op['fecha_respuesta']);
+                                                            echo 'Respondido: ' . $fecha->format('d/m/Y H:i');
+                                                        ?>
+                                                    </small>
+                                                </div>
+                                            <?php else: ?>
+                                                <?php if ($is_worker): ?>
+                                                    <?php 
+                                                        $userName = $op['nombre'] ?: strstr($op['email'], '@', true);
+                                                        $userNameEscaped = htmlspecialchars(json_encode($userName), ENT_QUOTES, 'UTF-8');
+                                                    ?>
+                                                    <button class="btn-responder" onclick="openResponseModal(<?= $op['id'] ?>, <?= $userNameEscaped ?>)" style="margin-top: 0.5rem; background-color: #d4af37; color: #333; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em; font-weight: 500; display: inline-block;">
+                                                        Responder
+                                                    </button>
+                                                <?php endif; ?>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <p style="color: #666; text-align: center;">No hay reseñas disponibles.</p>
+                                <?php endif; ?>
                                 </div>
+                            </div>
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
@@ -378,37 +380,34 @@ if ($is_logged_in) {
             const submitBtn = form.querySelector('.btn-rate-product');
             const rateMessage = form.querySelector('.rate-message');
 
-            // Configurar efecto hover de vista previa en las estrellas
-            starLabels.forEach((label, index) => {
+            // Función para actualizar estrellas de izquierda a derecha
+            function updateStars(upToStar) {
+                starLabels.forEach((label) => {
+                    const starNumber = parseInt(label.getAttribute('data-star'));
+                    const filledImg = label.querySelector('.star-img-filled');
+                    const emptyImg = label.querySelector('.star-img-empty');
+                    
+                    if (starNumber <= upToStar) {
+                        // Llenar estrellas de izquierda a derecha
+                        filledImg.style.opacity = '1';
+                        emptyImg.style.opacity = '0';
+                    } else {
+                        // Vaciar estrellas a la derecha
+                        filledImg.style.opacity = '0';
+                        emptyImg.style.opacity = '1';
+                    }
+                });
+            }
+
+            // Hover: mostrar preview de izquierda a derecha
+            starLabels.forEach((label) => {
                 label.addEventListener('mouseenter', function() {
                     const starNumber = parseInt(label.getAttribute('data-star'));
-                    // Rellenar estrellas de izquierda a derecha hasta la estrella actual
-                    starLabels.forEach((lbl, idx) => {
-                        const lblStarNumber = parseInt(lbl.getAttribute('data-star'));
-                        if (lblStarNumber <= starNumber) {
-                            // Mostrar como seleccionada (llenar)
-                            lbl.style.opacity = '0.8';
-                            const filledImg = lbl.querySelector('.star-img-filled');
-                            const emptyImg = lbl.querySelector('.star-img-empty');
-                            if (filledImg && emptyImg) {
-                                filledImg.style.opacity = '1';
-                                emptyImg.style.opacity = '0';
-                            }
-                        } else {
-                            // Mostrar como no seleccionada (vacía)
-                            lbl.style.opacity = '1';
-                            const filledImg = lbl.querySelector('.star-img-filled');
-                            const emptyImg = lbl.querySelector('.star-img-empty');
-                            if (filledImg && emptyImg) {
-                                filledImg.style.opacity = '0';
-                                emptyImg.style.opacity = '1';
-                            }
-                        }
-                    });
+                    updateStars(starNumber);
                 });
             });
 
-            // Restaurar estado anterior cuando se sale del selector
+            // Al salir del selector, restaurar estado guardado
             const starSelector = form.querySelector('.quick-star-selector');
             starSelector.addEventListener('mouseleave', function() {
                 restoreStarState();
@@ -416,40 +415,18 @@ if ($is_logged_in) {
 
             function restoreStarState() {
                 const checkedRadio = form.querySelector('input[name="puntuacion_' + productId + '"]:checked');
-                starLabels.forEach((label) => {
-                    const filledImg = label.querySelector('.star-img-filled');
-                    const emptyImg = label.querySelector('.star-img-empty');
-                    const starNumber = parseInt(label.getAttribute('data-star'));
-                    
-                    label.style.opacity = '1';
-                    
-                    if (checkedRadio) {
-                        const checkedValue = parseInt(checkedRadio.value);
-                        if (starNumber <= checkedValue) {
-                            if (filledImg && emptyImg) {
-                                filledImg.style.opacity = '1';
-                                emptyImg.style.opacity = '0';
-                            }
-                        } else {
-                            if (filledImg && emptyImg) {
-                                filledImg.style.opacity = '0';
-                                emptyImg.style.opacity = '1';
-                            }
-                        }
-                    } else {
-                        if (filledImg && emptyImg) {
-                            filledImg.style.opacity = '0';
-                            emptyImg.style.opacity = '1';
-                        }
-                    }
-                });
+                if (checkedRadio) {
+                    updateStars(parseInt(checkedRadio.value));
+                } else {
+                    updateStars(0);
+                }
             }
 
-            // Mostrar/ocultar comentario cuando se selecciona una estrella
+            // Al hacer click en una estrella
             starRadios.forEach(radio => {
                 radio.addEventListener('change', function() {
                     commentField.style.display = 'block';
-                    restoreStarState();
+                    updateStars(parseInt(this.value));
                 });
             });
 
@@ -469,7 +446,6 @@ if ($is_logged_in) {
                     comentario: commentField.value
                 };
 
-                // Convertir a FormData para compatibilidad
                 const formData = new FormData();
                 formData.append('id_producto', data.id_producto);
                 formData.append('puntuacion', data.puntuacion);
@@ -483,15 +459,12 @@ if ($is_logged_in) {
                 .then(result => {
                     if (result.success) {
                         showMessage('¡' + productName + ' valorado! Gracias por tu opinión.', 'success', rateMessage);
-                        
-                        // Recargar después de 2 segundos
                         setTimeout(() => {
                             location.reload();
                         }, 2000);
                     } else {
                         const errorMsg = result.error || 'Error al guardar la valoración';
-                        const debugMsg = result.debug ? ' (Debug: ' + result.debug + ')' : '';
-                        showMessage(errorMsg + debugMsg, 'error', rateMessage);
+                        showMessage(errorMsg, 'error', rateMessage);
                         console.error('Error en guardar_valoracion.php:', result);
                     }
                 })
@@ -512,6 +485,7 @@ if ($is_logged_in) {
                     }, 3000);
                 }
             }
+
             // Inicializar estado de estrellas al cargar
             restoreStarState();
         });
