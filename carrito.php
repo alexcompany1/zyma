@@ -1,7 +1,12 @@
-<?php
+﻿<?php
 if (!headers_sent()) {
     header('Content-Type: text/html; charset=UTF-8');
 }
+
+/**
+ * carrito.php
+ * Muestra el carrito y procesa pago por tarjeta o Bizum.
+ */
 
 require_once 'config.php';
 session_start();
@@ -37,15 +42,14 @@ foreach ($_SESSION['cart'] ?? [] as $id => $qty) {
 
 $error = null;
 
-// Procesar pedido/pago online
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pagar_online'])) {
     if (empty($cartItems)) {
-        $error = "No hay productos en el carrito.";
+        $error = 'No hay productos en el carrito.';
     } else {
         try {
             $metodo_pago = $_POST['metodo_pago'] ?? '';
             if (!in_array($metodo_pago, ['tarjeta', 'bizum'], true)) {
-                throw new Exception("Selecciona un metodo de pago valido.");
+                throw new Exception('Selecciona un metodo de pago valido.');
             }
 
             if ($metodo_pago === 'tarjeta') {
@@ -54,48 +58,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pagar_online'])) {
                 $cvv = preg_replace('/\D+/', '', $_POST['cvv'] ?? '');
 
                 if (strlen($numero_tarjeta) < 13 || strlen($numero_tarjeta) > 19) {
-                    throw new Exception("Numero de tarjeta invalido.");
+                    throw new Exception('Numero de tarjeta invalido.');
                 }
                 if (!preg_match('/^\d{2}\/\d{2}$/', $caducidad)) {
-                    throw new Exception("Fecha de caducidad invalida.");
+                    throw new Exception('Fecha de caducidad invalida.');
                 }
                 if (strlen($cvv) < 3 || strlen($cvv) > 4) {
-                    throw new Exception("CVV invalido.");
+                    throw new Exception('CVV invalido.');
                 }
             } else {
                 $telefono_bizum = preg_replace('/\s+/', '', $_POST['telefono_bizum'] ?? '');
                 if (!preg_match('/^(\+34)?[6789]\d{8}$/', $telefono_bizum)) {
-                    throw new Exception("Telefono Bizum invalido.");
+                    throw new Exception('Telefono Bizum invalido.');
                 }
             }
 
-            // Crear pedido
-            $stmt = $pdo->prepare("
-                INSERT INTO pedidos (
-                    id_mesa,
-                    id_usuario,
-                    fecha_hora,
-                    estado,
-                    total,
-                    metodo_pago,
-                    notas_cliente
-                ) VALUES (?, ?, NOW(), ?, ?, ?, ?)
-            ");
-
-            $id_mesa = 0;
-            $id_usuario = $_SESSION['user_id'];
-            $estado = 'pendiente';
-            $total_pedido = $total;
-            $metodo_pago = $_POST['metodo_pago'];
-            $notas_cliente = '';
+            $stmt = $pdo->prepare("\n                INSERT INTO pedidos (\n                    id_mesa,\n                    id_usuario,\n                    fecha_hora,\n                    estado,\n                    total,\n                    metodo_pago,\n                    notas_cliente\n                ) VALUES (?, ?, NOW(), ?, ?, ?, ?)\n            ");
 
             $stmt->execute([
-                $id_mesa,
-                $id_usuario,
-                $estado,
-                $total_pedido,
+                0,
+                $_SESSION['user_id'],
+                'pendiente',
+                $total,
                 $metodo_pago,
-                $notas_cliente
+                ''
             ]);
 
             $pedidoId = $pdo->lastInsertId();
@@ -104,19 +90,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pagar_online'])) {
             if ($display_name === '') {
                 $display_name = strstr($_SESSION['email'] ?? '', '@', true) ?: ($_SESSION['email'] ?? '');
             }
-            $stmt = $pdo->prepare("
-                INSERT INTO notificaciones (id_usuario, mensaje, leida, fecha)
-                VALUES (?, ?, 0, NOW())
-            ");
-            $mensaje = "Nuevo pedido #{$pedidoId} de " . $display_name . " por " . number_format($total, 2, ',', '.') . " EUR";
-            $stmt->execute([$_SESSION['user_id'], $mensaje]);
+
+            $stmtNot = $pdo->prepare("\n                INSERT INTO notificaciones (id_usuario, mensaje, leida, fecha)\n                VALUES (?, ?, 0, NOW())\n            ");
+            $mensaje = 'Nuevo pedido #' . $pedidoId . ' de ' . $display_name . ' por ' . number_format($total, 2, ',', '.') . ' EUR';
+            $stmtNot->execute([$_SESSION['user_id'], $mensaje]);
 
             unset($_SESSION['cart']);
-            $_SESSION['mensaje_pedido'] = "Pedido realizado con exito. Tu pedido #{$pedidoId} esta siendo procesado.";
-            header("Location: pedido_confirmado.php");
+            $_SESSION['mensaje_pedido'] = 'Pedido realizado con exito. Tu pedido #' . $pedidoId . ' esta siendo procesado.';
+            header('Location: pedido_confirmado.php');
             exit;
         } catch (Exception $e) {
-            $error = "Error al procesar el pedido: " . $e->getMessage();
+            $error = 'Error al procesar el pedido: ' . $e->getMessage();
         }
     }
 }
@@ -145,8 +129,8 @@ if ($display_name === '') {
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-        <a href="perfil.php">Mi perfil</a>
-        <a href="logout.php">Cerrar sesion</a>
+          <a href="perfil.php">Mi perfil</a>
+          <a href="logout.php">Cerrar sesion</a>
       </div>
     </div>
 
