@@ -254,6 +254,50 @@ header:not(.landing-header),
   border: 2px solid #fff;
 }
 
+/* Boton notificaciones (campanita) */
+.notif-btn {
+  background: var(--dark-red);
+  border: 2px solid var(--gold);
+  cursor: pointer;
+  padding: 0.45rem;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  position: relative;
+  width: 44px;
+  height: 44px;
+  box-shadow: 0 6px 14px rgba(69, 5, 12, 0.2);
+}
+
+.notif-btn:hover {
+  transform: translateY(-2px);
+  background: var(--deep-red);
+}
+
+.notif-btn svg {
+  width: 26px;
+  height: 26px;
+}
+
+.notif-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--gold);
+  color: var(--deep-red);
+  border-radius: 999px;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  border: 2px solid #fff;
+}
+
 /* Menu perfil */
 .dropdown {
   position: absolute;
@@ -405,6 +449,55 @@ a:focus-visible {
   background-color: #d0d0d0;
 }
 
+/* Boton de valorar producto */
+.btn-valorar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.2rem;
+  background-color: var(--dark-red);
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  letter-spacing: 0.4px;
+  text-decoration: none;
+  margin-top: 0.6rem;
+  width: 100%;
+}
+
+.btn-valorar:hover {
+  background-color: var(--deep-red);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(69, 5, 12, 0.25);
+}
+
+/* Estrellas de valoración en productos */
+.product-rating {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
+  margin: 0.3rem 0;
+}
+
+.rating-star {
+  width: 8px;
+  height: 8px;
+  object-fit: contain;
+}
+
+.rating-text {
+  margin-left: 0.25rem;
+  font-size: 0.65rem;
+  color: #888;
+  font-weight: 500;
+}
+
 /* Texto opcional */
 .optional-label {
   color: #777;
@@ -412,6 +505,109 @@ a:focus-visible {
   font-size: 0.95rem;
   margin-top: 0.4rem;
   display: block;
+}
+
+/* Carrusel de reseñas */
+.reviews-section {
+  padding: 3rem 1.5rem;
+  background: linear-gradient(135deg, rgba(114, 14, 7, 0.05), rgba(238, 207, 109, 0.08));
+  margin: 2rem 0;
+  border-radius: var(--border-radius);
+}
+
+.reviews-title {
+  text-align: center;
+  font-size: 1.6rem;
+  color: var(--deep-red);
+  margin-bottom: 1.5rem;
+  font-family: 'Playfair Display', serif;
+}
+
+.reviews-carousel-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.reviews-carousel {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 1rem 0.5rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.reviews-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.review-card {
+  flex: 0 0 280px;
+  background: var(--white);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(238, 207, 109, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.review-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.review-stars {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 0.8rem;
+}
+
+.review-comment {
+  font-size: 0.95rem;
+  color: var(--ink);
+  line-height: 1.5;
+  margin-bottom: 0.8rem;
+  font-style: italic;
+  min-height: 60px;
+}
+
+.review-product {
+  font-size: 0.8rem;
+  color: var(--dark-red);
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.review-author {
+  font-size: 0.85rem;
+  color: #888;
+  font-weight: 500;
+}
+
+.carousel-arrow {
+  background: var(--dark-red);
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.carousel-arrow:hover {
+  background: var(--deep-red);
+  transform: scale(1.1);
 }
 
 /* Alertas */

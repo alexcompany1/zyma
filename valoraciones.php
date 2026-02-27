@@ -122,7 +122,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zyma - Valoraciones y Opiniones</title>
-    <link rel="stylesheet" href="styles.css?v=20260217-1">
+    <link rel="stylesheet" href="styles.css?v=20260227-4">
     <style>
         /* Estilos adicionales para valoraciones - Ver más abajo en el archivo de CSS */
     </style>

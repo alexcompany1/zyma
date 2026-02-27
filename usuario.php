@@ -49,6 +49,7 @@ $cart_count = count($_SESSION['cart'] ?? []);
         <div class="dropdown quick-dropdown" id="quickDropdown">
           <a href="usuario.php">Inicio</a>
           <a href="carta.php">Ver carta</a>
+          <a href="valoraciones.php">Valoraciones</a>
           <a href="tickets.php">Tickets</a>
         </div>
       </div>
@@ -75,7 +76,7 @@ $cart_count = count($_SESSION['cart'] ?? []);
   <!-- Carrusel de Reseñas -->
   <?php if (!empty($resenias)): ?>
     <div class="reviews-carousel-section">
-      <h2 style="text-align: center; margin-bottom: 2rem; color: var(--ink); font-size: 1.8rem;">Lo que dicen nuestros clientes</h2>
+      <h2 style="text-align: center; margin-bottom: 2rem; color: var(--ink); font-size: 1.8rem;"> Lo que dicen nuestros clientes</h2>
       
       <div class="reviews-carousel-container">
         <button class="carousel-btn carousel-prev" id="prevBtn" aria-label="Anterior"></button>
