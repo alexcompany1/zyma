@@ -19,17 +19,17 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
-    $confirmPassword = $_POST['confirmPassword'] ?? '';
+    $confirmPassword = $_POST['confirm_password'] ?? '';
     $workerCode = trim($_POST['workerCode'] ?? '');
 
     if (empty($email) || empty($password) || empty($confirmPassword)) {
-        $error = "El email y ambas contraseñas son obligatorios.";
+        $error = "El email, la contraseña y su confirmación son obligatorios.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Formato de email inválido.";
-    } elseif ($password !== $confirmPassword) {
-        $error = "Las contraseñas no coinciden.";
     } elseif (strlen($password) < 6) {
         $error = "La contraseña debe tener al menos 6 caracteres.";
+    } elseif (!hash_equals($password, $confirmPassword)) {
+        $error = "Las contraseñas no coinciden.";
     } else {
         try {
             $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE email = :email");
@@ -63,13 +63,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registrarse - Zyma</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20260211-5">
 </head>
 <body>
   <div class="container">
-    <header>
-      <div class="header-content">
-        <h1 class="logo">Zyma</h1>
+    <header class="landing-header">
+      <div class="landing-bar">
+        <a href="index.php" class="landing-logo">
+          <span class="landing-logo-text">Zyma</span>
+        </a>
+        <div class="landing-actions">
+          <a href="login.php" class="landing-link">Entrar</a>
+        </div>
       </div>
     </header>
 
@@ -205,5 +210,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     });
   </script>
   <?php endif; ?>
+  <script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
 </html>

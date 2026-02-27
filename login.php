@@ -1,8 +1,9 @@
-﻿<?php
+<?php
 if (!headers_sent()) {
     header('Content-Type: text/html; charset=UTF-8');
 }
-
+?>
+<?php
 /**
  * login.php
  * Inicio de sesion.
@@ -13,17 +14,18 @@ require_once 'config.php';
 
 function usuariosTieneBloqueado(PDO $pdo): bool
 {
-    $stmt = $pdo->query("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'usuarios' AND COLUMN_NAME = 'bloqueado'");
-    return (int) $stmt->fetchColumn() > 0;
+    $stmt = $pdo->query("
+        SELECT COUNT(*)
+        FROM information_schema.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'usuarios'
+          AND COLUMN_NAME = 'bloqueado'
+    ");
+    return (int)$stmt->fetchColumn() > 0;
 }
 
 $error = '';
-$info = '';
 $supportsBloqueado = usuariosTieneBloqueado($pdo);
-
-if (isset($_GET['reset']) && $_GET['reset'] === '1') {
-    $info = 'Tu contrasena se ha actualizado. Ya puedes iniciar sesion.';
-}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
@@ -41,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $credencialesOk = $user && password_verify($password, $user['password_hash']);
 
-            if ($credencialesOk && (int) ($user['bloqueado'] ?? 0) === 1) {
-                $error = 'Tu cuenta esta bloqueada. Contacta con administracion.';
+            if ($credencialesOk && (int)($user['bloqueado'] ?? 0) === 1) {
+                $error = "Tu cuenta esta bloqueada. Contacta con administracion.";
             } elseif ($credencialesOk) {
                 if (!empty($workerCode)) {
                     if (!empty($user['worker_code']) && hash_equals($user['worker_code'], $workerCode)) {
@@ -66,8 +68,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     header('Location: usuario.php');
                     exit;
                 }
-            } else {
-                $error = 'Credenciales incorrectas.';
+            } elseif ($error === '') {
+                $error = "Credenciales incorrectas.";
             }
         } catch (Exception $e) {
             $error = 'Error interno del sistema.';
@@ -80,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iniciar sesion - Zyma</title>
+  <title>Iniciar Sesión - Zyma</title>
   <link rel="stylesheet" href="styles.css?v=20260211-5">
 </head>
 <body>
