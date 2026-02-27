@@ -108,14 +108,14 @@ document.getElementById('testForm')?.addEventListener('submit', async function(e
         if (data.success) {
             resultado.innerHTML = `
                 <div class="alert alert-success alert-spaced">
-                    <strong>✓ Éxito!</strong> La valoración se guardó correctamente.<br>
+                    <strong>Exito!</strong> La valoración se guardó correctamente.<br>
                     Mensaje: ${data.mensaje}
                 </div>
             `;
         } else {
             resultado.innerHTML = `
                 <div class="alert alert-error alert-spaced">
-                    <strong>✗ Error:</strong> ${data.error}<br>
+                    <strong>Error:</strong> ${data.error}<br>
                     ${data.debug ? '<br>Debug: ' + data.debug : ''}
                 </div>
             `;
@@ -123,7 +123,7 @@ document.getElementById('testForm')?.addEventListener('submit', async function(e
     } catch (error) {
         resultado.innerHTML = `
             <div class="alert alert-error alert-spaced">
-                <strong>✗ Error de conexión:</strong> ${error.message}
+                <strong>Error de conexión:</strong> ${error.message}
             </div>
         `;
     }

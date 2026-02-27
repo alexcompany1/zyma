@@ -42,12 +42,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['instalar'])) {
         // Verificar
         $verificacion = $pdo->query("SHOW TABLES LIKE 'valoraciones'")->fetch();
         if ($verificacion) {
-            $mensaje = "✓ ¡Tabla creada correctamente! Ya puedes valorar productos.";
+            $mensaje = "Tabla creada correctamente! Ya puedes valorar productos.";
             $tipo_alerta = "success";
             $tabla_existe = true;
         }
     } catch (Exception $e) {
-        $mensaje = "✗ Error: " . $e->getMessage();
+        $mensaje = "Error: " . $e->getMessage();
         $tipo_alerta = "error";
     }
 } else {
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['instalar'])) {
 
         <?php if ($tabla_existe): ?>
             <div class="alert alert-success alert-spaced">
-                <strong>✓ Status:</strong> Tabla de valoraciones está activa y funcionando.
+                <strong>Status:</strong> Tabla de valoraciones está activa y funcionando.
             </div>
             
             <div style="margin-top: 2rem;">
@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['instalar'])) {
             </div>
         <?php else: ?>
             <div class="alert alert-warning alert-spaced" style="margin: 1.5rem 0;">
-                <strong>⚠️ Atención:</strong> La tabla de valoraciones no está instalada.
+                <strong>Atención:</strong> La tabla de valoraciones no está instalada.
             </div>
 
             <p style="margin: 1.5rem 0; line-height: 1.6;">
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['instalar'])) {
 
             <form method="POST" style="margin: 2rem 0;">
                 <button type="submit" name="instalar" class="btn-add-cart" style="font-size: 1.2rem; padding: 0.8rem 2rem;">
-                    🔧 Instalar Tabla de Valoraciones
+                    Instalar Tabla de Valoraciones
                 </button>
             </form>
 

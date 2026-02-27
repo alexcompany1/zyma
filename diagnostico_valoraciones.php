@@ -39,11 +39,11 @@ require_once 'config.php';
             echo '<div class="diagnostic-section">';
             echo '<h3>1. Archivo SQL</h3>';
             if (file_exists('database_valoraciones.sql')) {
-                echo '<p><span class="status-ok">✓ BIEN:</span> Archivo database_valoraciones.sql existe</p>';
+                echo '<p><span class="status-ok">BIEN:</span> Archivo database_valoraciones.sql existe</p>';
                 $size = filesize('database_valoraciones.sql');
                 echo '<p>Tamaño: ' . $size . ' bytes</p>';
             } else {
-                echo '<p><span class="status-error">✗ ERROR:</span> Archivo database_valoraciones.sql NO existe</p>';
+                echo '<p><span class="status-error">ERROR:</span> Archivo database_valoraciones.sql NO existe</p>';
                 echo '<p>Ruta esperada: ' . realpath('.') . '/database_valoraciones.sql</p>';
             }
             echo '</div>';
@@ -54,7 +54,7 @@ require_once 'config.php';
             try {
                 $stmt = $pdo->query("SHOW TABLES LIKE 'valoraciones'");
                 if ($stmt->fetch()) {
-                    echo '<p><span class="status-ok">✓ BIEN:</span> Tabla valoraciones existe</p>';
+                    echo '<p><span class="status-ok">BIEN:</span> Tabla valoraciones existe</p>';
                     
                     // Verificar estructura
                     $stmt = $pdo->query("DESCRIBE valoraciones");
@@ -67,11 +67,11 @@ require_once 'config.php';
                     }
                     echo '</ul>';
                 } else {
-                    echo '<p><span class="status-warning">⚠ ADVERTENCIA:</span> Tabla valoraciones NO existe</p>';
+                    echo '<p><span class="status-warning">ADVERTENCIA:</span> Tabla valoraciones NO existe</p>';
                     echo '<p>Se intentará crear automáticamente cuando se guarde una valoración.</p>';
                 }
             } catch (Exception $e) {
-                echo '<p><span class="status-error">✗ ERROR:</span> ' . htmlspecialchars($e->getMessage()) . '</p>';
+                echo '<p><span class="status-error">ERROR:</span> ' . htmlspecialchars($e->getMessage()) . '</p>';
             }
             echo '</div>';
 
@@ -82,7 +82,7 @@ require_once 'config.php';
                 $stmt = $pdo->query("SELECT COUNT(*) as total FROM productos");
                 $result = $stmt->fetch();
                 $count = $result['total'];
-                echo '<p><span class="status-ok">✓ BIEN:</span> Tabla productos existe</p>';
+                echo '<p><span class="status-ok">BIEN:</span> Tabla productos existe</p>';
                 echo '<p>Total de productos: ' . $count . '</p>';
                 
                 if ($count > 0) {
@@ -94,10 +94,10 @@ require_once 'config.php';
                     }
                     echo '</ul>';
                 } else {
-                    echo '<p><span class="status-warning">⚠ ADVERTENCIA:</span> No hay productos en la base de datos</p>';
+                    echo '<p><span class="status-warning">ADVERTENCIA:</span> No hay productos en la base de datos</p>';
                 }
             } catch (Exception $e) {
-                echo '<p><span class="status-error">✗ ERROR:</span> ' . htmlspecialchars($e->getMessage()) . '</p>';
+                echo '<p><span class="status-error">ERROR:</span> ' . htmlspecialchars($e->getMessage()) . '</p>';
             }
             echo '</div>';
 
@@ -108,10 +108,10 @@ require_once 'config.php';
                 $stmt = $pdo->query("SELECT COUNT(*) as total FROM usuarios");
                 $result = $stmt->fetch();
                 $count = $result['total'];
-                echo '<p><span class="status-ok">✓ BIEN:</span> Tabla usuarios existe</p>';
+                echo '<p><span class="status-ok">BIEN:</span> Tabla usuarios existe</p>';
                 echo '<p>Total de usuarios: ' . $count . '</p>';
             } catch (Exception $e) {
-                echo '<p><span class="status-error">✗ ERROR:</span> ' . htmlspecialchars($e->getMessage()) . '</p>';
+                echo '<p><span class="status-error">ERROR:</span> ' . htmlspecialchars($e->getMessage()) . '</p>';
             }
             echo '</div>';
 
@@ -122,7 +122,7 @@ require_once 'config.php';
                 $stmt = $pdo->query("SELECT COUNT(*) as total FROM valoraciones");
                 $result = $stmt->fetch();
                 $count = $result['total'];
-                echo '<p><span class="status-ok">✓ BIEN:</span> Total de valoraciones: ' . $count . '</p>';
+                echo '<p><span class="status-ok">BIEN:</span> Total de valoraciones: ' . $count . '</p>';
                 
                 if ($count > 0) {
                     echo '<p>Últimas 3 valoraciones:</p>';
@@ -136,12 +136,12 @@ require_once 'config.php';
                     ");
                     echo '<ul>';
                     foreach ($stmt->fetchAll() as $val) {
-                        echo '<li>' . htmlspecialchars($val['nombre']) . ' - ' . htmlspecialchars($val['producto']) . ' (' . $val['puntuacion'] . '⭐)</li>';
+                        echo '<li>' . htmlspecialchars($val['nombre']) . ' - ' . htmlspecialchars($val['producto']) . ' (' . $val['puntuacion'] . ' estrellas)</li>';
                     }
                     echo '</ul>';
                 }
             } catch (Exception $e) {
-                echo '<p><span class="status-warning">⚠ ADVERTENCIA:</span> ' . htmlspecialchars($e->getMessage()) . '</p>';
+                echo '<p><span class="status-warning">ADVERTENCIA:</span> ' . htmlspecialchars($e->getMessage()) . '</p>';
             }
             echo '</div>';
 
@@ -158,9 +158,9 @@ require_once 'config.php';
             
             foreach ($archivos as $archivo => $desc) {
                 if (file_exists($archivo)) {
-                    echo '<p><span class="status-ok">✓</span> ' . $desc . ' (' . $archivo . ')</p>';
+                    echo '<p><span class="status-ok">[OK]</span> ' . $desc . ' (' . $archivo . ')</p>';
                 } else {
-                    echo '<p><span class="status-error">✗ FALTA:</span> ' . $desc . ' (' . $archivo . ')</p>';
+                    echo '<p><span class="status-error">FALTA:</span> ' . $desc . ' (' . $archivo . ')</p>';
                 }
             }
             echo '</div>';
@@ -169,8 +169,8 @@ require_once 'config.php';
             echo '<div class="diagnostic-section">';
             echo '<h3>7. Configuración PHP</h3>';
             echo '<p>PHP Version: ' . phpversion() . '</p>';
-            echo '<p>Extensión PDO: ' . (extension_loaded('pdo') ? '<span class="status-ok">✓ Habilitada</span>' : '<span class="status-error">✗ Deshabilitada</span>') . '</p>';
-            echo '<p>Extensión mysqli: ' . (extension_loaded('mysqli') ? '<span class="status-ok">✓ Habilitada</span>' : '<span class="status-error">✗ Deshabilitada</span>') . '</p>';
+            echo '<p>Extensión PDO: ' . (extension_loaded('pdo') ? '<span class="status-ok">Habilitada</span>' : '<span class="status-error">Deshabilitada</span>') . '</p>';
+            echo '<p>Extensión mysqli: ' . (extension_loaded('mysqli') ? '<span class="status-ok">Habilitada</span>' : '<span class="status-error">Deshabilitada</span>') . '</p>';
             echo '</div>';
         ?>
 

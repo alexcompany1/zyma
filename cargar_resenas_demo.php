@@ -137,10 +137,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cargar'])) {
             }
         }
 
-        $mensaje = "✓ Se cargaron $cargadas reseñas de demostración correctamente.";
+        $mensaje = "Se cargaron $cargadas reseñas de demostración correctamente.";
         $tipo_alerta = "success";
     } catch (Exception $e) {
-        $mensaje = "✗ Error: " . $e->getMessage();
+        $mensaje = "Error: " . $e->getMessage();
         $tipo_alerta = "error";
     }
 }
@@ -176,12 +176,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cargar'])) {
         </div>
 
         <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; border-left: 4px solid #ffc107;">
-            <strong>⚠️ Nota:</strong> Estas reseñas son ficticias. Para ver reseñas reales de clientes, ellos deben valorar los productos en la sección "Valoraciones".
+            <strong>Nota:</strong> Estas reseñas son ficticias. Para ver reseñas reales de clientes, ellos deben valorar los productos en la sección "Valoraciones".
         </div>
 
         <form method="POST" style="margin: 2rem 0;">
             <button type="submit" name="cargar" class="btn-add-cart" style="font-size: 1.1rem; padding: 0.8rem 2rem;">
-                📝 Cargar 6 Reseñas de Demostración
+                Cargar 6 Reseñas de Demostración
             </button>
         </form>
 

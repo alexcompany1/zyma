@@ -50,86 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['borrar'])) {
     try {
         $stmt = $pdo->prepare("DELETE FROM valoraciones WHERE id = ?");
         $stmt->execute([$id]);
-        $mensaje = "✓ Valoración eliminada correctamente";
+        $mensaje = "Valoración eliminada correctamente";
         $tipo_alerta = "success";
     } catch (Exception $e) {
-        $mensaje = "✗ Error: " . $e->getMessage();
+        $mensaje = "Error: " . $e->getMessage();
         $tipo_alerta = "error";
-    }
-}
-
-// Responder a valoración
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['responder'])) {
-    $id_valoracion = (int)$_POST['id_valoracion'];
-    $respuesta = trim($_POST['respuesta']);
-    $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) || isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false;
-    
-    if (empty($respuesta)) {
-        $error = "La respuesta no puede estar vacía";
-        if ($isAjax) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => $error]);
-            exit;
-        }
-        $mensaje = "✗ " . $error;
-        $tipo_alerta = "error";
-    } else if (strlen($respuesta) > 500) {
-        $error = "La respuesta no puede superar 500 caracteres";
-        if ($isAjax) {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => $error]);
-            exit;
-        }
-        $mensaje = "✗ " . $error;
-        $tipo_alerta = "error";
-    } else {
-        try {
-            // Verificar si ya existe respuesta
-            $stmt = $pdo->prepare("SELECT id FROM respuestas_valoraciones WHERE id_valoracion = ?");
-            $stmt->execute([$id_valoracion]);
-            $existe = $stmt->fetch();
-            
-            if ($existe) {
-                // Actualizar respuesta existente
-                $stmt = $pdo->prepare("UPDATE respuestas_valoraciones SET respuesta = ? WHERE id_valoracion = ?");
-                $stmt->execute([$respuesta, $id_valoracion]);
-            } else {
-                // Insertar nueva respuesta
-                $stmt = $pdo->prepare("INSERT INTO respuestas_valoraciones (id_valoracion, respuesta) VALUES (?, ?)");
-                $stmt->execute([$id_valoracion, $respuesta]);
-                
-                // Obtener datos para notificación
-                $stmtVal = $pdo->prepare("SELECT id_usuario FROM valoraciones WHERE id = ?");
-                $stmtVal->execute([$id_valoracion]);
-                $valoracion = $stmtVal->fetch();
-                
-                if ($valoracion) {
-                    // Crear notificación
-                    $stmtNotif = $pdo->prepare("
-                        INSERT INTO notificaciones_respuestas (id_usuario, id_valoracion, leida)
-                        VALUES (?, ?, FALSE)
-                    ");
-                    $stmtNotif->execute([$valoracion['id_usuario'], $id_valoracion]);
-                }
-            }
-            
-            if ($isAjax) {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => true, 'message' => 'Respuesta guardada correctamente']);
-                exit;
-            }
-            
-            $mensaje = "✓ Respuesta guardada correctamente";
-            $tipo_alerta = "success";
-        } catch (Exception $e) {
-            if ($isAjax) {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-                exit;
-            }
-            $mensaje = "✗ Error: " . $e->getMessage();
-            $tipo_alerta = "error";
-        }
     }
 }
 
@@ -137,12 +62,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['responder'])) {
 $valoraciones = [];
 try {
     $stmt = $pdo->prepare("
-        SELECT v.id, v.puntuacion, v.comentario, v.fecha_creacion, u.nombre, u.email, p.nombre as producto,
-               rv.respuesta, rv.id as id_respuesta
+        SELECT v.id, v.puntuacion, v.comentario, v.fecha_creacion, u.nombre, u.email, p.nombre as producto
         FROM valoraciones v
         JOIN usuarios u ON v.id_usuario = u.id
         JOIN productos p ON v.id_producto = p.id
-        LEFT JOIN respuestas_valoraciones rv ON v.id = rv.id_valoracion
         ORDER BY v.fecha_creacion DESC
     ");
     $stmt->execute();
@@ -221,22 +144,6 @@ if ($display_name === '') {
         flex-wrap: wrap;
     }
     
-    .btn-responder {
-        background: var(--dark-red);
-        color: white;
-        border: none;
-        padding: 0.6rem 1.2rem;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-responder:hover {
-        background: var(--deep-red);
-        transform: translateY(-2px);
-    }
-    
     .btn-borrar {
         background: #dc3545;
         color: white;
@@ -251,69 +158,6 @@ if ($display_name === '') {
     .btn-borrar:hover {
         background: #c82333;
         transform: translateY(-2px);
-    }
-    
-    .respuesta-section {
-        background: #e8f4f8;
-        padding: 1rem;
-        border-radius: 6px;
-        margin-top: 1rem;
-        border-left: 4px solid #2196F3;
-    }
-    
-    .respuesta-existente {
-        background: white;
-        padding: 1rem;
-        border-radius: 6px;
-        margin-bottom: 1rem;
-        font-style: italic;
-        color: #555;
-    }
-    
-    .form-respuesta {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
-    }
-    
-    .form-respuesta textarea {
-        flex: 1;
-        padding: 0.6rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-family: 'Montserrat', sans-serif;
-        font-size: 0.9rem;
-        resize: vertical;
-        min-height: 60px;
-    }
-    
-    .form-respuesta button {
-        background: #28a745;
-        color: white;
-        border: none;
-        padding: 0.6rem 1.2rem;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: 600;
-        white-space: nowrap;
-    }
-    
-    .form-respuesta button:hover {
-        background: #218838;
-    }
-    
-    .toggle-respuesta {
-        background: transparent;
-        color: var(--dark-red);
-        border: none;
-        cursor: pointer;
-        text-decoration: underline;
-        padding: 0;
-        font-weight: 600;
-    }
-    
-    .respuesta-form-hidden {
-        display: none;
     }
 </style>
 </head>
@@ -380,7 +224,7 @@ if ($display_name === '') {
               <span class="valoracion-producto"><?= htmlspecialchars($val['producto']) ?></span>
               <div class="valoracion-stars">
                 <?php for ($i = 1; $i <= 5; $i++): ?>
-                  <img src="assets/<?= $i <= $val['puntuacion'] ? 'estrellaSelecionada' : 'estrellaNegra' ?>.png" alt="⭐">
+                  <img src="assets/<?= $i <= $val['puntuacion'] ? 'estrellaSelecionada' : 'estrellaNegra' ?>.png" alt="estrella">
                 <?php endfor; ?>
               </div>
             </div>
@@ -391,39 +235,12 @@ if ($display_name === '') {
               </div>
             <?php endif; ?>
             
-            <?php if ($val['respuesta']): ?>
-              <div class="respuesta-section">
-                <strong>✓ Respuesta del restaurante:</strong>
-                <div class="respuesta-existente">
-                  <?= htmlspecialchars($val['respuesta']) ?>
-                </div>
-              </div>
-            <?php endif; ?>
-            
             <div class="valoracion-acciones">
-              <button class="btn-responder toggle-respuesta" data-id="<?= $val['id'] ?>">
-                <?= $val['respuesta'] ? '✎ Editar respuesta' : '💬 Responder' ?>
-              </button>
-              
               <form method="POST" style="display: inline;" onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta valoración?');">
                 <input type="hidden" name="id_valoracion" value="<?= $val['id'] ?>">
-                <button type="submit" name="borrar" class="btn-borrar">🗑️ Eliminar</button>
+                <button type="submit" name="borrar" class="btn-borrar">Eliminar</button>
               </form>
             </div>
-            
-            <!-- Formulario de respuesta -->
-            <form method="POST" class="respuesta-form-hidden" id="form-<?= $val['id'] ?>">
-              <div class="respuesta-section">
-                <input type="hidden" name="id_valoracion" value="<?= $val['id'] ?>">
-                <div class="form-respuesta">
-                  <textarea name="respuesta" placeholder="Escribe tu respuesta aquí..." required><?= $val['respuesta'] ? htmlspecialchars($val['respuesta']) : '' ?></textarea>
-                  <button type="submit" name="responder">📤 Enviar</button>
-                </div>
-                <small style="color: #666; display: block; margin-top: 0.5rem;">
-                  Máximo 500 caracteres. Se enviará una notificación al cliente.
-                </small>
-              </div>
-            </form>
           </div>
         <?php endforeach; ?>
       </div>
@@ -447,15 +264,6 @@ if (profileBtn && dropdownMenu) {
     }
   });
 }
-
-// Toggle de formularios de respuesta
-document.querySelectorAll('.toggle-respuesta').forEach(btn => {
-  btn.addEventListener('click', function() {
-    const id = this.dataset.id;
-    const form = document.getElementById(`form-${id}`);
-    form.classList.toggle('respuesta-form-hidden');
-  });
-});
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>

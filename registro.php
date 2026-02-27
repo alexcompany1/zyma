@@ -153,11 +153,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       
       // Contenido del popup
       popup.innerHTML = `
-        <div style="width: 80px; height: 80px; background: #EECF6D; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 1.5rem; box-shadow: 0 8px 20px rgba(238, 207, 109, 0.4);">
-          <span style="font-size: 2.5rem; color: #45050C;">✓</span>
-        </div>
-        <h2 style="color: #45050C; margin-bottom: 1rem; font-size: 1.8rem;">¡Registro exitoso!</h2>
-        <p style="color: #555; margin-bottom: 1.5rem; font-size: 1.1rem;">
+        <div class="popup-icon">✓</div>
+        <h2 class="popup-title">¡Registro exitoso!</h2>
+        <p class="popup-text">
           Tu cuenta ha sido creada correctamente.<br>
           <strong><?= htmlspecialchars($_SESSION['registered_email']) ?></strong>
         </p>

@@ -32,10 +32,10 @@ try {
         
         <div style="font-size: 1.5rem; margin: 2rem 0; padding: 2rem; background: <?= $tabla_existe ? '#d4edda' : '#f8d7da' ?>; border-radius: 8px; text-align: center;">
             <?php if ($tabla_existe): ?>
-                <strong style="color: #28a745;">✓ TABLA ACTIVA</strong>
+                <strong style="color: #28a745;">TABLA ACTIVA</strong>
                 <p style="margin-top: 0.5rem; color: #155724;">El sistema de valoraciones está funcionando correctamente.</p>
             <?php else: ?>
-                <strong style="color: #dc3545;">✗ TABLA NO EXISTE</strong>
+                <strong style="color: #dc3545;">TABLA NO EXISTE</strong>
                 <p style="margin-top: 0.5rem; color: #721c24;">Necesitas instalar el sistema.</p>
                 <?php if ($error): ?>
                     <p style="font-size: 0.9rem; margin-top: 0.5rem;">Error: <?= htmlspecialchars($error) ?></p>
@@ -49,7 +49,7 @@ try {
                     <strong>Solución:</strong> Como trabajador, ve a tu panel y haz clic en:
                 </p>
                 <p style="background: #f0f0f0; padding: 1rem; border-radius: 6px; display: inline-block; margin: 1rem 0;">
-                    <strong>⚙️ Sistema de Valoraciones → Instalar/Activar</strong>
+                    <strong>Sistema de Valoraciones - Instalar/Activar</strong>
                 </p>
             <?php else: ?>
                 <a href="valoraciones.php" class="btn-add-cart">Ir a Valoraciones</a>

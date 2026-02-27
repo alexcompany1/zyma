@@ -56,7 +56,7 @@ require_once 'config.php';
                 
                 if ($resultado) {
                     echo '<div class="alert alert-success alert-spaced">';
-                    echo '<strong>✓ Éxito!</strong> La tabla de valoraciones fue creada correctamente.';
+                    echo '<strong>Exito!</strong> La tabla de valoraciones fue creada correctamente.';
                     echo '</div>';
                     
                     // Mostrar estructura de la tabla
