@@ -57,6 +57,7 @@ unset($_SESSION['mensaje_pedido']);
         <div class="dropdown quick-dropdown" id="quickDropdown">
           <a href="usuario.php">Inicio</a>
           <a href="carta.php">Ver carta</a>
+          <a href="valoraciones.php">Valoraciones</a>
           <a href="tickets.php">Tickets</a>
         </div>
       </div>

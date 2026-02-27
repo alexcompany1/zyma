@@ -25,6 +25,9 @@ $username = 'root';
 // Password BD
 $password = '';
 
+// Tasa de IVA (10% para restauración en España)
+define('TAX_RATE', 0.10);
+
 try {
     // Crear conexion PDO
     $pdo = new PDO(

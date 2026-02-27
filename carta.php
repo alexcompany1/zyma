@@ -67,14 +67,15 @@ try {
 
     $products = [];
     foreach ($products_db as $product) {
-        $promedio = (float)($product['promedio_puntuacion'] ?? 0);
         $products[] = [
             'id' => $product['id'],
             'name' => $product['nombre'],
             'description' => '',
             'price' => (float)$product['precio'],
             'image' => $product['imagen'],
-            'allergens' => []
+            'allergens' => [],
+            'promedio' => (float)($product['promedio_puntuacion'] ?? 0),
+            'total_valoraciones' => (int)($product['total_valoraciones'] ?? 0)
         ];
     }
 } catch (Exception $e) {
@@ -109,7 +110,7 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zyma - Carta</title>
-<link rel="stylesheet" href="styles.css?v=20260211-5">
+<link rel="stylesheet" href="styles.css?v=20260227-2">
 </head>
 <body>
 <header class="landing-header">
@@ -145,6 +146,7 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
         <div class="dropdown quick-dropdown" id="quickDropdown">
           <a href="usuario.php">Inicio</a>
           <a href="carta.php">Ver carta</a>
+          <a href="valoraciones.php">Valoraciones</a>
           <a href="tickets.php">Tickets</a>
         </div>
       </div>
@@ -183,6 +185,21 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
            onerror="this.src='assets/default-product.png';">
       <div class="card-content">
         <h2 class="card-title"><?= htmlspecialchars($product['name']) ?></h2>
+        
+        <!-- Estrellas de valoración -->
+        <div class="product-rating">
+          <?php 
+          $promedio = $product['promedio'] ?? 0;
+          $total = $product['total_valoraciones'] ?? 0;
+          for ($i = 1; $i <= 5; $i++): 
+            $starClass = $i <= round($promedio) ? 'star-filled' : 'star-empty';
+          ?>
+            <img src="assets/<?= $i <= round($promedio) ? 'estrellaSelecionada.png' : 'estrellaNegra.png' ?>" 
+                 alt="Estrella" class="rating-star <?= $starClass ?>" style="width:11px;height:11px;">
+          <?php endfor; ?>
+          <span class="rating-text"><?= number_format($promedio, 1) ?> (<?= $total ?>)</span>
+        </div>
+        
         <p class="card-description"><?= htmlspecialchars($product['description']) ?></p>
         <p class="card-price">EUR <?= number_format($product['price'], 2, ',', '.') ?></p>
 
@@ -200,11 +217,13 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
 
         <?php if ($guestMode): ?>
           <a href="login.php" class="btn-add-cart">Inicia sesion para pedir</a>
+          <a href="login.php" class="btn-valorar">Valorar producto</a>
         <?php else: ?>
           <form method="POST">
             <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
             <button type="submit" name="add_to_cart" class="btn-add-cart">Anadir al carrito</button>
           </form>
+          <a href="valoraciones.php?producto=<?= (int)$product['id'] ?>" class="btn-valorar">Valorar producto</a>
         <?php endif; ?>
       </div>
     </div>
