@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 require_once 'config.php';
 
-// Obtener pedidos del usuario
+// Obtener pedidos del usuario.
 $stmt = $pdo->prepare(
     "SELECT id_pedido, total, fecha_hora FROM pedidos WHERE id_usuario = :usuario_id ORDER BY fecha_hora DESC"
 );
