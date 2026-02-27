@@ -53,12 +53,13 @@ unset($_SESSION['mensaje_pedido']);
       <span class="landing-logo-text">Zyma</span>
     </a>
         <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
-      <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="usuario.php">Inicio</a>
-        <a href="carta.php">Ver carta</a>
+        <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
+        <div class="dropdown quick-dropdown" id="quickDropdown">
+          <a href="usuario.php">Inicio</a>
+          <a href="carta.php">Ver carta</a>
+          <a href="tickets.php">Tickets</a>
+        </div>
       </div>
-    </div>
     <div class="cart-section">
       <a href="carrito.php" class="cart-btn">
         <img src="assets/cart-icon.png" alt="Carrito">

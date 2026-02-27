@@ -9,32 +9,11 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-require_once 'config.php';
-
 $display_name = trim($_SESSION['nombre'] ?? '');
 if ($display_name === '') {
     $display_name = strstr($_SESSION['email'] ?? '', '@', true) ?: ($_SESSION['email'] ?? '');
 }
 $cart_count = count($_SESSION['cart'] ?? []);
-
-// Obtener reseñas de la base de datos
-$resenias = [];
-try {
-    $stmt = $pdo->prepare("
-        SELECT v.puntuacion, v.comentario, u.nombre, p.nombre as producto
-        FROM valoraciones v
-        JOIN usuarios u ON v.id_usuario = u.id
-        JOIN productos p ON v.id_producto = p.id
-        WHERE v.comentario IS NOT NULL AND v.comentario != ''
-        ORDER BY v.fecha_creacion DESC
-        LIMIT 10
-    ");
-    $stmt->execute();
-    $resenias = $stmt->fetchAll();
-} catch (Exception $e) {
-    error_log("Error obteniendo reseñas: " . $e->getMessage());
-    $resenias = [];
-}
 ?>
 
 <!DOCTYPE html>
@@ -43,7 +22,7 @@ try {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zyma - Restaurante de Hotdogs</title>
-  <link rel="stylesheet" href="styles.css?v=20260217-1">
+  <link rel="stylesheet" href="styles.css?v=20260211-5">
 </head>
 <body>
 <header class="landing-header">
@@ -66,13 +45,13 @@ try {
     </a>
 
         <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
-      <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="usuario.php">Inicio</a>
-        <a href="carta.php">Ver carta</a>
-        <a href="valoraciones.php">Valoraciones</a>
+        <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
+        <div class="dropdown quick-dropdown" id="quickDropdown">
+          <a href="usuario.php">Inicio</a>
+          <a href="carta.php">Ver carta</a>
+          <a href="tickets.php">Tickets</a>
+        </div>
       </div>
-    </div>
     <div class="cart-section">
       <a href="carrito.php" class="cart-btn" aria-label="Carrito">
         <img src="assets/cart-icon.png" alt="Carrito">
@@ -135,7 +114,6 @@ try {
 </footer>
 
 <script>
-// Dropdown del perfil
 const profileBtn = document.getElementById('profileBtn');
 const dropdownMenu = document.getElementById('dropdownMenu');
 if (profileBtn && dropdownMenu) {
@@ -146,56 +124,6 @@ if (profileBtn && dropdownMenu) {
     }
   });
 }
-
-// Carrusel de Reseñas
-document.addEventListener('DOMContentLoaded', function() {
-  const carousel = document.querySelector('.reviews-carousel');
-  const cards = document.querySelectorAll('.review-card');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const indicators = document.querySelectorAll('.carousel-indicators .indicator');
-  const container = document.querySelector('.reviews-carousel-container');
-  
-  if (!carousel || cards.length === 0) return;
-  
-  let currentSlide = 0;
-  
-  function showSlide(n) {
-    currentSlide = (n + cards.length) % cards.length;
-    
-    // Calcular el ancho real del contenedor
-    const containerWidth = container.offsetWidth;
-    const translateAmount = currentSlide * containerWidth;
-    
-    carousel.style.transform = `translateX(-${translateAmount}px)`;
-    
-    indicators.forEach((ind, idx) => {
-      ind.classList.toggle('active', idx === currentSlide);
-    });
-  }
-  
-  function nextSlide() {
-    showSlide(currentSlide + 1);
-  }
-  
-  function prevSlide() {
-    showSlide(currentSlide - 1);
-  }
-  
-  // Event listeners
-  if (nextBtn) nextBtn.addEventListener('click', nextSlide);
-  if (prevBtn) prevBtn.addEventListener('click', prevSlide);
-  
-  indicators.forEach((indicator, idx) => {
-    indicator.addEventListener('click', () => showSlide(idx));
-  });
-  
-  // Auto-avance cada 6 segundos
-  setInterval(nextSlide, 6000);
-  
-  // Recalcular en caso de resize
-  window.addEventListener('resize', () => showSlide(currentSlide));
-});
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>

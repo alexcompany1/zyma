@@ -21,7 +21,7 @@ if ($display_name === '') {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zyma - Trabajador</title>
-<link rel="stylesheet" href="styles.css?v=20260217-1">
+<link rel="stylesheet" href="styles.css?v=20260211-5">
 </head>
 <body>
 <header class="landing-header">
@@ -44,12 +44,13 @@ if ($display_name === '') {
     </a>
 
         <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
-      <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="usuario.php">Inicio</a>
-        <a href="carta.php">Ver carta</a>
+        <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
+        <div class="dropdown quick-dropdown" id="quickDropdown">
+          <a href="usuario.php">Inicio</a>
+          <a href="carta.php">Ver carta</a>
+          <a href="tickets.php">Tickets</a>
+        </div>
       </div>
-    </div>
     <div class="landing-actions">
       <a href="gestionar_pedidos.php" class="landing-link">Pedidos</a>
       <a href="estadisticas.php" class="landing-cta">Estadisticas</a>
@@ -74,13 +75,8 @@ if ($display_name === '') {
         <li>
           <a href="gestionar_pedidos.php" class="panel-link">Gestionar pedidos</a>
         </li>
-        <li>
-          <a href="gestionar_valoraciones.php" class="panel-link">Gestionar Valoraciones</a>
-        </li>
       </ul>
     </div>
-
-
   </div>
 </div>
 

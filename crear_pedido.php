@@ -31,25 +31,25 @@ try {
         $total += $item['precio'] * $item['cantidad'];
     }
 
-    // Guardar pedido
-    $stmt = $pdo->prepare("
-        INSERT INTO pedidos (usuario_id, total)
-        VALUES (:usuario_id, :total)
-    ");
+    // Calcular manualmente siguiente id_pedido (en caso de tabla sin AUTO_INCREMENT)
+    $stmtNext = $pdo->query("SELECT COALESCE(MAX(id_pedido),0) FROM pedidos");
+    $nextId = (int)$stmtNext->fetchColumn() + 1;
+
+    // Guardar pedido incluyendo id_pedido
+    $stmt = $pdo->prepare(
+        "INSERT INTO pedidos (id_pedido, id_usuario, total) VALUES (:pedido_id, :usuario_id, :total)"
+    );
     $stmt->execute([
+        ':pedido_id' => $nextId,
         ':usuario_id' => $_SESSION['user_id'],
         ':total' => $total
     ]);
-
-    // Obtener id pedido
-    $pedido_id = $pdo->lastInsertId();
+    $pedido_id = $nextId;
 
     // Guardar items
-    $stmtItem = $pdo->prepare("
-        INSERT INTO pedido_items (pedido_id, producto_id, cantidad, precio_unitario)
-        VALUES (:pedido_id, :producto_id, :cantidad, :precio_unitario)
-    ");
-
+    $stmtItem = $pdo->prepare(
+        "INSERT INTO pedido_items (id_pedido, id_producto, cantidad, precio_unitario) VALUES (:pedido_id, :producto_id, :cantidad, :precio_unitario)"
+    );
     foreach ($_SESSION['cart'] as $producto_id => $item) {
         $stmtItem->execute([
             ':pedido_id' => $pedido_id,
@@ -65,8 +65,8 @@ try {
     // Vaciar carrito
     unset($_SESSION['cart']);
 
-    // Ir a confirmacion
-    header("Location: confirmacion_pedido.php?id=$pedido_id");
+    // Ir al ticket del pedido
+    header("Location: ticket.php?id=$pedido_id");
     exit;
 
 } catch (Exception $e) {

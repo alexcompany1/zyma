@@ -1,7 +1,7 @@
 <?php
 /**
  * reset_password.php
- * Establece nueva contrasena con token.
+ * Establece nueva contrasena con token. :)
  */
 
 if (!headers_sent()) {

@@ -2,12 +2,10 @@
 if (!headers_sent()) {
     header('Content-Type: text/html; charset=UTF-8');
 }
-?>
-<?php
+
 /**
  * carrito.php
- * que te jodan
- * Muestra el carrito y crea el pedido.
+ * Muestra el carrito y procesa pago por tarjeta o Bizum.
  */
 
 require_once 'config.php';
@@ -75,9 +73,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pagar_online'])) {
                 }
             }
 
-            $stmt = $pdo->prepare("\n                INSERT INTO pedidos (\n                    id_mesa,\n                    id_usuario,\n                    fecha_hora,\n                    estado,\n                    total,\n                    metodo_pago,\n                    notas_cliente\n                ) VALUES (?, ?, NOW(), ?, ?, ?, ?)\n            ");
+            // calcular siguiente id_pedido manualmente
+            $stmtNext = $pdo->query("SELECT COALESCE(MAX(id_pedido),0) FROM pedidos");
+            $nextId = (int)$stmtNext->fetchColumn() + 1;
+
+            $stmt = $pdo->prepare("\n                INSERT INTO pedidos (id_pedido, id_mesa, id_usuario, fecha_hora, estado, total, metodo_pago, notas_cliente)\n                VALUES (?, ?, ?, NOW(), ?, ?, ?, ?)\n            ");
 
             $stmt->execute([
+                $nextId,
                 0,
                 $_SESSION['user_id'],
                 'pendiente',
@@ -86,30 +89,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pagar_online'])) {
                 ''
             ]);
 
-            $pedidoId = $pdo->lastInsertId();
+            $pedidoId = $nextId;
 
             $display_name = trim($_SESSION['nombre'] ?? '');
             if ($display_name === '') {
                 $display_name = strstr($_SESSION['email'] ?? '', '@', true) ?: ($_SESSION['email'] ?? '');
             }
-            
-            // Crear notificacion
-            $display_name = trim($_SESSION['nombre'] ?? '');
-            if ($display_name === '') {
-                $display_name = strstr($_SESSION['email'] ?? '', '@', true) ?: ($_SESSION['email'] ?? '');
-            }
-            $stmt = $pdo->prepare("
-                INSERT INTO notificaciones (id_usuario, mensaje, leida, fecha)
-                VALUES (?, ?, 0, NOW())
-            ");
-            $mensaje = "Nuevo pedido #{$pedidoId} de " . $display_name . " por " . number_format($total, 2, ',', '.') . "?";
-            $stmt->execute([$_SESSION['user_id'], $mensaje]);
-            
-            // Vaciar carrito
+
+            $stmtNot = $pdo->prepare("\n                INSERT INTO notificaciones (id_usuario, mensaje, leida, fecha)\n                VALUES (?, ?, 0, NOW())\n            ");
+            $mensaje = 'Nuevo pedido #' . $pedidoId . ' de ' . $display_name . ' por ' . number_format($total, 2, ',', '.') . ' EUR';
+            $stmtNot->execute([$_SESSION['user_id'], $mensaje]);
+
             unset($_SESSION['cart']);
-            $_SESSION['mensaje_pedido'] = 'Pedido realizado con exito. Tu pedido #' . $pedidoId . ' esta siendo procesado.';
-            header('Location: pedido_confirmado.php');
-            exit;
+            // Redirigir directamente al ticket recién generado
++            header('Location: ticket.php?id=' . $pedidoId);
++            exit;
         } catch (Exception $e) {
             $error = 'Error al procesar el pedido: ' . $e->getMessage();
         }
@@ -130,12 +124,6 @@ if ($display_name === '') {
 <link rel="stylesheet" href="styles.css?v=20260211-5">
 </head>
 <body>
-<?php
-  $display_name = trim($_SESSION['nombre'] ?? '');
-  if ($display_name === '') {
-    $display_name = strstr($_SESSION['email'] ?? '', '@', true) ?: ($_SESSION['email'] ?? '');
-  }
-?>
 <header class="landing-header">
   <div class="landing-bar">
     <div class="profile-section">
@@ -148,18 +136,19 @@ if ($display_name === '') {
       <div class="dropdown" id="dropdownMenu">
           <a href="perfil.php">Mi perfil</a>
           <a href="logout.php">Cerrar sesion</a>
-        </div>
+      </div>
     </div>
-    
+
     <a href="usuario.php" class="landing-logo">
       <span class="landing-logo-text">Zyma</span>
     </a>
-    
+
         <div class="quick-menu-section">
       <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
         <a href="usuario.php">Inicio</a>
         <a href="carta.php">Ver carta</a>
+        <a href="tickets.php">Tickets</a>
       </div>
     </div>
     <div class="cart-section">
@@ -211,51 +200,6 @@ if ($display_name === '') {
           Total: EUR <?= number_format($total, 2, ',', '.') ?>
         </div>
 
-        <?php if (empty($cartItems)): ?>
-            <div class="empty-cart">
-                <p class="empty-state">Tu carrito está vacío.</p>
-                <a href="carta.php" class="btn-seguir-comprando">Seguir comprando</a>
-            </div>
-        <?php else: ?>
-            <?php foreach ($cartItems as $item): ?>
-            <div class="cart-item-row">
-                <img src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="cart-item-img">
-                
-                <div class="cart-item-info">
-                    <div class="cart-item-name">
-                        <?= htmlspecialchars($item['name']) ?>
-                    </div>
-                    <div class="cart-item-meta" id="desc-<?= $item['id'] ?>">
-                        ?<?= number_format($item['price'], 2, ',', '.') ?> x <?= $item['quantity'] ?>
-                    </div>
-                    <div class="cart-item-subtotal" id="subtotal-<?= $item['id'] ?>">
-                        ?<?= number_format($item['subtotal'], 2, ',', '.') ?>
-                    </div>
-                </div>
-                
-                <div class="quantity-controls">
-                    <button class="quantity-btn" onclick="changeQuantity(<?= $item['id'] ?>, -1)">-</button>
-                    <span class="quantity-value" id="qty-<?= $item['id'] ?>"><?= $item['quantity'] ?></span>
-                    <button class="quantity-btn" onclick="changeQuantity(<?= $item['id'] ?>, 1)">+</button>
-                </div>
-            </div>
-            <?php endforeach; ?>
-
-            <div class="center mt-3">
-                <div class="cart-total-line" id="total-amount">
-                    Total: ?<?= number_format($total, 2, ',', '.') ?>
-                </div>
-                
-                <div class="btn-row center">
-                    <form method="POST">
-                        <button type="submit" name="realizar_pedido" class="btn-realizar-pedido btn-block">
-                            Realizar Pedido
-                        </button>
-                    </form>
-                    <a href="carta.php" class="btn-seguir-comprando">
-                        Seguir comprando
-                    </a>
-                </div>
         <div class="btn-row center">
           <form method="POST">
             <?php if (!empty($error)): ?>
@@ -312,38 +256,39 @@ window.addEventListener('click', (e) => {
 });
 
 function changeQuantity(productId, delta) {
-    const qtyElement = document.getElementById('qty-' + productId);
-    const descElement = document.getElementById('desc-' + productId);
-    const subtotalElement = document.getElementById('subtotal-' + productId);
-    const totalElement = document.getElementById('total-amount');
-    
-    let currentQty = parseInt(qtyElement.textContent);
-    
-    if (delta === -1 && currentQty === 1) {
-        window.location.href = 'eliminar_producto.php?id=' + productId;
-        return;
-    }
-    
-    if (currentQty + delta < 1) return;
-    
-    currentQty += delta;
-    qtyElement.textContent = currentQty;
-    
-    const prices = [0, 6.00, 3.50, 7.50, 5.99, 6.50, 2.00, 1.50];
-    
-    descElement.innerHTML = '?' + prices[productId].toFixed(2).replace('.', ',') + ' x ' + currentQty;
-    const subtotal = prices[productId] * currentQty;
-    subtotalElement.innerHTML = '?' + subtotal.toFixed(2).replace('.', ',');
-    
-    let total = 0;
-    <?php foreach ($cartItems as $item): ?>
-        if (<?= $item['id'] ?> === productId) {
-            total += <?= $item['price'] ?> * currentQty;
-        } else {
-            total += <?= $item['price'] ?> * <?= $item['quantity'] ?>;
-        }
-    <?php endforeach; ?>
-    totalElement.innerHTML = 'Total: ?' + total.toFixed(2).replace('.', ',');
+  const qtyElement = document.getElementById('qty-' + productId);
+  const descElement = document.getElementById('desc-' + productId);
+  const subtotalElement = document.getElementById('subtotal-' + productId);
+  const totalElement = document.getElementById('total-amount');
+
+  let currentQty = parseInt(qtyElement.textContent, 10);
+
+  if (delta === -1 && currentQty === 1) {
+    window.location.href = 'eliminar_producto.php?id=' + productId;
+    return;
+  }
+
+  if (currentQty + delta < 1) return;
+
+  currentQty += delta;
+  qtyElement.textContent = currentQty;
+
+  const prices = [0, 6.00, 3.50, 7.50, 5.99, 6.50, 2.00, 1.50];
+
+  descElement.innerHTML = 'EUR ' + prices[productId].toFixed(2).replace('.', ',') + ' x ' + currentQty;
+  const subtotal = prices[productId] * currentQty;
+  subtotalElement.innerHTML = 'EUR ' + subtotal.toFixed(2).replace('.', ',');
+
+  let total = 0;
+  <?php foreach ($cartItems as $item): ?>
+  if (<?= $item['id'] ?> === productId) {
+    total += <?= $item['price'] ?> * currentQty;
+  } else {
+    total += <?= $item['price'] ?> * <?= $item['quantity'] ?>;
+  }
+  <?php endforeach; ?>
+
+  totalElement.innerHTML = 'Total: EUR ' + total.toFixed(2).replace('.', ',');
 }
 
 const methodRadios = document.querySelectorAll('input[name="metodo_pago"]');

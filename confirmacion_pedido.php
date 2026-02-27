@@ -93,6 +93,7 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
       <div class="dropdown quick-dropdown" id="quickDropdown">
         <a href="usuario.php">Inicio</a>
         <a href="carta.php">Ver carta</a>
+                <a href="tickets.php">Tickets</a>
       </div>
     </div>
     <div class="cart-section">
@@ -141,7 +142,11 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
             </p>
         </div>
 
-        <a href="usuario.php" class="btn-cart">Volver al Inicio</a>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;">
+            <a href="ticket.php?id=<?= $pedido['id_pedido'] ?>" class="btn-cart">Ver Ticket</a>
+            <a href="tickets.php" class="btn-cart">Todos mis Tickets</a>
+            <a href="usuario.php" class="btn-cart">Volver al Inicio</a>
+        </div>
     </div>
 </div>
 

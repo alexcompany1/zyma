@@ -86,13 +86,14 @@ unset($_SESSION['mensaje']);
     <a href="usuario.php" class="landing-logo">
       <span class="landing-logo-text">Zyma</span>
     </a>
-        <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
-      <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="usuario.php">Inicio</a>
-        <a href="carta.php">Ver carta</a>
-      </div>
-    </div>
+            <div class="quick-menu-section">
+            <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
+            <div class="dropdown quick-dropdown" id="quickDropdown">
+                <a href="usuario.php">Inicio</a>
+                <a href="carta.php">Ver carta</a>
+                <a href="tickets.php">Tickets</a>
+            </div>
+        </div>
     <div class="cart-section">
       <a href="carrito.php" class="cart-btn">
         <img src="assets/cart-icon.png" alt="Carrito">
@@ -120,7 +121,7 @@ unset($_SESSION['mensaje']);
             <div class="pedido-card estado-<?= $pedido['estado'] ?>">
                 <div class="row-between mb-2">
                     <div>
-                        <h3>Pedido #<?= $pedido['id_pedido'] ?></h3>
+                        <h3>Pedido #<?= htmlspecialchars($pedido['id_pedido']) ?></h3>
                         <p><strong>Estado:</strong> <?= ucfirst($pedido['estado']) ?></p>
                         <p><strong>Total:</strong> ?<?= number_format($pedido['total'], 2, ',', '.') ?></p>
                         <p><strong>Fecha:</strong> <?= date('d/m/Y H:i', strtotime($pedido['fecha_hora'])) ?></p>
@@ -134,7 +135,7 @@ unset($_SESSION['mensaje']);
                 <p><strong>Productos:</strong> <?= htmlspecialchars($pedido['items']) ?></p>
                 
                 <?php if (in_array($pedido['estado'], ['pendiente', 'preparando'])): ?>
-                    <button type="button" class="btn-cancelar" onclick="confirmarCancelacion(<?= $pedido['id_pedido'] ?>)">
+                    <button type="button" class="btn-cancelar" onclick="confirmarCancelacion(<?= htmlspecialchars($pedido['id_pedido']) ?>)">
                         Cancelar Pedido
                     </button>
                 <?php endif; ?>
