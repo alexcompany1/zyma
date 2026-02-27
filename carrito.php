@@ -211,51 +211,6 @@ if ($display_name === '') {
           Total: EUR <?= number_format($total, 2, ',', '.') ?>
         </div>
 
-        <?php if (empty($cartItems)): ?>
-            <div class="empty-cart">
-                <p class="empty-state">Tu carrito está vacío.</p>
-                <a href="carta.php" class="btn-seguir-comprando">Seguir comprando</a>
-            </div>
-        <?php else: ?>
-            <?php foreach ($cartItems as $item): ?>
-            <div class="cart-item-row">
-                <img src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="cart-item-img">
-                
-                <div class="cart-item-info">
-                    <div class="cart-item-name">
-                        <?= htmlspecialchars($item['name']) ?>
-                    </div>
-                    <div class="cart-item-meta" id="desc-<?= $item['id'] ?>">
-                        ?<?= number_format($item['price'], 2, ',', '.') ?> x <?= $item['quantity'] ?>
-                    </div>
-                    <div class="cart-item-subtotal" id="subtotal-<?= $item['id'] ?>">
-                        ?<?= number_format($item['subtotal'], 2, ',', '.') ?>
-                    </div>
-                </div>
-                
-                <div class="quantity-controls">
-                    <button class="quantity-btn" onclick="changeQuantity(<?= $item['id'] ?>, -1)">-</button>
-                    <span class="quantity-value" id="qty-<?= $item['id'] ?>"><?= $item['quantity'] ?></span>
-                    <button class="quantity-btn" onclick="changeQuantity(<?= $item['id'] ?>, 1)">+</button>
-                </div>
-            </div>
-            <?php endforeach; ?>
-
-            <div class="center mt-3">
-                <div class="cart-total-line" id="total-amount">
-                    Total: ?<?= number_format($total, 2, ',', '.') ?>
-                </div>
-                
-                <div class="btn-row center">
-                    <form method="POST">
-                        <button type="submit" name="realizar_pedido" class="btn-realizar-pedido btn-block">
-                            Realizar Pedido
-                        </button>
-                    </form>
-                    <a href="carta.php" class="btn-seguir-comprando">
-                        Seguir comprando
-                    </a>
-                </div>
         <div class="btn-row center">
           <form method="POST">
             <?php if (!empty($error)): ?>
