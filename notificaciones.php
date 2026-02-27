@@ -39,22 +39,6 @@ try {
     $notifIdCol = 'id';
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['mark_as_read_respuesta'])) {
-        $notif_id = (int)$_POST['mark_as_read_respuesta'];
-        
-        try {
-            $stmt = $pdo->prepare("UPDATE notificaciones_respuestas SET leida = 1 WHERE id = :notif_id AND id_usuario = :id_usuario");
-            $stmt->execute([':notif_id' => $notif_id, ':id_usuario' => $user_id]);
-            
-            header('Location: notificaciones.php?msg=leida');
-            exit;
-        } catch (Exception $e) {
-            error_log("Error marcando respuesta como leída: " . $e->getMessage());
-        }
-    }
-}
-
 if (isset($_GET['read'])) {
     $id = (int)($_GET['read'] ?? 0);
     if ($id > 0) {
@@ -77,19 +61,6 @@ if (isset($_GET['read_all'])) {
         WHERE id_usuario = :id_usuario AND leida = 0
     ");
     $stmt->execute([':id_usuario' => $user_id]);
-    
-    // También marcar respuestas como leídas
-    try {
-        $stmtResp = $pdo->prepare("
-            UPDATE notificaciones_respuestas
-            SET leida = 1
-            WHERE id_usuario = :id_usuario AND leida = 0
-        ");
-        $stmtResp->execute([':id_usuario' => $user_id]);
-    } catch (Exception $e) {
-        error_log("Error marcando respuestas como leídas: " . $e->getMessage());
-    }
-    
     header('Location: notificaciones.php?msg=leidas');
     exit;
 }
@@ -112,24 +83,6 @@ $stmt = $pdo->prepare("
 $stmt->execute([':id_usuario' => $user_id]);
 $notificaciones = $stmt->fetchAll();
 
-// Obtener notificaciones de respuestas a valoraciones
-$notificaciones_respuestas = [];
-try {
-    $stmt = $pdo->prepare("
-        SELECT nr.id, p.nombre as producto, v.puntuacion, rv.respuesta, nr.leida, nr.fecha_creacion
-        FROM notificaciones_respuestas nr
-        JOIN valoraciones v ON nr.id_valoracion = v.id
-        JOIN productos p ON v.id_producto = p.id
-        LEFT JOIN respuestas_valoraciones rv ON v.id = rv.id_valoracion
-        WHERE nr.id_usuario = :id_usuario
-        ORDER BY nr.fecha_creacion DESC
-    ");
-    $stmt->execute([':id_usuario' => $user_id]);
-    $notificaciones_respuestas = $stmt->fetchAll();
-} catch (Exception $e) {
-    error_log("Error obteniendo notificaciones de respuestas: " . $e->getMessage());
-}
-
 $stmt = $pdo->prepare("
     SELECT COUNT(*)
     FROM notificaciones
@@ -137,20 +90,6 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([':id_usuario' => $user_id]);
 $unread_count = (int)$stmt->fetchColumn();
-
-// Contar notificaciones de respuestas no leídas
-try {
-    $stmtResp = $pdo->prepare("
-        SELECT COUNT(*)
-        FROM notificaciones_respuestas
-        WHERE id_usuario = :id_usuario AND leida = 0
-    ");
-    $stmtResp->execute([':id_usuario' => $user_id]);
-    $unread_respuestas = (int)$stmtResp->fetchColumn();
-    $unread_count += $unread_respuestas;
-} catch (Exception $e) {
-    error_log("Error contando respuestas no leídas: " . $e->getMessage());
-}
 ?>
 
 <!DOCTYPE html>
@@ -188,12 +127,13 @@ try {
     </a>
 
         <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
-      <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="usuario.php">Inicio</a>
-        <a href="carta.php">Ver carta</a>
+        <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
+        <div class="dropdown quick-dropdown" id="quickDropdown">
+          <a href="usuario.php">Inicio</a>
+          <a href="carta.php">Ver carta</a>
+          <a href="tickets.php">Tickets</a>
+        </div>
       </div>
-    </div>
     <div class="cart-section">
       <a href="carrito.php" class="cart-btn">
         <img src="assets/cart-icon.png" alt="Carrito">
@@ -217,51 +157,17 @@ try {
   </div>
 
   <div class="section mt-3">
-    <?php
-    $todas_notificaciones = $notificaciones;
-    
-    // Agregar notificaciones de respuestas en el mismo array para ordenarlas por fecha
-    foreach ($notificaciones_respuestas as $resp) {
-        $todas_notificaciones[] = [
-            'notif_id' => $resp['id'],
-            'mensaje' => '👤 El restaurante Zyma respondió a tu reseña de ' . htmlspecialchars($resp['producto']),
-            'fecha' => $resp['fecha_creacion'],
-            'leida' => $resp['leida'],
-            'tipo' => 'respuesta',
-            'respuesta_texto' => $resp['respuesta']
-        ];
-    }
-    
-    // Ordenar por fecha descendente
-    usort($todas_notificaciones, function($a, $b) {
-        return strtotime($b['fecha']) - strtotime($a['fecha']);
-    });
-    ?>
-    
-    <?php if (count($todas_notificaciones) === 0): ?>
+    <?php if (count($notificaciones) === 0): ?>
       <div class="empty-state">No tienes notificaciones todavía.</div>
     <?php else: ?>
-      <?php foreach ($todas_notificaciones as $n): ?>
+      <?php foreach ($notificaciones as $n): ?>
         <div class="notif-item <?= $n['leida'] ? '' : 'notif-unread' ?>">
           <div>
             <p class="notif-message"><?= htmlspecialchars($n['mensaje']) ?></p>
-            <?php if (isset($n['respuesta_texto']) && $n['respuesta_texto']): ?>
-              <div style="background-color: #f5f5f5; padding: 12px; margin-top: 10px; border-radius: 6px; border-left: 3px solid #d4af37;">
-                <p style="margin: 0; font-size: 0.9em; color: #555;"><strong>Respuesta:</strong></p>
-                <p style="margin: 8px 0 0 0; font-size: 0.9em; color: #333;"><?= htmlspecialchars($n['respuesta_texto']) ?></p>
-              </div>
-            <?php endif; ?>
             <p class="muted notif-date"><?= htmlspecialchars($n['fecha']) ?></p>
           </div>
           <?php if ((int)$n['leida'] === 0): ?>
-            <?php if (isset($n['tipo']) && $n['tipo'] === 'respuesta'): ?>
-              <form method="POST" style="display: inline;">
-                <input type="hidden" name="mark_as_read_respuesta" value="<?= (int)$n['notif_id'] ?>">
-                <button type="submit" class="btn-seguir-comprando" style="border: none; cursor: pointer; padding: 8px 16px; background-color: #d4af37; color: #333; border-radius: 4px; font-weight: 500;">Marcar como leída</button>
-              </form>
-            <?php else: ?>
-              <a class="btn-seguir-comprando" href="?read=<?= (int)$n['notif_id'] ?>">Marcar como leída</a>
-            <?php endif; ?>
+            <a class="btn-seguir-comprando" href="?read=<?= (int)$n['notif_id'] ?>">Marcar como leída</a>
           <?php else: ?>
             <span class="badge-status badge-estado-listo">Leída</span>
           <?php endif; ?>

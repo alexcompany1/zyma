@@ -19,17 +19,17 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
-    $confirmPassword = $_POST['confirm_password'] ?? '';
+    $confirmPassword = $_POST['confirmPassword'] ?? '';
     $workerCode = trim($_POST['workerCode'] ?? '');
 
     if (empty($email) || empty($password) || empty($confirmPassword)) {
-        $error = "El email, la contraseña y su confirmación son obligatorios.";
+        $error = "El email y ambas contraseñas son obligatorios.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Formato de email inválido.";
+    } elseif ($password !== $confirmPassword) {
+        $error = "Las contraseñas no coinciden.";
     } elseif (strlen($password) < 6) {
         $error = "La contraseña debe tener al menos 6 caracteres.";
-    } elseif (!hash_equals($password, $confirmPassword)) {
-        $error = "Las contraseñas no coinciden.";
     } else {
         try {
             $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE email = :email");
@@ -153,9 +153,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       
       // Contenido del popup
       popup.innerHTML = `
-        <div class="popup-icon">✓</div>
-        <h2 class="popup-title">¡Registro exitoso!</h2>
-        <p class="popup-text">
+        <div style="width: 80px; height: 80px; background: #EECF6D; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 1.5rem; box-shadow: 0 8px 20px rgba(238, 207, 109, 0.4);">
+          <span style="font-size: 2.5rem; color: #45050C;">✓</span>
+        </div>
+        <h2 style="color: #45050C; margin-bottom: 1rem; font-size: 1.8rem;">¡Registro exitoso!</h2>
+        <p style="color: #555; margin-bottom: 1.5rem; font-size: 1.1rem;">
           Tu cuenta ha sido creada correctamente.<br>
           <strong><?= htmlspecialchars($_SESSION['registered_email']) ?></strong>
         </p>

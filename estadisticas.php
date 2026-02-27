@@ -80,6 +80,7 @@ $pedidosTotales = $stmt->fetchColumn();
       <div class="dropdown quick-dropdown" id="quickDropdown">
         <a href="usuario.php">Inicio</a>
         <a href="carta.php">Ver carta</a>
+        <a href="tickets.php">Tickets</a>
       </div>
     </div>
     <div class="cart-section">

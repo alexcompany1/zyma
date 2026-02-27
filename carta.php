@@ -74,9 +74,7 @@ try {
             'description' => '',
             'price' => (float)$product['precio'],
             'image' => $product['imagen'],
-            'allergens' => [],
-            'promedio_puntuacion' => $promedio,
-            'total_valoraciones' => (int)($product['total_valoraciones'] ?? 0)
+            'allergens' => []
         ];
     }
 } catch (Exception $e) {
@@ -111,7 +109,7 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zyma - Carta</title>
-  <link rel="stylesheet" href="styles.css?v=20260217-1">
+<link rel="stylesheet" href="styles.css?v=20260211-5">
 </head>
 <body>
 <header class="landing-header">
@@ -143,13 +141,13 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
       </a>
 
           <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
-      <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="usuario.php">Inicio</a>
-        <a href="carta.php">Ver carta</a>
-        <a href="valoraciones.php">Valoraciones</a>
+        <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
+        <div class="dropdown quick-dropdown" id="quickDropdown">
+          <a href="usuario.php">Inicio</a>
+          <a href="carta.php">Ver carta</a>
+          <a href="tickets.php">Tickets</a>
+        </div>
       </div>
-    </div>
     <div class="cart-section">
         <a href="notificaciones.php" class="cart-btn" aria-label="Notificaciones">
           <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white">
@@ -187,29 +185,6 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
         <h2 class="card-title"><?= htmlspecialchars($product['name']) ?></h2>
         <p class="card-description"><?= htmlspecialchars($product['description']) ?></p>
         <p class="card-price">EUR <?= number_format($product['price'], 2, ',', '.') ?></p>
-        
-        <!-- Promedio de valoraciones -->
-        <div style="margin: 10px 0; display: flex; align-items: center; gap: 8px;">
-          <div style="display: flex; gap: 3px;">
-            <?php 
-            $promedio = $product['promedio_puntuacion'];
-            for ($i = 1; $i <= 5; $i++): 
-              if ($i <= $promedio): 
-                echo '<img src="assets/estrellaSelecionada.png" alt="Estrella" style="width: 16px; height: 16px;">';
-              else:
-                echo '<img src="assets/estrellaNegra.png" alt="Sin estrella" style="width: 16px; height: 16px;">';
-              endif;
-            endfor;
-            ?>
-          </div>
-          <span style="font-size: 0.85em; color: #666;">
-            <?php if ($product['total_valoraciones'] > 0): ?>
-              <?= number_format($promedio, 1) ?> (<?= $product['total_valoraciones'] ?> resenas)
-            <?php else: ?>
-              Sin resenas
-            <?php endif; ?>
-          </span>
-        </div>
 
         <div class="allergen-tags">
           <?php if (in_array('gluten', $product['allergens'], true)): ?>
@@ -223,17 +198,14 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
           <?php endif; ?>
         </div>
 
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          <?php if ($guestMode): ?>
-            <a href="login.php" class="btn-add-cart" style="padding: 12px 40px; width: 100%;">Inicia sesion para pedir</a>
-          <?php else: ?>
-            <form method="POST">
-              <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
-              <button type="submit" name="add_to_cart" class="btn-add-cart" style="padding: 12px 40px; width: 100%;">Anadir al carrito</button>
-            </form>
-            <a href="valoraciones.php?producto=<?= (int)$product['id'] ?>" class="btn-add-cart" style="background-color: #c0392b; color: #ffd700; padding: 10px 20px; width: 100%; text-align: center;">Resena</a>
-          <?php endif; ?>
-        </div>
+        <?php if ($guestMode): ?>
+          <a href="login.php" class="btn-add-cart">Inicia sesion para pedir</a>
+        <?php else: ?>
+          <form method="POST">
+            <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
+            <button type="submit" name="add_to_cart" class="btn-add-cart">Anadir al carrito</button>
+          </form>
+        <?php endif; ?>
       </div>
     </div>
     <?php endforeach; ?>
