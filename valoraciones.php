@@ -327,15 +327,7 @@ if ($is_logged_in) {
                                                     </small>
                                                 </div>
                                             <?php else: ?>
-                                                <?php if ($is_worker): ?>
-                                                    <?php 
-                                                        $userName = $op['nombre'] ?: strstr($op['email'], '@', true);
-                                                        $userNameEscaped = htmlspecialchars(json_encode($userName), ENT_QUOTES, 'UTF-8');
-                                                    ?>
-                                                    <button class="btn-responder" onclick="openResponseModal(<?= $op['id'] ?>, <?= $userNameEscaped ?>)" style="margin-top: 0.5rem; background-color: #d4af37; color: #333; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em; font-weight: 500; display: inline-block;">
-                                                        Responder
-                                                    </button>
-                                                <?php endif; ?>
+                                                <?php // Opcion de responder eliminada ?>
                                             <?php endif; ?>
                                         </div>
                                     <?php endforeach; ?>
@@ -492,24 +484,6 @@ if ($is_logged_in) {
     });
 </script>
 
-<!-- MODAL PARA RESPONDER RESEÑA (TRABAJADORES) -->
-<div id="responseModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 9998; align-items: center; justify-content: center; flex-direction: column;">
-    <div style="background: white; padding: 30px; border-radius: 12px; max-width: 500px; width: 90%; animation: slideUp 0.3s ease; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
-        <h2 style="margin-top: 0; margin-bottom: 15px;">Responder a <span id="userNameResponse"></span></h2>
-        <form id="responseForm" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
-            <input type="hidden" id="valoracionId" name="valoracion_id" value="">
-            <textarea name="respuesta" placeholder="Escribe tu respuesta (máx 500 caracteres)..." maxlength="500" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-family: Arial; resize: vertical; min-height: 100px;" required></textarea>
-            <div style="font-size: 0.9em; color: #666;">
-                <span id="charCount">0</span>/500 caracteres
-            </div>
-            <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button type="button" onclick="closeResponseModal()" style="background: #ccc; color: #333; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 500;">Cancelar</button>
-                <button type="submit" style="background: #d4af37; color: #333; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 500;">Enviar Respuesta</button>
-            </div>
-        </form>
-    </div>
-</div>
-
 <style>
     @keyframes fadeIn {
         from { opacity: 0; }
@@ -643,67 +617,10 @@ if ($is_logged_in) {
         }
     }
     
-    function openResponseModal(valoracionId, userName) {
-        document.getElementById('valoracionId').value = valoracionId;
-        document.getElementById('userNameResponse').textContent = userName;
-        document.getElementById('responseForm').reset();
-        document.getElementById('charCount').textContent = '0';
-        const modal = document.getElementById('responseModal');
-        modal.style.display = 'flex';
-    }
-    
-    function closeResponseModal() {
-        document.getElementById('responseModal').style.display = 'none';
-    }
-    
-    // Contador de caracteres
-    document.getElementById('responseForm')?.querySelector('textarea').addEventListener('input', function(e) {
-        document.getElementById('charCount').textContent = e.target.value.length;
-    });
-    
-    // Enviar respuesta
-    document.getElementById('responseForm')?.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const valoracionId = document.getElementById('valoracionId').value;
-        const respuesta = this.querySelector('textarea').value.trim();
-        
-        if (!respuesta) {
-            alert('Por favor escribe una respuesta');
-            return;
-        }
-        
-        try {
-            const formData = new FormData();
-            formData.append('responder', '1');
-            formData.append('id_valoracion', valoracionId);
-            formData.append('respuesta', respuesta);
-            
-            const response = await fetch('gestionar_valoraciones.php', {
-                method: 'POST',
-                body: formData
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                alert('Respuesta enviada correctamente');
-                closeResponseModal();
-                location.reload();
-            } else {
-                alert('Error: ' + (result.error || 'No se pudo enviar la respuesta'));
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Error de conexión');
-        }
-    });
-    
     // Cerrar modal con ESC
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeReviewsModal();
-            closeResponseModal();
         }
     });
 </script>

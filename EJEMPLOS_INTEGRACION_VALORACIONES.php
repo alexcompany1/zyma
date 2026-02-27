@@ -55,7 +55,7 @@ try {
                 <span class="rating-number"><?= $promedio_estrellas ?>/5</span>
                 <span class="rating-stars">
                     <?php for ($i = 1; $i <= 5; $i++): ?>
-                        <span class="star <?= $i <= round($promedio_estrellas) ? 'filled' : '' ?>">★</span>
+                        <span class="star <?= $i <= round($promedio_estrellas) ? 'filled' : '' ?>">*</span>
                     <?php endfor; ?>
                 </span>
                 <span class="rating-count"><?= $total_opiniones ?> opiniones</span>
@@ -167,7 +167,7 @@ $promedio = obtenerPromedio();
     <span class="mini-rating-label">Calificación:</span>
     <div class="mini-rating-display">
         <?php for ($i = 1; $i <= 5; $i++): ?>
-            <span class="mini-star <?= $i <= $promedio ? 'active' : '' ?>">★</span>
+            <span class="mini-star <?= $i <= $promedio ? 'active' : '' ?>">*</span>
         <?php endfor; ?>
     </div>
     <span class="mini-rating-value"><?= $promedio ?>/5</span>
@@ -238,7 +238,7 @@ function notificarNuevaValoracion($pdo, $id_usuario, $puntuacion) {
         $nombre_usuario = $usuario['nombre'] ?? strstr($usuario['email'], '@', true);
         
         // Crear mensaje
-        $mensaje = "$nombre_usuario valoró el restaurante con $puntuacion ⭐";
+        $mensaje = "$nombre_usuario valoró el restaurante con $puntuacion estrellas";
         
         // Insertar en notificaciones (para admin)
         $stmt = $pdo->prepare("
@@ -314,7 +314,7 @@ $valoraciones = obtenerValoracionesFiltradas($pdo, $filtro);
     <?php for ($i = 5; $i >= 1; $i--): ?>
         <a href="?filtro=<?= $i ?>" class="filter-btn <?= ($_GET['filtro'] ?? null) == $i ? 'active' : '' ?>">
             <?php for ($j = 1; $j <= $i; $j++): ?>
-                <span class="filter-star">★</span>
+                <span class="filter-star">*</span>
             <?php endfor; ?>
         </a>
     <?php endfor; ?>
@@ -551,7 +551,7 @@ $analisis = obtenerAnalisisValoraciones($pdo);
         <?php for ($i = 5; $i >= 1; $i--): ?>
             <?php $cantidad = $analisis['distribucion'][$i] ?? 0; ?>
             <div class="chart-row">
-                <span><?= $i ?>★</span>
+                <span><?= $i ?> estrellas</span>
                 <div class="bar" style="width: <?= ($cantidad / max(array_values($analisis['distribucion']), 1)) * 100 ?>%"></div>
                 <span><?= $cantidad ?></span>
             </div>
@@ -580,7 +580,7 @@ function enviarEmailNuevaValoracion($pdo, $id_usuario, $puntuacion, $comentario)
         if (!$admin) return false;
         
         $nombre = $usuario['nombre'] ?? strstr($usuario['email'], '@', true);
-        $estrellas = str_repeat('⭐', $puntuacion) . str_repeat('☆', 5 - $puntuacion);
+        $estrellas = str_repeat('[*]', $puntuacion) . str_repeat('[ ]', 5 - $puntuacion);
         
         $asunto = "Nueva valoración de $nombre - $estrellas";
         $cuerpo = "

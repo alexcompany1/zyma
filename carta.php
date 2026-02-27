@@ -231,7 +231,7 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
               <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
               <button type="submit" name="add_to_cart" class="btn-add-cart" style="padding: 12px 40px; width: 100%;">Anadir al carrito</button>
             </form>
-            <a href="valoraciones.php?producto=<?= (int)$product['id'] ?>" class="btn-add-cart" style="background-color: #c0392b; color: #ffd700; padding: 10px 20px; width: 100%; text-align: center;">★ Resena</a>
+            <a href="valoraciones.php?producto=<?= (int)$product['id'] ?>" class="btn-add-cart" style="background-color: #c0392b; color: #ffd700; padding: 10px 20px; width: 100%; text-align: center;">Resena</a>
           <?php endif; ?>
         </div>
       </div>

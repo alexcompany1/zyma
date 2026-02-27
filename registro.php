@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       
       // Contenido
       popup.innerHTML = `
-        <div class="popup-icon">✓</div>
+        <div class="popup-icon">[OK]</div>
         <h2 class="popup-title">¡Registro exitoso!</h2>
         <p class="popup-text">
           Tu cuenta ha sido creada correctamente.<br>

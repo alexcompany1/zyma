@@ -80,23 +80,7 @@ if ($display_name === '') {
       </ul>
     </div>
 
-    <div class="panel-box" style="background: #fff3cd; border: 2px solid #ffc107;">
-      <h3 class="panel-title">⚙️ Sistema de Valoraciones</h3>
-      <ul class="list-clean">
-        <li>
-          <a href="instalar_valoraciones.php" class="panel-link" style="color: #856404; font-weight: bold;">✓ Instalar/Activar</a>
-        </li>
-        <li>
-          <a href="cargar_resenas_demo.php" class="panel-link">📝 Cargar Reseñas Demo</a>
-        </li>
-        <li>
-          <a href="diagnostico_valoraciones.php" class="panel-link">🔍 Diagnóstico</a>
-        </li>
-        <li>
-          <a href="test_valoracion.php" class="panel-link">🧪 Probar Sistema</a>
-        </li>
-      </ul>
-    </div>
+
   </div>
 </div>
 
