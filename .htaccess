@@ -1,0 +1,13 @@
+RewriteEngine On
+
+# Forzar UTF-8 en todas las respuestas de texto.
+AddDefaultCharset UTF-8
+<IfModule mod_php.c>
+  php_value default_charset UTF-8
+</IfModule>
+
+# Compatibilidad con rutas antiguas:
+# /zyma/archivo.php -> /archivo.php
+# /zyma/zyma/archivo.php -> /archivo.php
+RewriteRule ^zyma/zyma/(.*)$ /$1 [R=302,L,NC]
+RewriteRule ^zyma/(.*)$ /$1 [R=302,L,NC]
