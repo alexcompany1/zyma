@@ -50,11 +50,24 @@ if (!$guestMode) {
 }
 
 try {
-    $stmt = $pdo->query("SELECT id, nombre, precio, imagen FROM productos ORDER BY nombre");
+    $stmt = $pdo->query("
+        SELECT 
+            p.id, 
+            p.nombre, 
+            p.precio, 
+            p.imagen,
+            ROUND(AVG(v.puntuacion), 1) as promedio_puntuacion,
+            COUNT(v.id) as total_valoraciones
+        FROM productos p
+        LEFT JOIN valoraciones v ON p.id = v.id_producto
+        GROUP BY p.id
+        ORDER BY p.nombre
+    ");
     $products_db = $stmt->fetchAll();
 
     $products = [];
     foreach ($products_db as $product) {
+        $promedio = (float)($product['promedio_puntuacion'] ?? 0);
         $products[] = [
             'id' => $product['id'],
             'name' => $product['nombre'],

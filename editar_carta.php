@@ -6,6 +6,7 @@ if (!headers_sent()) {
 <?php
 /**
  * editar_carta.php
+ * tonto
  * Panel para editar productos.
  */
 
@@ -37,6 +38,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (isset($_POST['eliminar'])) {
         $id = intval($_POST['id']);
         
+        // Borrar valoraciones del producto
+        $stmt = $pdo->prepare("DELETE FROM valoraciones WHERE id_producto = ?");
+        $stmt->execute([$id]);
+        
         // Borrar relaciones
         $stmt = $pdo->prepare("DELETE FROM producto_ingredientes WHERE producto_id = ?");
         $stmt->execute([$id]);
@@ -45,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("DELETE FROM productos WHERE id = ?");
         $stmt->execute([$id]);
         
-        $_SESSION['mensaje'] = "Producto eliminado correctamente.";
+        $_SESSION['mensaje'] = "Producto y sus valoraciones eliminados correctamente.";
         header('Location: editar_carta.php');
         exit;
     } elseif (isset($_POST['nuevo'])) {

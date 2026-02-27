@@ -71,6 +71,42 @@ $cart_count = count($_SESSION['cart'] ?? []);
       <a href="carta.php" class="btn-cart">Ver la Carta</a>
     </div>
   </div>
+
+  <!-- Carrusel de Reseñas -->
+  <?php if (!empty($resenias)): ?>
+    <div class="reviews-carousel-section">
+      <h2 style="text-align: center; margin-bottom: 2rem; color: var(--ink); font-size: 1.8rem;">Lo que dicen nuestros clientes</h2>
+      
+      <div class="reviews-carousel-container">
+        <button class="carousel-btn carousel-prev" id="prevBtn" aria-label="Anterior"></button>
+        
+        <div class="reviews-carousel">
+          <?php foreach ($resenias as $resena): ?>
+            <div class="review-card">
+              <div class="review-stars">
+                <?php for ($i = 1; $i <= 5; $i++): ?>
+                  <img src="assets/<?= $i <= $resena['puntuacion'] ? 'estrellaSelecionada' : 'estrellaNegra' ?>.png" alt="estrella">
+                <?php endfor; ?>
+              </div>
+              <p class="review-text">"<?= htmlspecialchars($resena['comentario']) ?>"</p>
+              <div class="review-author">
+                <strong><?= htmlspecialchars($resena['nombre']) ?></strong>
+                <span class="review-product"><?= htmlspecialchars($resena['producto']) ?></span>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        </div>
+
+        <button class="carousel-btn carousel-next" id="nextBtn" aria-label="Siguiente"></button>
+      </div>
+
+      <div class="carousel-indicators">
+        <?php foreach ($resenias as $idx => $resena): ?>
+          <button class="indicator <?= $idx === 0 ? 'active' : '' ?>" data-slide="<?= $idx ?>"></button>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  <?php endif; ?>
 </main>
 
 <footer>

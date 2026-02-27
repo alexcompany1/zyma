@@ -1,0 +1,273 @@
+CAMBIOS REALIZADOS - SISTEMA DE VALORACIONES POR PRODUCTOS
+═══════════════════════════════════════════════════════════════════════════════
+
+Versión: 1.1
+Fecha: 2025-02-17
+Cambio: Actualización de valoraciones por RESTAURANTE a valoraciones por PRODUCTO
+
+═══════════════════════════════════════════════════════════════════════════════
+
+CAMBIOS PRINCIPALES:
+
+1. ESTRUCTURA DE BASE DE DATOS
+───────────────────────────────────────────────────────────────────────────────
+
+   ANTES (v1.0):
+   └─ Tabla: valoraciones
+      └─ Campos: id, id_usuario, puntuacion, comentario
+
+   AHORA (v1.1):
+   └─ Tabla: valoraciones
+      ├─ id
+      ├─ id_usuario (FK → usuarios)
+      ├─ id_producto (FK → productos) ← NUEVO
+      ├─ puntuacion
+      ├─ comentario
+      └─ Unique: (id_usuario, id_producto) ← Un usuario solo valora un producto 1 vez
+
+   ACCION NECESARIA:
+   • Ejecutar el nuevo database_valoraciones.sql en phpMyAdmin
+   • O ejecutar en terminal:
+     TRUNCATE TABLE valoraciones;
+     ALTER TABLE valoraciones ADD COLUMN id_producto INT NOT NULL;
+     ALTER TABLE valoraciones ADD FOREIGN KEY (id_producto) REFERENCES productos(id);
+     ALTER TABLE valoraciones ADD UNIQUE KEY unique_usuario_producto (id_usuario, id_producto);
+
+
+2. PAGINA: valoraciones.php
+───────────────────────────────────────────────────────────────────────────────
+
+   ANTES:
+   ├─ Mostrar estadísticas generales del restaurante
+   ├─ Un solo formulario para valorar todo el restaurante
+   └─ Un usuario = una sola valoración
+
+   AHORA:
+   ├─ Grid visual de TODOS los productos
+   ├─ Cada producto muestra:
+   │  ├─ Imagen
+   │  ├─ Nombre
+   │  ├─ Precio
+   │  ├─ Promedio de valoración
+   │  ├─ Selector de estrellas rápido
+   │  └─ Últimas 2 opiniones del producto
+   └─ Un usuario puede valorar múltiples productos
+
+   NUEVA APARIENCIA:
+   • Grid responsive (3 columnas en desktop, 2 en tablet, 1 en móvil)
+   • Cards compactas por producto
+   • Selector de estrellas integrado en cada producto
+   • Opiniones recientes mostradas en vista mini
+   • Muy visual y intuitivo
+
+
+3. API: guardar_valoracion.php
+───────────────────────────────────────────────────────────────────────────────
+
+   ANTES:
+   └─ POST: {puntuacion, comentario}
+
+   AHORA:
+   └─ POST: {id_producto, puntuacion, comentario}
+
+   CAMBIOS:
+   [OK] Valida que el producto existe
+   [OK] Busca valoración anterior del PRODUCTO (no usuario)
+   [OK] INSERT/UPDATE por (usuario + producto)
+   [OK] Un usuario puede tener N valoraciones (una por producto)
+
+
+4. CSS: styles.css
+───────────────────────────────────────────────────────────────────────────────
+
+   NUEVAS CLASES CSS:
+   ├─ .products-ratings-grid ← Grid layout
+   ├─ .product-rating-card ← Tarjeta producto
+   ├─ .product-rating-image ← Imagen
+   ├─ .product-rating-info ← Info gen
+   ├─ .product-rating-stats ← Estadísticas mini
+   ├─ .quick-rating-form ← Formulario rápido
+   ├─ .quick-star-selector ← Selector estrellas
+   ├─ .quick-comment-field ← Campo comentario
+   ├─ .btn-rate-product ← Botón enviar
+   ├─ .product-recent-opinions ← Opiniones
+   └─ Más de 20 clases adicionales
+
+   RESPONSIVE:
+   • Desktop (≥1200px): Grid 3 columnas
+   • Tablet (768-1199px): Grid 2 columnas
+   • Móvil (<480px): Grid 1 columna
+
+
+5. NAVEGACION
+───────────────────────────────────────────────────────────────────────────────
+
+   ARCHIVOS MODIFICADOS:
+
+   usuario.php:
+   [X] ANTES: [Inicio] [Ver carta]
+   [OK] AHORA:  [Inicio] [Ver carta] [Valoraciones]
+
+   carta.php:
+   [X] ANTES: [Inicio] [Ver carta]
+   [OK] AHORA:  [Inicio] [Ver carta] [Valoraciones]
+
+   El link aparece en el menú desplegable "quick-dropdown"
+
+
+6. FLUJO DE USO (NUEVO)
+───────────────────────────────────────────────────────────────────────────────
+
+   1. Usuario inicia sesión
+   2. Click en "Valoraciones" en el menú
+   3. Ve grid visual con TODOS los productos
+   4. Para cada producto puede:
+      ├─ Ver promedio de valoración actual
+      ├─ Ver opiniones recientes
+      ├─ Seleccionar 1-5 estrellas
+      ├─ Agregar comentario (opcional)
+      └─ Click "Valorar" para guardar
+   5. Página se actualiza
+   6. Ahora ese producto muestra SU valoración
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+PASOS PARA ACTUALIZAR:
+
+   PASO 1: Actualizar Base de Datos
+   ─────────────────────────────────
+   [OK] Abre phpMyAdmin
+   [OK] Ve a base de datos "zyma"
+   [OK] Click en SQL
+   [OK] Copia contenido de: database_valoraciones.sql (actualizado)
+   [OK] Click "Continuar"
+   [OK] Verifica: "Query executed successfully"
+
+   PASO 2: Verificar Archivos
+   ─────────────────────────────────
+   [OK] valoraciones.php (COMPLETAMENTE REESCRITO)
+   [OK] guardar_valoracion.php (MODIFICADO - ahora con id_producto)
+   [OK] database_valoraciones.sql (ACTUALIZADO)
+   [OK] usuario.php (MODIFICADO - añadido link)
+   [OK] carta.php (MODIFICADO - añadido link)
+   [OK] styles.css (MODIFICADO - nuevos estilos)
+
+   PASO 3: Probar
+   ─────────────────────────────────
+   [OK] Accede a: http://localhost/zyma-main/valoraciones.php
+   [OK] Verifica que se ven todos los productos
+   [OK] Intenta valorar un producto
+   [OK] Recarga página
+   [OK] Verifica que la opinión se guardó
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+COMPARATIVA ANTES vs DESPUES:
+
+CARACTERÍSTICA          ANTES (v1.0)          AHORA (v1.1)
+────────────────────────────────────────────────────────────────────────
+Qué se valora?          Restaurante           Productos individuales
+Usuarios pueden tener:  1 valoración          N valoraciones (1 por producto)
+Formularios:            1 central              N formularios (1 por producto)
+Vista:                  Estadísticas + Form   Grid visual de productos
+Compleción:             Alta (500 chars)      Media (300 chars - móvil friendly)
+Opiniones mostradas:    Todas, lista larga    2 más recientes por producto
+Responsive:             Sí                    Sí (mejorado)
+Diseño:                 Clásico               Moderno y visual
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+BENEFICIOS DEL CAMBIO:
+
+Más útil para clientes
+   -> Pueden valorar productos individuales
+   -> No solo opinión general
+
+Mejor experiencia visual
+   -> Grid interactivo y moderno
+   -> Cada producto con imagen
+
+Escalable
+   -> Funciona con cualquier cantidad de productos
+   -> Un usuario puede valorar 100+ productos si los hay
+
+Más informativo
+   -> Ver opiniones de cada producto
+   -> Comparar valoraciones entre productos
+
+Mejor para móvil
+   -> Formularios compactos
+   -> Comentarios más cortos (300 vs 500 chars)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+DATOS ANTIGUOS:
+
+Si tenías valoraciones generales del restaurante (v1.0), ahora aparecerá un error
+porque la tabla ha cambiado su estructura.
+
+OPCIONES:
+1. Pasar datos al nuevo esquema (requiere SQL manual)
+2. Limpiar y empezar de nuevo: TRUNCATE TABLE valoraciones;
+3. Hacer backup antes de actualizar
+
+RECOMENDACION: Opción 2 (Limpiar)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+NOTAS TECNICAS:
+
+• La restricción UNIQUE (id_usuario, id_producto) asegura que un usuario
+  solo pueda tener UNA valoración por producto
+
+• El campo id_producto es NOT NULL y tiene FK a productos(id)
+  → Si eliminas un producto, sus valoraciones se borran automáticamente
+
+• Los índices optimizan búsquedas por usuario y producto
+
+• Los comentarios ahora máximo 300 chars (antes 500)
+  → Mejor para vistas compactas en móvil
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+CHECKLIST DE ACTUALIZACION:
+
+□ Base de datos actualizada
+□ Archivos PHP descargados/actualizados
+□ Liens agregados en navegación
+□ Prueba: Usuario logueado ve menú "Valoraciones"
+□ Prueba: Click en Valoraciones lleva a grid de productos
+□ Prueba: Se ven 5+ productos con imágenes y precios
+□ Prueba: Selector de estrellas funciona en cada producto
+□ Prueba: Agregar valoración se guarda
+□ Prueba: Página se recarga y muestra opinión
+□ Prueba: Usuario no logueado ve invitación de login
+□ Prueba: Responsive en móvil (F12 → Mobile)
+□ Base de datos: Verificar registros en tabla valoraciones
+□ ¡Listo! Sistema funcionando con nuevos productos
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+SOPORTE:
+
+Si algo no funciona:
+1. Verifica que database_valoraciones.sql se ejecutó correctamente
+2. Verifica que id_producto existe en tabla valoraciones
+3. Verifica que links aparecen en menú (usuario.php, carta.php)
+4. Abre consola (F12) y busca errores
+5. Revisa error.log de Apache
+
+═══════════════════════════════════════════════════════════════════════════════
+
+ACTUALIZACION COMPLETADA!
+
+Versión: 1.1
+Estado: Listo
+Cambio: Valoraciones por PRODUCTO en lugar de por restaurante
