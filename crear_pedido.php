@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * crear_pedido.php
  * Crea un pedido desde el carrito.
