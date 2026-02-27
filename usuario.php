@@ -96,7 +96,7 @@ try {
   <!-- Carrusel de Reseñas -->
   <?php if (!empty($resenias)): ?>
     <div class="reviews-carousel-section">
-      <h2 style="text-align: center; margin-bottom: 2rem; color: var(--ink); font-size: 1.8rem;">Lo que dicen nuestros clientes</h2>
+      <h2 style="text-align: center; margin-bottom: 2rem; color: var(--ink); font-size: 1.8rem;"> Lo que dicen nuestros clientes</h2>
       
       <div class="reviews-carousel-container">
         <button class="carousel-btn carousel-prev" id="prevBtn" aria-label="Anterior"></button>
