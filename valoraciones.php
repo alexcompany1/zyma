@@ -124,7 +124,115 @@ try {
     <title>Zyma - Valoraciones y Opiniones</title>
     <link rel="stylesheet" href="styles.css?v=20260227-4">
     <style>
-        /* Estilos adicionales para valoraciones - Ver más abajo en el archivo de CSS */
+        /* Estilos para las estrellas de valoración */
+        .quick-star-selector {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: center;
+        }
+        
+        .quick-star-radio {
+            display: none;
+        }
+        
+        .quick-star-label {
+            cursor: pointer;
+            position: relative;
+            width: 32px;
+            height: 32px;
+        }
+        
+        .quick-star-label img,
+        .star-img-empty,
+        .star-img-filled {
+            width: 32px !important;
+            height: 32px !important;
+            object-fit: contain;
+        }
+        
+        .star-img-empty,
+        .star-img-filled {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .star-img-filled {
+            opacity: 0;
+        }
+        
+        /* Estrellas en opiniones */
+        .opinion-stars {
+            display: flex;
+            gap: 3px;
+        }
+        
+        .star-opinion-img {
+            width: 20px !important;
+            height: 20px !important;
+            object-fit: contain;
+        }
+        
+        /* Formulario de valoración centrado */
+        .quick-rating-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
+        
+        .quick-comment-field {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px;
+            border: 2px solid #e0d6c8;
+            border-radius: 10px;
+            font-size: 1rem;
+            resize: vertical;
+            text-align: center;
+        }
+        
+        .quick-comment-field:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+        
+        .btn-rate-product {
+            margin-top: 8px;
+        }
+        
+        /* Imagen del producto en recuadro centrado */
+        .product-rating-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+        
+        .product-rating-image img {
+            width: 320px;
+            height: 320px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 3px solid #e0d6c8;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: #fff;
+        }
+        
+        .product-placeholder {
+            width: 320px;
+            height: 320px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f5f5f5;
+            border-radius: 12px;
+            border: 3px solid #e0d6c8;
+            color: #999;
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 <body>
@@ -219,9 +327,9 @@ if ($is_logged_in) {
                                                     checked
                                                 <?php endif; ?>
                                             >
-                                            <label for="star-<?= $pid ?>-<?= $i ?>" class="quick-star-label" data-star="<?= $i ?>">
-                                                <img src="assets/estrellaNegra.png" alt="Estrella <?= $i ?>" class="star-img-empty">
-                                                <img src="assets/estrellaSelecionada.png" alt="Estrella <?= $i ?> seleccionada" class="star-img-filled">
+                                            <label for="star-<?= $pid ?>-<?= $i ?>" class="quick-star-label" data-star="<?= $i ?>" style="position: relative; width: 32px; height: 32px; display: inline-block; cursor: pointer;">
+                                                <img src="assets/estrellaNegra.png" alt="Estrella <?= $i ?>" class="star-img-empty" style="width: 32px; height: 32px; position: absolute; top: 0; left: 0;">
+                                                <img src="assets/estrellaSelecionada.png" alt="Estrella <?= $i ?> seleccionada" class="star-img-filled" style="width: 32px; height: 32px; position: absolute; top: 0; left: 0; opacity: 0;">
                                             </label>
                                         <?php endfor; ?>
                                     </div>
@@ -298,11 +406,12 @@ if ($is_logged_in) {
                                                         ?>
                                                     </span>
                                                 </div>
-                                                <span class="opinion-stars">
+                                                <span class="opinion-stars" style="display: flex; gap: 3px;">
                                                     <?php for ($i = 1; $i <= 5; $i++): ?>
                                                         <img src="assets/<?= $i <= $op['puntuacion'] ? 'estrellaSelecionada' : 'estrellaNegra' ?>.png" 
                                                              alt="Estrella" 
                                                              class="star-opinion-img"
+                                                             style="width: 20px; height: 20px;"
                                                              title="<?= $op['puntuacion'] ?>/5">
                                                     <?php endfor; ?>
                                                 </span>
