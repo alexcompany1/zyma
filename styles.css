@@ -498,6 +498,60 @@ a:focus-visible {
   font-weight: 500;
 }
 
+/* Estrellas de valoraciones - Selector de estrellas */
+.quick-star-selector {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.quick-star-radio {
+  display: none;
+}
+
+.quick-star-label {
+  cursor: pointer;
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+
+.quick-star-label img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  transition: transform 0.15s ease;
+}
+
+.quick-star-label:hover img {
+  transform: scale(1.1);
+}
+
+.star-img-empty,
+.star-img-filled {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.star-img-filled {
+  opacity: 0;
+}
+
+/* Estrellas en opiniones de productos */
+.opinion-stars {
+  display: flex;
+  gap: 2px;
+}
+
+.star-opinion-img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
 /* Texto opcional */
 .optional-label {
   color: #777;
