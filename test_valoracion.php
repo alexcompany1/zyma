@@ -1,7 +1,7 @@
 <?php
 /**
  * test_valoracion.php
- * Script de prueba para testear manualmente el guardado de valoraciones
+ * Script de prueba para testear manualmente el guardado de valoraciones 
  */
 
 session_start();
