@@ -385,7 +385,7 @@ if ($is_logged_in) {
                             ?>
                             <div class="product-recent-opinions">
                                 <button id="reviewToggle-<?= $pid ?>" class="review-toggle-btn" onclick="toggleReviewsDropdown(<?= $pid ?>)" style="cursor: pointer; padding: 10px; background: linear-gradient(135deg, #d4af37, #f4e4a6); border-radius: 6px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; font-weight: 600; width: 100%; border: none; font-size: 1em;">
-                                    Ver resenas (<?= $stats['total'] ?>)
+                                    Ver reseñas (<?= $stats['total'] ?>)
                                 </button>
                                 <div id="reviewsDropdown-<?= $pid ?>" style="display: none; background: #f9f9f9; border: 1px solid #ddd; border-radius: 6px; padding: 15px; margin-top: 10px; max-height: 400px; overflow-y: auto;">
                                 <?php if (count($opiniones) > 0): ?>
