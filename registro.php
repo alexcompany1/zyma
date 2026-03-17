@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Página de registro de nuevos usuarios
  * 
@@ -8,7 +8,7 @@
  * Muestra un popup de confirmación antes de redirigir al login.
  * 
  * @author Equipo Zyma
- * @version 1.0
+ * @versión 1.0
  */
 
 require_once 'config.php';
@@ -211,5 +211,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </script>
   <?php endif; ?>
   <script src="assets/mobile-header.js?v=20260211-6"></script>
+<footer>
+  <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p class="footer-legal-links">
+    <a href="politica_cookies.php">Política de Cookies</a>
+    <span>|</span>
+    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <span>|</span>
+    <a href="aviso_legal.php">Aviso Legal</a>
+  </p></footer>
 </body>
 </html>

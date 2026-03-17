@@ -6,7 +6,7 @@
 
 session_start();
 
-// Validar sesion
+// Validar Sesión
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
@@ -18,7 +18,7 @@ if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
     exit;
 }
 
-// Conexion BD
+// Conexión BD
 require_once 'config.php'; // incluye PDO
 
 try {
@@ -78,4 +78,5 @@ try {
     echo "</div>";
 }
 ?>
+
 

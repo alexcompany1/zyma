@@ -1,7 +1,7 @@
 <?php
 /**
  * config.php
- * Configuracion de base de datos y conexion PDO.
+ * Configuración de base de datos y conexión PDO.
  */
 
 // Forzar UTF-8 en toda la salida PHP.
@@ -29,7 +29,7 @@ $password = '';
 define('TAX_RATE', 0.10);
 
 try {
-    // Crear conexion PDO
+    // Crear conexión PDO
     $pdo = new PDO(
         "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4", // DSN
         $username, // usuario
@@ -41,7 +41,7 @@ try {
         ]
     );
 } catch (PDOException $e) {
-    // Error de conexion
+    // Error de conexión
     die("<h2 class='page-error'>Error de conexión a la base de datos</h2>");
 }
 ?>  

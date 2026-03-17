@@ -4,10 +4,10 @@
  * Quita un producto del carrito.
  */
 
-// Iniciar sesion
+// Iniciar Sesión
 session_start();
 
-// Validar sesion
+// Validar Sesión
 if (!isset($_SESSION['user_id'])) {
     // Ir a login
     header('Location: login.php');
@@ -32,3 +32,4 @@ if (isset($_GET['id'])) {
     exit;
 }
 ?>
+
