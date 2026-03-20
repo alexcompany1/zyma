@@ -22,6 +22,8 @@ if (!isset($_SESSION['user_id'])) {
     unset($_SESSION['guest_mode']);
 }
 
+$selectedProductId = isset($_GET['producto']) ? (int) $_GET['producto'] : 0;
+
 if (!$guestMode && !isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
@@ -96,6 +98,42 @@ try {
         ['id' => 6, 'name' => 'Refresco Cola', 'description' => 'Bebida refrescante y burbujeante.', 'price' => 2.00, 'image' => 'assets/soda.png', 'allergens' => []],
         ['id' => 7, 'name' => 'Agua Mineral', 'description' => 'Agua pura y natural, sin gas.', 'price' => 1.00, 'image' => 'assets/water.png', 'allergens' => []]
     ];
+}
+
+$starProductId = 0;
+$starProductName = '';
+if (!empty($products)) {
+    $rankedProducts = $products;
+    usort($rankedProducts, static function ($a, $b) {
+        $isHotdogA = stripos((string)($a['name'] ?? ''), 'hotdog') !== false ? 1 : 0;
+        $isHotdogB = stripos((string)($b['name'] ?? ''), 'hotdog') !== false ? 1 : 0;
+        $scoreA = (float)($a['promedio'] ?? 0);
+        $scoreB = (float)($b['promedio'] ?? 0);
+        $reviewsA = (int)($a['total_valoraciones'] ?? 0);
+        $reviewsB = (int)($b['total_valoraciones'] ?? 0);
+
+        if ($isHotdogA !== $isHotdogB) {
+            return $isHotdogB <=> $isHotdogA;
+        }
+
+        if ($scoreA === $scoreB) {
+            if ($reviewsA === $reviewsB) {
+                return strcmp((string)($a['name'] ?? ''), (string)($b['name'] ?? ''));
+            }
+            return $reviewsB <=> $reviewsA;
+        }
+
+        return $scoreB <=> $scoreA;
+    });
+
+    $starProductId = (int)($rankedProducts[0]['id'] ?? 0);
+    $starProductName = (string)($rankedProducts[0]['name'] ?? '');
+}
+
+if ($selectedProductId > 0) {
+    $products = array_values(array_filter($products, static function ($product) use ($selectedProductId) {
+        return (int)($product['id'] ?? 0) === $selectedProductId;
+    }));
 }
 
 if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
@@ -180,7 +218,13 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
 <div class="container">
   <div class="hero">
     <h1 class="hero-title">Carta de Zyma</h1>
-    <p class="hero-sub">Disfruta de nuestros deliciosos platos artesanales.</p>
+    <p class="hero-sub"><?= $selectedProductId > 0 ? 'Vista destacada de nuestro producto estrella.' : 'Disfruta de nuestros deliciosos platos artesanales.' ?></p>
+    <?php if ($starProductId > 0): ?>
+      <p class="menu-star-callout">Producto estrella: <a href="#producto-<?= $starProductId ?>"><?= htmlspecialchars($starProductName) ?></a></p>
+    <?php endif; ?>
+    <?php if ($selectedProductId > 0): ?>
+      <p class="menu-star-callout"><a href="carta.php">Volver a toda la carta</a></p>
+    <?php endif; ?>
     <?php if ($guestMode): ?>
       <p class="muted mt-1">Modo invitado: puedes ver la carta, para pedir necesitas iniciar Sesión.</p>
     <?php endif; ?>
@@ -188,11 +232,14 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
 
   <div class="grid grid-products">
     <?php foreach ($products as $product): ?>
-    <div class="card-product">
+    <div class="card-product <?= ((int)$product['id'] === $starProductId) ? 'card-product-star' : '' ?>" id="producto-<?= (int)$product['id'] ?>">
       <img src="<?= htmlspecialchars($product['image']) ?>"
            alt="<?= htmlspecialchars($product['name']) ?>"
            onerror="this.src='assets/default-product.png';">
       <div class="card-content">
+        <?php if ((int)$product['id'] === $starProductId): ?>
+          <span class="product-star-badge">Producto estrella</span>
+        <?php endif; ?>
         <h2 class="card-title"><?= htmlspecialchars($product['name']) ?></h2>
         
         <!-- Estrellas de valoración -->
