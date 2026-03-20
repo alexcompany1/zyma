@@ -36,7 +36,7 @@ require_once 'config.php';
                 $productos = $stmt->fetchAll();
             } catch (Exception $e) {
                 echo '<div class="alert alert-error alert-spaced">';
-                echo 'Error obtiendo productos: ' . htmlspecialchars($e->getMessage());
+                echo 'Error obteniendo productos: ' . htmlspecialchars($e->getMessage());
                 echo '</div>';
                 $productos = [];
             }
@@ -108,7 +108,7 @@ document.getElementById('testForm')?.addEventListener('submit', async function(e
         if (data.success) {
             resultado.innerHTML = `
                 <div class="alert alert-success alert-spaced">
-                    <strong>Exito!</strong> La valoración se guardó correctamente.<br>
+                    <strong>¡Éxito!</strong> La valoración se guardó correctamente.<br>
                     Mensaje: ${data.mensaje}
                 </div>
             `;
@@ -132,7 +132,15 @@ document.getElementById('testForm')?.addEventListener('submit', async function(e
 
 <footer>
     <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p class="footer-legal-links">
+    <a href="politica_cookies.php">Política de Cookies</a>
+    <span>|</span>
+    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <span>|</span>
+    <a href="aviso_legal.php">Aviso Legal</a>
+  </p>
 </footer>
 
 </body>
 </html>
+

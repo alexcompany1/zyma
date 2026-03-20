@@ -166,6 +166,10 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['worker_code'] ?? '') !== 'ADMIN'
     die("<h2 class='page-error'>Acceso denegado. Solo administradores.</h2>");
 }
 
+$show_cookie_popup = !empty($_SESSION['show_cookie_popup']);
+$cookie_preferences = $_SESSION['cookie_preferences'] ?? [];
+unset($_SESSION['show_cookie_popup']);
+
 $supportsBloqueado = hasTableColumn($pdo, 'usuarios', 'bloqueado');
 $msg = '';
 
@@ -177,15 +181,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add'])) {
     $workerCodeInput = trim($_POST['worker_code'] ?? '');
 
     if ($nombre === '' || $email === '' || $password === '') {
-        $msg = "<div class='alert alert-error'>Nombre, email y contrasena obligatorios.</div>";
+        $msg = "<div class='alert alert-error'>Nombre, email y Contraseña obligatorios.</div>";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $msg = "<div class='alert alert-error'>Formato de email invalido.</div>";
+        $msg = "<div class='alert alert-error'>Formato de email inválido.</div>";
     } elseif (strlen($password) < 6) {
-        $msg = "<div class='alert alert-error'>La contrasena debe tener al menos 6 caracteres.</div>";
+        $msg = "<div class='alert alert-error'>La Contraseña debe tener al menos 6 caracteres.</div>";
     } elseif (!in_array($role, ['cliente', 'trabajador', 'admin'], true)) {
-        $msg = "<div class='alert alert-error'>Rol invalido.</div>";
+        $msg = "<div class='alert alert-error'>Rol inválido.</div>";
     } elseif ($workerCodeInput !== '' && !isValidWorkerCode($workerCodeInput)) {
-        $msg = "<div class='alert alert-error'>Codigo trabajador invalido. Usa 3-32 caracteres A-Z, 0-9, _ o -.</div>";
+        $msg = "<div class='alert alert-error'>Codigo trabajador inválido. Usa 3-32 caracteres A-Z, 0-9, _ o -.</div>";
     } elseif ($workerCodeInput !== '' && workerCodeExists($pdo, $workerCodeInput)) {
         $msg = "<div class='alert alert-error'>Ese codigo de trabajador ya esta en uso.</div>";
     } else {
@@ -237,7 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if (!in_array($action, ['delete', 'role', 'toggle_block'], true)) {
         $msg = "<div class='alert alert-error'>Accion invalida.</div>";
     } elseif (!$targetId) {
-        $msg = "<div class='alert alert-error'>ID invalido.</div>";
+        $msg = "<div class='alert alert-error'>ID inválido.</div>";
     } elseif ($targetId === (int)$_SESSION['user_id']) {
         $msg = "<div class='alert alert-error'>No puedes aplicar esta accion sobre tu propio usuario.</div>";
     } else {
@@ -260,11 +264,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             } elseif ($action === 'role') {
                 $newRole = $_POST['new_role'] ?? '';
                 if (!in_array($newRole, ['cliente', 'trabajador', 'admin'], true)) {
-                    $msg = "<div class='alert alert-error'>Rol invalido.</div>";
+                    $msg = "<div class='alert alert-error'>Rol inválido.</div>";
                 } else {
                     $customCode = trim($_POST['new_worker_code'] ?? '');
                     if ($newRole === 'trabajador' && $customCode !== '' && !isValidWorkerCode($customCode)) {
-                        $msg = "<div class='alert alert-error'>Codigo trabajador invalido. Usa 3-32 caracteres A-Z, 0-9, _ o -.</div>";
+                        $msg = "<div class='alert alert-error'>Codigo trabajador inválido. Usa 3-32 caracteres A-Z, 0-9, _ o -.</div>";
                     } elseif ($customCode !== '' && workerCodeExists($pdo, $customCode, (int)$targetId)) {
                         $msg = "<div class='alert alert-error'>Ese codigo de trabajador ya esta en uso.</div>";
                     } else {
@@ -308,7 +312,7 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>Panel de Administracion</title>
-    <link rel="stylesheet" href="styles.css?v=20260211-5">
+    <link rel="stylesheet" href="styles.css?v=20260317-1">
 </head>
 <body>
 <?php
@@ -328,7 +332,8 @@ if ($display_name === '') {
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
           <a href="perfil.php">Mi perfil</a>
-          <a href="logout.php">Cerrar sesion</a>
+          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
+          <a href="logout.php">Cerrar Sesión</a>
         </div>
     </div>
 
@@ -362,12 +367,12 @@ if ($display_name === '') {
     <?php endif; ?>
 
     <div class="section-card">
-        <h2>Anadir usuario</h2>
+        <h2>Añadir usuario</h2>
 
         <form method="POST">
             <input type="text" name="nombre" placeholder="Nombre" required>
             <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Contrasena" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
             <select name="role" required>
                 <option value="cliente">Cliente</option>
                 <option value="trabajador">Trabajador</option>
@@ -453,6 +458,19 @@ if ($display_name === '') {
     </div>
 </div>
 
+<footer>
+    <p>&copy; 2026 Zyma. Todos los derechos reservados.</p>
+    <p class="footer-legal-links">
+        <a href="politica_cookies.php">Política de Cookies</a>
+        <span>|</span>
+        <a href="politica_privacidad.php">Política de Privacidad</a>
+        <span>|</span>
+        <a href="aviso_legal.php">Aviso Legal</a>
+    </p>
+</footer>
+
+<?php include 'cookie_popup.php'; ?>
+
 <script>
 const profileBtn = document.getElementById('profileBtn');
 const dropdownMenu = document.getElementById('dropdownMenu');
@@ -473,3 +491,4 @@ if (profileBtn && dropdownMenu) {
 <script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
 </html>
+

@@ -9,6 +9,10 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+$show_cookie_popup = !empty($_SESSION['show_cookie_popup']);
+$cookie_preferences = $_SESSION['cookie_preferences'] ?? [];
+unset($_SESSION['show_cookie_popup']);
+
 $display_name = trim($_SESSION['nombre'] ?? '');
 if ($display_name === '') {
     $display_name = strstr($_SESSION['email'] ?? '', '@', true) ?: ($_SESSION['email'] ?? '');
@@ -22,7 +26,7 @@ $cart_count = count($_SESSION['cart'] ?? []);
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zyma - Restaurante de Hotdogs</title>
-  <link rel="stylesheet" href="styles.css?v=20260211-5">
+  <link rel="stylesheet" href="styles.css?v=20260317-1">
 </head>
 <body>
 <header class="landing-header">
@@ -36,7 +40,8 @@ $cart_count = count($_SESSION['cart'] ?? []);
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
           <a href="perfil.php">Mi perfil</a>
-          <a href="logout.php">Cerrar sesion</a>
+          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
+          <a href="logout.php">Cerrar Sesión</a>
         </div>
     </div>
 
@@ -112,7 +117,16 @@ $cart_count = count($_SESSION['cart'] ?? []);
 
 <footer>
   <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p class="footer-legal-links">
+    <a href="politica_cookies.php">Política de Cookies</a>
+    <span>|</span>
+    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <span>|</span>
+    <a href="aviso_legal.php">Aviso Legal</a>
+  </p>
 </footer>
+
+<?php include 'cookie_popup.php'; ?>
 
 <script>
 const profileBtn = document.getElementById('profileBtn');
@@ -129,3 +143,4 @@ if (profileBtn && dropdownMenu) {
 <script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
 </html>
+

@@ -43,7 +43,8 @@ $pedidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
           <a href="perfil.php">Mi perfil</a>
-          <a href="logout.php">Cerrar sesion</a>
+          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
+          <a href="logout.php">Cerrar Sesión</a>
         </div>
     </div>
 
@@ -96,6 +97,13 @@ $pedidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <footer>
     <p>© 2025 Zyma. Todos los derechos reservados.</p>
+  <p class="footer-legal-links">
+    <a href="politica_cookies.php">Política de Cookies</a>
+    <span>|</span>
+    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <span>|</span>
+    <a href="aviso_legal.php">Aviso Legal</a>
+  </p>
 </footer>
 
 <script>
@@ -115,3 +123,4 @@ $pedidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
 </html>
+

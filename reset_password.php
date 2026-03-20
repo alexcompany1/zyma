@@ -1,7 +1,7 @@
 <?php
 /**
  * reset_password.php
- * Establece nueva contrasena con token. :)
+ * Establece nueva Contraseña con token. :)
  */
 
 if (!headers_sent()) {
@@ -15,7 +15,7 @@ $error = '';
 $token = trim($_GET['token'] ?? $_POST['token'] ?? '');
 
 if ($token === '') {
-    $error = 'El enlace de recuperacion no es valido.';
+    $error = 'El enlace de recuperación no es válido.';
 }
 
 try {
@@ -32,7 +32,7 @@ try {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     ");
 } catch (Exception $e) {
-    $error = 'No se pudo validar el enlace de recuperacion.';
+    $error = 'No se pudo validar el enlace de recuperación.';
 }
 
 $resetRow = null;
@@ -43,7 +43,7 @@ if ($error === '') {
     $resetRow = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$resetRow) {
-        $error = 'El enlace de recuperacion no es valido.';
+        $error = 'El enlace de recuperación no es válido.';
     } elseif (!empty($resetRow['used_at'])) {
         $error = 'Este enlace ya fue utilizado.';
     } elseif (strtotime($resetRow['expires_at']) < time()) {
@@ -56,9 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $error === '') {
     $confirmPassword = $_POST['confirmPassword'] ?? '';
 
     if (strlen($password) < 6) {
-        $error = 'La contrasena debe tener al menos 6 caracteres.';
+        $error = 'La Contraseña debe tener al menos 6 caracteres.';
     } elseif ($password !== $confirmPassword) {
-        $error = 'Las contrasenas no coinciden.';
+        $error = 'Las Contraseñas no coinciden.';
     } else {
         try {
             $pdo->beginTransaction();
@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $error === '') {
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
             }
-            $error = 'No se pudo actualizar la contrasena. Intentalo de nuevo.';
+            $error = 'No se pudo actualizar la Contraseña. Intentalo de nuevo.';
         }
     }
 }
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $error === '') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nueva contrasena - Zyma</title>
+  <title>Nueva Contraseña - Zyma</title>
   <link rel="stylesheet" href="styles.css?v=20260211-5">
 </head>
 <body>
@@ -108,24 +108,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $error === '') {
       <div class="center mt-3"><a href="forgot_password.php">Solicitar nuevo enlace</a></div>
     <?php else: ?>
       <form method="POST" action="reset_password.php">
-        <h2>Establecer nueva contrasena</h2>
+        <h2>Establecer nueva Contraseña</h2>
         <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
 
         <label for="password">
-          Nueva contrasena <span class="required">*</span>
+          Nueva Contraseña <span class="required">*</span>
           <input type="password" id="password" name="password" required minlength="6">
         </label>
 
         <label for="confirmPassword">
-          Confirmar contrasena <span class="required">*</span>
+          Confirmar Contraseña <span class="required">*</span>
           <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
         </label>
 
-        <button type="submit">Guardar contrasena</button>
+        <button type="submit">Guardar Contraseña</button>
       </form>
     <?php endif; ?>
 
     <div class="center mt-3"><a href="login.php">Volver al login</a></div>
   </div>
+<footer>
+  <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p class="footer-legal-links">
+    <a href="politica_cookies.php">Política de Cookies</a>
+    <span>|</span>
+    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <span>|</span>
+    <a href="aviso_legal.php">Aviso Legal</a>
+  </p></footer>
 </body>
 </html>
+

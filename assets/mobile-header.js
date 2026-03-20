@@ -33,6 +33,7 @@
       addLink('carrito.php', 'Carrito');
       addLink('perfil.php', 'Mi perfil');
       addLink('notificaciones.php', 'Notificaciones');
+      addLink('politica_cookies.php', 'Personalizar cookies');
       addLink('logout.php', 'Cerrar sesión');
       return links;
     }

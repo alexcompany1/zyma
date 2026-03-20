@@ -1,7 +1,7 @@
 <?php
 /**
  * header.php
- * Cabecera unificada para paginas con sesion.
+ * Cabecera unificada para paginas con Sesión.
  */
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -47,7 +47,8 @@ if ($show_notif && $is_logged_in) {
         <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
         <div class="dropdown" id="dropdownMenu">
           <a href="perfil.php">Mi perfil</a>
-          <a href="logout.php">Cerrar sesion</a>
+          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
+          <a href="logout.php">Cerrar Sesión</a>
         </div>
       </div>
     <?php endif; ?>
@@ -111,3 +112,4 @@ if ($show_notif && $is_logged_in) {
     }
   });
 </script>
+

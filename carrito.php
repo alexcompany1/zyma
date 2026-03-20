@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pagar_online'])) {
         try {
             $metodo_pago = $_POST['metodo_pago'] ?? '';
             if (!in_array($metodo_pago, ['tarjeta', 'bizum'], true)) {
-                throw new Exception('Selecciona un metodo de pago valido.');
+                throw new Exception('Selecciona un método de pago válido.');
             }
 
             if ($metodo_pago === 'tarjeta') {
@@ -58,18 +58,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pagar_online'])) {
                 $cvv = preg_replace('/\D+/', '', $_POST['cvv'] ?? '');
 
                 if (strlen($numero_tarjeta) < 13 || strlen($numero_tarjeta) > 19) {
-                    throw new Exception('Numero de tarjeta invalido.');
+                    throw new Exception('Número de tarjeta inválido.');
                 }
                 if (!preg_match('/^\d{2}\/\d{2}$/', $caducidad)) {
                     throw new Exception('Fecha de caducidad invalida.');
                 }
                 if (strlen($cvv) < 3 || strlen($cvv) > 4) {
-                    throw new Exception('CVV invalido.');
+                    throw new Exception('CVV inválido.');
                 }
             } else {
                 $telefono_bizum = preg_replace('/\s+/', '', $_POST['telefono_bizum'] ?? '');
                 if (!preg_match('/^(\+34)?[6789]\d{8}$/', $telefono_bizum)) {
-                    throw new Exception('Telefono Bizum invalido.');
+                    throw new Exception('Teléfono Bizum inválido.');
                 }
             }
 
@@ -135,7 +135,8 @@ if ($display_name === '') {
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
           <a href="perfil.php">Mi perfil</a>
-          <a href="logout.php">Cerrar sesion</a>
+          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
+          <a href="logout.php">Cerrar Sesión</a>
       </div>
     </div>
 
@@ -208,7 +209,7 @@ if ($display_name === '') {
             <?php endif; ?>
 
             <div style="text-align:left;margin-bottom:12px;">
-              <strong>Metodo de pago online</strong>
+              <strong>Método de pago online</strong>
               <div style="margin-top:8px;">
                 <label style="margin-right:16px;">
                   <input type="radio" name="metodo_pago" value="tarjeta" checked> Tarjeta
@@ -220,7 +221,7 @@ if ($display_name === '') {
             </div>
 
             <div id="card-fields" style="text-align:left;margin-bottom:12px;">
-              <input type="text" name="numero_tarjeta" placeholder="Numero de tarjeta" maxlength="19" style="width:100%;margin-bottom:8px;">
+              <input type="text" name="numero_tarjeta" placeholder="Número de tarjeta" maxlength="19" style="width:100%;margin-bottom:8px;">
               <div style="display:flex;gap:8px;">
                 <input type="text" name="caducidad" placeholder="MM/AA" maxlength="5" style="width:50%;">
                 <input type="text" name="cvv" placeholder="CVV" maxlength="4" style="width:50%;">
@@ -228,7 +229,7 @@ if ($display_name === '') {
             </div>
 
             <div id="bizum-fields" style="display:none;text-align:left;margin-bottom:12px;">
-              <input type="text" name="telefono_bizum" placeholder="Telefono Bizum (+34XXXXXXXXX)" style="width:100%;">
+              <input type="text" name="telefono_bizum" placeholder="Teléfono Bizum (+34XXXXXXXXX)" style="width:100%;">
             </div>
 
             <button type="submit" name="pagar_online" class="btn-realizar-pedido btn-block">
@@ -311,5 +312,14 @@ methodRadios.forEach((radio) => {
 togglePaymentFields();
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<footer>
+  <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p class="footer-legal-links">
+    <a href="politica_cookies.php">Política de Cookies</a>
+    <span>|</span>
+    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <span>|</span>
+    <a href="aviso_legal.php">Aviso Legal</a>
+  </p></footer>
 </body>
 </html>
