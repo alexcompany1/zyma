@@ -5,11 +5,12 @@ if (!headers_sent()) {
 
 /**
  * login.php
- * Inicio de sesion.
+ * Inicio de Sesión.
  */
 
 session_start();
 require_once 'config.php';
+require_once 'cookie_consent_helper.php';
 
 function usuariosTieneBloqueado(PDO $pdo): bool
 {
@@ -17,12 +18,27 @@ function usuariosTieneBloqueado(PDO $pdo): bool
     return (int) $stmt->fetchColumn() > 0;
 }
 
+function prepararConsentimientoCookiesSesion(PDO $pdo, int $userId): void
+{
+  $consent = getCookieConsentByUser($pdo, $userId);
+  $_SESSION['cookie_preferences'] = [
+    'analytics' => (int)($consent['analytics'] ?? 0) === 1,
+    'marketing' => (int)($consent['marketing'] ?? 0) === 1,
+    'policy_version' => $consent['policy_version'] ?? null,
+    'estado' => $consent['estado'] ?? null,
+  ];
+  $_SESSION['show_cookie_popup'] = shouldShowCookiePopup($pdo, $userId);
+}
+
 $error = '';
 $info = '';
 $supportsBloqueado = usuariosTieneBloqueado($pdo);
 
 if (isset($_GET['reset']) && $_GET['reset'] === '1') {
-    $info = 'Tu contrasena se ha actualizado. Ya puedes iniciar sesion.';
+    $info = 'Tu Contraseña se ha actualizado. Ya puedes iniciar Sesión.';
+}
+if (isset($_GET['cookie_rejected']) && $_GET['cookie_rejected'] === '1') {
+  $info = 'Para usar tu cuenta en Zyma necesitamos aceptar las cookies técnicas. Puedes volver a iniciar sesión y configurar tus preferencias.';
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -31,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $workerCode = trim($_POST['workerCode'] ?? '');
 
     if (empty($email) || empty($password)) {
-        $error = 'El email y la contrasena son obligatorios.';
+        $error = 'El email y la Contraseña son obligatorios.';
     } else {
         try {
             $sql = "SELECT id, nombre, email, password_hash, worker_code" . ($supportsBloqueado ? ", bloqueado" : ", 0 AS bloqueado") . " FROM usuarios WHERE email = :email";
@@ -50,6 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $_SESSION['nombre'] = $user['nombre'] ?? '';
                         $_SESSION['email'] = $user['email'];
                         $_SESSION['worker_code'] = $user['worker_code'];
+                        prepararConsentimientoCookiesSesion($pdo, (int)$user['id']);
                         if ($user['worker_code'] === 'ADMIN') {
                             header('Location: admin.php');
                             exit;
@@ -63,6 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['nombre'] = $user['nombre'] ?? '';
                     $_SESSION['email'] = $user['email'];
                     $_SESSION['worker_code'] = $user['worker_code'];
+                    prepararConsentimientoCookiesSesion($pdo, (int)$user['id']);
                     header('Location: usuario.php');
                     exit;
                 }
@@ -80,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iniciar sesion - Zyma</title>
+  <title>Iniciar Sesión - Zyma</title>
   <link rel="stylesheet" href="styles.css?v=20260211-5">
 </head>
 <body>
@@ -104,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="POST" action="login.php">
-      <h2>Iniciar sesion</h2>
+      <h2>Iniciar Sesión</h2>
 
       <label for="email">
         Email <span class="required">*</span>
@@ -112,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </label>
 
       <label for="password">
-        Contrasena <span class="required">*</span>
+        Contraseña <span class="required">*</span>
         <input type="password" id="password" name="password" required>
       </label>
 
@@ -122,16 +140,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <span class="optional-label">Trabajador: ej. TRAB001<br>Administrador: ADMIN</span>
       </label>
 
-      <button type="submit">Iniciar sesion</button>
+      <button type="submit">Iniciar Sesión</button>
     </form>
 
     <div class="center mt-3">
       <a href="registro.php">No tienes cuenta? Registrate</a>
     </div>
     <div class="center mt-2">
-      <a href="forgot_password.php">He olvidado la contrasena</a>
+      <a href="forgot_password.php">He olvidado la Contraseña</a>
+    </div>
+    <div class="center mt-3 footer-legal-links">
+      <a href="politica_cookies.php">Política de Cookies</a>
+      <span>|</span>
+      <a href="politica_privacidad.php">Política de Privacidad</a>
+      <span>|</span>
+      <a href="aviso_legal.php">Aviso Legal</a>
     </div>
   </div>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
 </html>
+

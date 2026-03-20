@@ -163,12 +163,12 @@ try {
         }
         
         /* Estrellas en opiniones */
-        .opinion-stars {
+        .opinión-stars {
             display: flex;
             gap: 3px;
         }
         
-        .star-opinion-img {
+        .star-opinión-img {
             width: 20px !important;
             height: 20px !important;
             object-fit: contain;
@@ -385,39 +385,39 @@ if ($is_logged_in) {
                             ?>
                             <div class="product-recent-opinions">
                                 <button id="reviewToggle-<?= $pid ?>" class="review-toggle-btn" onclick="toggleReviewsDropdown(<?= $pid ?>)" style="cursor: pointer; padding: 10px; background: linear-gradient(135deg, #d4af37, #f4e4a6); border-radius: 6px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; font-weight: 600; width: 100%; border: none; font-size: 1em;">
-                                    Ver resenas (<?= $stats['total'] ?>)
+                                    Ver reseñas (<?= $stats['total'] ?>)
                                 </button>
                                 <div id="reviewsDropdown-<?= $pid ?>" style="display: none; background: #f9f9f9; border: 1px solid #ddd; border-radius: 6px; padding: 15px; margin-top: 10px; max-height: 400px; overflow-y: auto;">
                                 <?php if (count($opiniones) > 0): ?>
                                     <?php foreach ($opiniones as $op): ?>
-                                        <div class="opinion-snippet">
-                                            <div class="opinion-header">
-                                                <div class="opinion-user-info">
-                                                    <span class="opinion-name">
+                                        <div class="opinión-snippet">
+                                            <div class="opinión-header">
+                                                <div class="opinión-user-info">
+                                                    <span class="opinión-name">
                                                         <?= !empty($op['nombre']) 
                                                             ? htmlspecialchars($op['nombre'])
                                                             : htmlspecialchars(strstr($op['email'], '@', true));
                                                         ?>
                                                     </span>
-                                                    <span class="opinion-date">
+                                                    <span class="opinión-date">
                                                         <?php
                                                             $fecha = new DateTime($op['fecha_creacion']);
                                                             echo $fecha->format('d/m/Y H:i');
                                                         ?>
                                                     </span>
                                                 </div>
-                                                <span class="opinion-stars" style="display: flex; gap: 3px;">
-                                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                                <span class="opinión-stars" style="display: flex; gap: 3px;">
+                                                    <?php for ($i = 0; $i <= 5; $i++): ?>
                                                         <img src="assets/<?= $i <= $op['puntuacion'] ? 'estrellaSelecionada' : 'estrellaNegra' ?>.png" 
                                                              alt="Estrella" 
-                                                             class="star-opinion-img"
+                                                             class="star-opinión-img"
                                                              style="width: 20px; height: 20px;"
                                                              title="<?= $op['puntuacion'] ?>/5">
                                                     <?php endfor; ?>
                                                 </span>
                                             </div>
                                             <?php if (!empty($op['comentario'])): ?>
-                                                <p class="opinion-text"><?= htmlspecialchars($op['comentario']) ?></p>
+                                                <p class="opinión-text"><?= htmlspecialchars($op['comentario']) ?></p>
                                             <?php endif; ?>
                                             
                                             <?php if (!empty($op['respuesta'])): ?>
@@ -465,6 +465,13 @@ if ($is_logged_in) {
 <!-- Footer -->
 <footer>
     <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p class="footer-legal-links">
+    <a href="politica_cookies.php">Política de Cookies</a>
+    <span>|</span>
+    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <span>|</span>
+    <a href="aviso_legal.php">Aviso Legal</a>
+  </p>
 </footer>
 
 <!-- Script para manejar el formulario de valoraciones de productos -->
@@ -740,3 +747,4 @@ if ($is_logged_in) {
 
 </body>
 </html>
+

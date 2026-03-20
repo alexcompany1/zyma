@@ -80,7 +80,8 @@ unset($_SESSION['mensaje']);
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
           <a href="perfil.php">Mi perfil</a>
-          <a href="logout.php">Cerrar sesion</a>
+          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
+          <a href="logout.php">Cerrar Sesión</a>
         </div>
     </div>
     <a href="usuario.php" class="landing-logo">
@@ -172,5 +173,15 @@ setInterval(() => {
 }, AUTO_REFRESH_MS);
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<footer>
+  <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p class="footer-legal-links">
+    <a href="politica_cookies.php">Política de Cookies</a>
+    <span>|</span>
+    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <span>|</span>
+    <a href="aviso_legal.php">Aviso Legal</a>
+  </p></footer>
 </body>
 </html>
+

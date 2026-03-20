@@ -1,7 +1,7 @@
 <?php
 /**
  * forgot_password.php
- * Solicita recuperacion de contrasena por email.
+ * Solicita recuperación de Contraseña por email.
  */
 
 if (!headers_sent()) {
@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
 
     if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = 'Introduce un email valido.';
+        $error = 'Introduce un email válido.';
     } else {
         try {
             $pdo->exec("
@@ -56,10 +56,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $baseUrl = $scheme . '://' . $host . ($basePath === '' ? '' : $basePath);
 
                 $resetLink = $baseUrl . '/reset_password.php?token=' . urlencode($token);
-                $subject = 'Recuperar contrasena - Zyma';
+                $subject = 'Recuperar Contraseña - Zyma';
                 $body = "Hola,\n\n";
-                $body .= "Hemos recibido una solicitud para restablecer tu contrasena.\n";
-                $body .= "Usa este enlace (valido 1 hora):\n";
+                $body .= "Hemos recibido una solicitud para restablecer tu Contraseña.\n";
+                $body .= "Usa este enlace (válido 1 hora):\n";
                 $body .= $resetLink . "\n\n";
                 $body .= "Si no fuiste tu, ignora este mensaje.\n";
                 $body .= "Equipo Zyma";
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 @mail($email, $subject, $body, $headers);
             }
 
-            $info = 'Si el email existe, te hemos enviado instrucciones para recuperar la contrasena.';
+            $info = 'Si el email existe, te hemos enviado instrucciones para recuperar la Contraseña.';
         } catch (Exception $e) {
             $error = 'No se pudo procesar la solicitud. Intentalo de nuevo.';
         }
@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recuperar contrasena - Zyma</title>
+  <title>Recuperar Contraseña - Zyma</title>
   <link rel="stylesheet" href="styles.css?v=20260211-5">
 </head>
 <body>
@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="POST" action="forgot_password.php">
-      <h2>Recuperar contrasena</h2>
+      <h2>Recuperar Contraseña</h2>
       <label for="email">
         Email <span class="required">*</span>
         <input type="email" id="email" name="email" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
@@ -114,5 +114,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <a href="login.php">Volver al login</a>
     </div>
   </div>
+<footer>
+  <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p class="footer-legal-links">
+    <a href="politica_cookies.php">Política de Cookies</a>
+    <span>|</span>
+    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <span>|</span>
+    <a href="aviso_legal.php">Aviso Legal</a>
+  </p></footer>
 </body>
 </html>
+
