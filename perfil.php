@@ -254,18 +254,42 @@ if ($initials === '') {
 
           <label for="current_password">
             Contrasena actual <span class="required">*</span>
-            <input type="password" id="current_password" name="current_password" required minlength="6" placeholder="Introduce tu contrasena actual">
+            <div class="password-field">
+              <input type="password" id="current_password" name="current_password" required minlength="6" placeholder="Introduce tu contrasena actual">
+              <button type="button" class="password-toggle" data-password-toggle="current_password" aria-label="Mostrar contrasena" aria-pressed="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
           </label>
 
           <div class="profile-form-split">
             <label for="new_password">
               Nueva contrasena <span class="required">*</span>
-              <input type="password" id="new_password" name="new_password" required minlength="8" placeholder="Minimo 8 caracteres">
+              <div class="password-field">
+                <input type="password" id="new_password" name="new_password" required minlength="8" placeholder="Minimo 8 caracteres">
+                <button type="button" class="password-toggle" data-password-toggle="new_password" aria-label="Mostrar contrasena" aria-pressed="false">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </div>
             </label>
 
             <label for="confirm_password">
               Confirmar nueva contrasena <span class="required">*</span>
-              <input type="password" id="confirm_password" name="confirm_password" required minlength="8" placeholder="Repite la nueva contrasena">
+              <div class="password-field">
+                <input type="password" id="confirm_password" name="confirm_password" required minlength="8" placeholder="Repite la nueva contrasena">
+                <button type="button" class="password-toggle" data-password-toggle="confirm_password" aria-label="Mostrar contrasena" aria-pressed="false">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </div>
             </label>
           </div>
 
@@ -294,6 +318,19 @@ if (profileBtn && dropdownMenu) {
 }
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script>
+document.querySelectorAll('[data-password-toggle]').forEach((button) => {
+  button.addEventListener('click', () => {
+    const input = document.getElementById(button.dataset.passwordToggle);
+    if (!input) return;
+
+    const showPassword = input.type === 'password';
+    input.type = showPassword ? 'text' : 'password';
+    button.setAttribute('aria-label', showPassword ? 'Ocultar contrasena' : 'Mostrar contrasena');
+    button.setAttribute('aria-pressed', showPassword ? 'true' : 'false');
+  });
+});
+</script>
 <footer>
   <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">

@@ -377,6 +377,48 @@ input[type="number"] {
   font-family: inherit;
 }
 
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  padding-right: 3.4rem;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.9rem;
+  transform: translateY(-50%);
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--dark-red);
+  box-shadow: none;
+}
+
+.password-toggle:hover {
+  transform: translateY(-50%);
+  box-shadow: none;
+  background: transparent;
+}
+
+.password-toggle:focus-visible {
+  border-radius: 999px;
+}
+
+.password-toggle svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 input:focus,
 textarea:focus,
 select:focus {
