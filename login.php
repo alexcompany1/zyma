@@ -113,7 +113,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       <label for="password">
         Contrasena <span class="required">*</span>
-        <input type="password" id="password" name="password" required>
+        <div class="password-field">
+          <input type="password" id="password" name="password" required>
+          <button type="button" class="password-toggle" data-password-toggle="password" aria-label="Mostrar contrasena" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
       </label>
 
       <label for="workerCode">
@@ -133,5 +141,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </div>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script>
+document.querySelectorAll('[data-password-toggle]').forEach((button) => {
+  button.addEventListener('click', () => {
+    const input = document.getElementById(button.dataset.passwordToggle);
+    if (!input) return;
+
+    const showPassword = input.type === 'password';
+    input.type = showPassword ? 'text' : 'password';
+    button.setAttribute('aria-label', showPassword ? 'Ocultar contrasena' : 'Mostrar contrasena');
+    button.setAttribute('aria-pressed', showPassword ? 'true' : 'false');
+  });
+});
+</script>
 </body>
 </html>

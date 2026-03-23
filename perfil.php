@@ -22,21 +22,38 @@ $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = trim($_POST['nombre'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $confirmPassword = $_POST['confirmPassword'] ?? '';
 
     if ($nombre === '') {
         $error = 'El nombre es obligatorio.';
     } elseif (strlen($nombre) > 60) {
         $error = 'El nombre no puede superar 60 caracteres.';
+    } elseif (($password !== '' || $confirmPassword !== '') && strlen($password) < 6) {
+        $error = 'La contrasena debe tener al menos 6 caracteres.';
+    } elseif ($password !== $confirmPassword) {
+        $error = 'Las contrasenas no coinciden.';
     } else {
         try {
-            $stmt = $pdo->prepare("UPDATE usuarios SET nombre = :nombre WHERE id = :id");
-            $stmt->execute([
-                ':nombre' => $nombre,
-                ':id' => $_SESSION['user_id']
-            ]);
+            if ($password !== '') {
+                $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+                $stmt = $pdo->prepare("UPDATE usuarios SET nombre = :nombre, password_hash = :password_hash WHERE id = :id");
+                $stmt->execute([
+                    ':nombre' => $nombre,
+                    ':password_hash' => $passwordHash,
+                    ':id' => $_SESSION['user_id']
+                ]);
+                $mensaje = 'Perfil y contrasena actualizados correctamente.';
+            } else {
+                $stmt = $pdo->prepare("UPDATE usuarios SET nombre = :nombre WHERE id = :id");
+                $stmt->execute([
+                    ':nombre' => $nombre,
+                    ':id' => $_SESSION['user_id']
+                ]);
+                $mensaje = 'Nombre actualizado correctamente.';
+            }
 
             $_SESSION['nombre'] = $nombre;
-            $mensaje = 'Nombre actualizado correctamente.';
         } catch (Exception $e) {
             $error = 'Error al guardar los cambios.';
         }
@@ -118,6 +135,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <input type="email" id="email" value="<?= htmlspecialchars($_SESSION['email'] ?? '') ?>" disabled>
     </label>
 
+    <label for="password">
+      Nueva contrasena
+      <div class="password-field">
+        <input type="password" id="password" name="password" minlength="6">
+        <button type="button" class="password-toggle" data-password-toggle="password" aria-label="Mostrar contrasena" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </button>
+      </div>
+      <span class="optional-label">Dejalo vacio si no quieres cambiarla.</span>
+    </label>
+
+    <label for="confirmPassword">
+      Confirmar nueva contrasena
+      <div class="password-field">
+        <input type="password" id="confirmPassword" name="confirmPassword" minlength="6">
+        <button type="button" class="password-toggle" data-password-toggle="confirmPassword" aria-label="Mostrar contrasena" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </button>
+      </div>
+    </label>
+
     <button type="submit">Guardar cambios</button>
   </form>
 </div>
@@ -138,5 +182,18 @@ if (profileBtn && dropdownMenu) {
 }
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script>
+document.querySelectorAll('[data-password-toggle]').forEach((button) => {
+  button.addEventListener('click', () => {
+    const input = document.getElementById(button.dataset.passwordToggle);
+    if (!input) return;
+
+    const showPassword = input.type === 'password';
+    input.type = showPassword ? 'text' : 'password';
+    button.setAttribute('aria-label', showPassword ? 'Ocultar contrasena' : 'Mostrar contrasena');
+    button.setAttribute('aria-pressed', showPassword ? 'true' : 'false');
+  });
+});
+</script>
 </body>
 </html>
