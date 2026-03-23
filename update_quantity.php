@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * update_quantity.php
  * Actualiza cantidad y totales.
@@ -34,7 +34,7 @@ if (isset($input['productId']) && isset($input['quantity'])) {
         exit;
     }
     
-    // Guardar en sesion
+    // Guardar en Sesión
     $_SESSION['cart'][$productId] = $quantity;
     
     // Calcular subtotal
@@ -57,3 +57,4 @@ if (isset($input['productId']) && isset($input['quantity'])) {
     echo json_encode(['success' => false, 'message' => 'Datos inválidos']);
 }
 ?>
+

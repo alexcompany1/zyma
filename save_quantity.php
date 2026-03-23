@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 /**
  * save_quantity.php
- * Guarda cantidad en sesion.
+ * Guarda cantidad en Sesión.
  */
 
 session_start();
@@ -19,7 +19,7 @@ if (isset($input['productId']) && isset($input['quantity'])) {
         exit;
     }
     
-    // Guardar en sesion
+    // Guardar en Sesión
     $_SESSION['cart'][$productId] = $quantity;
     
     echo json_encode(['success' => true]);
@@ -27,3 +27,4 @@ if (isset($input['productId']) && isset($input['quantity'])) {
     echo json_encode(['success' => false, 'message' => 'Datos inválidos']);
 }
 ?>
+

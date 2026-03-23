@@ -1,43 +1,43 @@
-﻿<!DOCTYPE html>
-<html lang="es">
-
 <?php
+if (!headers_sent()) {
+    header('Content-Type: text/html; charset=UTF-8');
+}
+
 // menu.php
 // Muestra productos y permite pedir con QR
 session_start();
 
-// Configuracion BD
-require 'config.php';
+require_once 'config.php';
 
-// Sanitizar texto
-function sanitize($data) {
-    return htmlspecialchars(trim($data));}
+function sanitize($data)
+{
+    return htmlspecialchars(trim((string)$data), ENT_QUOTES, 'UTF-8');
+}
 
-// Validar acceso QR
-function tieneAccesoQR() {
-    // Se guarda en sesion
-    return isset($_SESSION['qr_validado']) && $_SESSION['qr_validado'] === true;}
+function tieneAccesoQR()
+{
+    // Se guarda en sesión
+    return isset($_SESSION['qr_validado']) && $_SESSION['qr_validado'] === true;
+}
 
-// Conexion mysqli
-$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+// En config.php ya existen estas variables para PDO.
+$conn = new mysqli($host, $username, $password, $dbname, (int)$port);
+$conn->set_charset('utf8mb4');
 
-// Validar conexion
 if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);}
+    die('Conexión fallida: ' . $conn->connect_error);
+}
 
-// Cargar categorias
-$sql_categorias_producto = "SELECT id, nombre FROM categorias_producto ORDER BY nombre";
-$result_categorias_producto = $conn->query($sql_categorias_producto);
+$sql_categorias = "SELECT id, nombre FROM categorias_producto ORDER BY nombre";
+$result_categorias = $conn->query($sql_categorias);
 
-// Leer filtro
-$categoria_id = isset($_GET['categoria']) ? intval($_GET['categoria']) : 0;
+$categoria_id = isset($_GET['categoria']) ? (int)$_GET['categoria'] : 0;
 
-// Consulta productos
 if ($categoria_id > 0) {
-    $stmt = $conn->prepare("SELECT id, nombre, descripcion, precio, imagen, disponible FROM productos WHERE categoria_id = ? AND disponible=1 ORDER BY nombre");
-    $stmt->bind_param("i", $categoria_id);
+    $stmt = $conn->prepare('SELECT id, nombre, descripcion, precio, imagen, disponible FROM productos WHERE categoria_id = ? AND disponible = 1 ORDER BY nombre');
+    $stmt->bind_param('i', $categoria_id);
 } else {
-    $stmt = $conn->prepare("SELECT id, nombre, descripcion, precio, imagen, disponible FROM productos WHERE disponible=1 ORDER BY nombre");
+    $stmt = $conn->prepare('SELECT id, nombre, descripcion, precio, imagen, disponible FROM productos WHERE disponible = 1 ORDER BY nombre');
 }
 
 $stmt->execute();
@@ -50,18 +50,21 @@ $result_productos = $stmt->get_result();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Menú - Restaurante</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=20260211-5" />
     <script src="script.js" defer></script> <!-- JS del carrito -->
 </head>
 <body>
 
-    <header>
-        <h1>Menú del Restaurante</h1>
-        <?php if (tieneAccesoQR()): ?>
-            <p> Acceso desde QR confirmado. Puedes hacer pedidos</p>
-        <?php else: ?>
-            <p> Muestra solo carta (sin pedido) porque no has accedido vía QR</p>
-        <?php endif; ?>
+    <header class="landing-header">
+      <div class="landing-bar">
+        <a href="index.php" class="landing-logo">
+          <span class="landing-logo-text">Zyma</span>
+        </a>
+        <div class="landing-actions">
+          <a href="login.php" class="landing-link">Entrar</a>
+          <a href="registro.php" class="landing-cta">Crear cuenta</a>
+        </div>
+      </div>
     </header>
 
     <nav>
@@ -87,7 +90,7 @@ $result_productos = $stmt->get_result();
                         <img src="fotos/<?php echo sanitize($producto['imagen']); ?>" alt="Foto de <?php echo sanitize($producto['nombre']); ?>" class="foto-producto" />
                     <?php endif; ?>
                     <p><?php echo nl2br(sanitize($producto['descripcion'])); ?></p>
-                    <p><strong>Precio:</strong> <?php echo number_format($producto['precio'], 2, ',', '.') . ' €'; ?></p>
+                    <p><strong>Precio:</strong> <?php echo number_format((float)$producto['precio'], 2, ',', '.') . ' EUR'; ?></p>
 
                     <?php if (tieneAccesoQR()): ?>
                         <!-- Boton agregar -->
@@ -113,11 +116,22 @@ $result_productos = $stmt->get_result();
         <button id="btn-enviar-pedido">Enviar pedido</button>
     </aside>
 
+<script src="assets/mobile-header.js?v=20260211-6"></script>
+<footer>
+  <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p class="footer-legal-links">
+    <a href="politica_cookies.php">Política de Cookies</a>
+    <span>|</span>
+    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <span>|</span>
+    <a href="aviso_legal.php">Aviso Legal</a>
+  </p></footer>
 </body>
 </html>
 
 <?php
-// Cerrar conexion
+// Cerrar conexión
 $stmt->close();
 $conn->close();
 ?>
+

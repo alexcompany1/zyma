@@ -1,8 +1,14 @@
-﻿<?php
+<?php
 /**
  * config.php
- * Configuracion de base de datos y conexion PDO.
+ * Configuración de base de datos y conexión PDO.
  */
+
+// Forzar UTF-8 en toda la salida PHP.
+ini_set('default_charset', 'UTF-8');
+if (!headers_sent()) {
+    header('Content-Type: text/html; charset=UTF-8');
+}
 
 // Host BD
 $host = 'localhost';
@@ -19,8 +25,11 @@ $username = 'root';
 // Password BD
 $password = '';
 
+// Tasa de IVA (10% para restauración en España)
+define('TAX_RATE', 0.10);
+
 try {
-    // Crear conexion PDO
+    // Crear conexión PDO
     $pdo = new PDO(
         "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4", // DSN
         $username, // usuario
@@ -32,7 +41,7 @@ try {
         ]
     );
 } catch (PDOException $e) {
-    // Error de conexion
+    // Error de conexión
     die("<h2 class='page-error'>Error de conexión a la base de datos</h2>");
 }
 ?>  
