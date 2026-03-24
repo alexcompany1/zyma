@@ -56,11 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $confirmPassword = $_POST['confirm_password'] ?? '';
 
         if ($currentPassword === '' || $newPassword === '' || $confirmPassword === '') {
-            $error = 'Todos los campos de contrasena son obligatorios.';
+            $error = 'Todos los campos de contraseña son obligatorios.';
         } elseif (strlen($newPassword) < 8) {
-            $error = 'La nueva contrasena debe tener al menos 8 caracteres.';
+            $error = 'La nueva contraseña debe tener al menos 8 caracteres.';
         } elseif ($newPassword !== $confirmPassword) {
-            $error = 'La nueva contrasena y su confirmacion no coinciden.';
+            $error = 'La nueva contraseña y su confirmación no coinciden.';
         } else {
             try {
                 $stmt = $pdo->prepare('SELECT password_hash FROM usuarios WHERE id = :id');
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 if (!$row || !password_verify($currentPassword, $row['password_hash'])) {
-                    $error = 'Contrasena actual incorrecta.';
+                    $error = 'Contraseña actual incorrecta.';
                 } else {
                     $updatedHash = password_hash($newPassword, PASSWORD_DEFAULT);
                     $update = $pdo->prepare('UPDATE usuarios SET password_hash = :hash WHERE id = :id');
@@ -76,10 +76,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ':hash' => $updatedHash,
                         ':id' => $_SESSION['user_id'],
                     ]);
-                    $mensaje = 'Contrasena actualizada correctamente.';
+                    $mensaje = 'Contraseña actualizada correctamente.';
                 }
             } catch (Exception $e) {
-                $error = 'Error al actualizar la contrasena.';
+                $error = 'Error al actualizar la contraseña.';
             }
         }
     }
@@ -127,7 +127,7 @@ if ($initials === '') {
       <div class="dropdown" id="dropdownMenu">
         <a href="perfil.php">Mi perfil</a>
         <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-        <a href="logout.php">Cerrar sesion</a>
+        <a href="logout.php">Cerrar sesión</a>
       </div>
     </div>
 
@@ -136,7 +136,7 @@ if ($initials === '') {
     </a>
 
     <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
+      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
         <a href="usuario.php">Inicio</a>
         <a href="carta.php">Ver carta</a>
@@ -167,7 +167,7 @@ if ($initials === '') {
       <div class="profile-hero-copy">
         <span class="profile-eyebrow">Panel personal</span>
         <h1><?= htmlspecialchars($profileName !== '' ? $profileName : $display_name) ?></h1>
-        <p>Gestiona tu cuenta desde un espacio mas claro, profesional y facil de usar.</p>
+        <p>Gestiona tu cuenta desde un espacio más claro, profesional y fácil de usar.</p>
       </div>
     </div>
     <div class="profile-badges">
@@ -181,7 +181,7 @@ if ($initials === '') {
     <aside class="profile-card profile-summary-card">
       <div class="profile-card-header">
         <span class="profile-section-kicker">Resumen</span>
-        <h2>Informacion de cuenta</h2>
+        <h2>Información de cuenta</h2>
       </div>
 
       <dl class="profile-data-list">
@@ -205,7 +205,7 @@ if ($initials === '') {
 
       <div class="profile-highlight-box">
         <strong>Consejo profesional</strong>
-        <p>Usa tu nombre completo y revisa tu contrasena con frecuencia para mantener una imagen mas cuidada y segura.</p>
+        <p>Usa tu nombre completo y revisa tu contraseña con frecuencia para mantener una imagen más cuidada y segura.</p>
       </div>
 
       <a class="profile-secondary-link" href="usuario.php">Volver al panel principal</a>
@@ -216,7 +216,7 @@ if ($initials === '') {
         <div class="profile-card-header">
           <span class="profile-section-kicker">Datos personales</span>
           <h2>Editar perfil</h2>
-          <p>Actualiza la informacion visible de tu cuenta para dar una imagen mas profesional.</p>
+          <p>Actualiza la información visible de tu cuenta para dar una imagen más profesional.</p>
         </div>
 
         <form method="POST" action="perfil.php" class="profile-form">
@@ -236,7 +236,7 @@ if ($initials === '') {
             >
           </label>
 
-          <p class="profile-field-note">Este nombre se mostrara en tu area privada y ayuda a que el perfil se vea mas serio y ordenado.</p>
+          <p class="profile-field-note">Este nombre se mostrará en tu área privada y ayuda a que el perfil se vea más serio y ordenado.</p>
 
           <button type="submit">Guardar cambios</button>
         </form>
@@ -245,7 +245,7 @@ if ($initials === '') {
       <section class="profile-card profile-form-card">
         <div class="profile-card-header">
           <span class="profile-section-kicker">Seguridad</span>
-          <h2>Cambiar contrasena</h2>
+          <h2>Cambiar contraseña</h2>
           <p>Actualiza tu clave para mantener protegido el acceso a la cuenta.</p>
         </div>
 
@@ -253,10 +253,10 @@ if ($initials === '') {
           <input type="hidden" name="action" value="change_password">
 
           <label for="current_password">
-            Contrasena actual <span class="required">*</span>
+            Contraseña actual <span class="required">*</span>
             <div class="password-field">
-              <input type="password" id="current_password" name="current_password" required minlength="6" placeholder="Introduce tu contrasena actual">
-              <button type="button" class="password-toggle" data-password-toggle="current_password" aria-label="Mostrar contrasena" aria-pressed="false">
+              <input type="password" id="current_password" name="current_password" required minlength="6" placeholder="Introduce tu contraseña actual">
+              <button type="button" class="password-toggle" data-password-toggle="current_password" aria-label="Mostrar contraseña" aria-pressed="false">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
                   <circle cx="12" cy="12" r="3"></circle>
@@ -267,10 +267,10 @@ if ($initials === '') {
 
           <div class="profile-form-split">
             <label for="new_password">
-              Nueva contrasena <span class="required">*</span>
+              Nueva contraseña <span class="required">*</span>
               <div class="password-field">
-                <input type="password" id="new_password" name="new_password" required minlength="8" placeholder="Minimo 8 caracteres">
-                <button type="button" class="password-toggle" data-password-toggle="new_password" aria-label="Mostrar contrasena" aria-pressed="false">
+                <input type="password" id="new_password" name="new_password" required minlength="8" placeholder="Mínimo 8 caracteres">
+                <button type="button" class="password-toggle" data-password-toggle="new_password" aria-label="Mostrar contraseña" aria-pressed="false">
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
                     <circle cx="12" cy="12" r="3"></circle>
@@ -280,10 +280,10 @@ if ($initials === '') {
             </label>
 
             <label for="confirm_password">
-              Confirmar nueva contrasena <span class="required">*</span>
+              Confirmar nueva contraseña <span class="required">*</span>
               <div class="password-field">
-                <input type="password" id="confirm_password" name="confirm_password" required minlength="8" placeholder="Repite la nueva contrasena">
-                <button type="button" class="password-toggle" data-password-toggle="confirm_password" aria-label="Mostrar contrasena" aria-pressed="false">
+                <input type="password" id="confirm_password" name="confirm_password" required minlength="8" placeholder="Repite la nueva contraseña">
+                <button type="button" class="password-toggle" data-password-toggle="confirm_password" aria-label="Mostrar contraseña" aria-pressed="false">
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
                     <circle cx="12" cy="12" r="3"></circle>
@@ -293,9 +293,9 @@ if ($initials === '') {
             </label>
           </div>
 
-          <p class="profile-field-note">Combina letras, numeros y simbolos para conseguir una clave mas fuerte.</p>
+          <p class="profile-field-note">Combina letras, números y símbolos para conseguir una clave más fuerte.</p>
 
-          <button type="submit">Actualizar contrasena</button>
+          <button type="submit">Actualizar contraseña</button>
         </form>
       </section>
     </div>
@@ -326,7 +326,7 @@ document.querySelectorAll('[data-password-toggle]').forEach((button) => {
 
     const showPassword = input.type === 'password';
     input.type = showPassword ? 'text' : 'password';
-    button.setAttribute('aria-label', showPassword ? 'Ocultar contrasena' : 'Mostrar contrasena');
+    button.setAttribute('aria-label', showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
     button.setAttribute('aria-pressed', showPassword ? 'true' : 'false');
   });
 });
@@ -334,9 +334,9 @@ document.querySelectorAll('[data-password-toggle]').forEach((button) => {
 <footer>
   <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php">Politica de Cookies</a>
+    <a href="politica_cookies.php">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php">Politica de Privacidad</a>
+    <a href="politica_privacidad.php">Política de Privacidad</a>
     <span>|</span>
     <a href="aviso_legal.php">Aviso Legal</a>
   </p>

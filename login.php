@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $credencialesOk = $user && password_verify($password, $user['password_hash']);
 
             if ($credencialesOk && (int) ($user['bloqueado'] ?? 0) === 1) {
-                $error = 'Tu cuenta esta bloqueada. Contacta con administracion.';
+                $error = 'Tu cuenta está bloqueada. Contacta con administración.';
             } elseif ($credencialesOk) {
                 if (!empty($workerCode)) {
                     if (!empty($user['worker_code']) && hash_equals($user['worker_code'], $workerCode)) {
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         header('Location: trabajador.php');
                         exit;
                     }
-                    $error = 'Codigo de trabajador incorrecto.';
+                    $error = 'Código de trabajador incorrecto.';
                 } else {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['nombre'] = $user['nombre'] ?? '';
@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         Contraseña <span class="required">*</span>
         <div class="password-field">
           <input type="password" id="password" name="password" required>
-          <button type="button" class="password-toggle" data-password-toggle="password" aria-label="Mostrar contrasena" aria-pressed="false">
+          <button type="button" class="password-toggle" data-password-toggle="password" aria-label="Mostrar contraseña" aria-pressed="false">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
               <circle cx="12" cy="12" r="3"></circle>
@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </label>
 
       <label for="workerCode">
-        Codigo de trabajador (opcional)
+        Código de trabajador (opcional)
         <input type="text" id="workerCode" name="workerCode" value="<?= htmlspecialchars($_POST['workerCode'] ?? '') ?>">
         <span class="optional-label">Trabajador: ej. TRAB001<br>Administrador: ADMIN</span>
       </label>
@@ -174,7 +174,7 @@ document.querySelectorAll('[data-password-toggle]').forEach((button) => {
 
     const showPassword = input.type === 'password';
     input.type = showPassword ? 'text' : 'password';
-    button.setAttribute('aria-label', showPassword ? 'Ocultar contrasena' : 'Mostrar contrasena');
+    button.setAttribute('aria-label', showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
     button.setAttribute('aria-pressed', showPassword ? 'true' : 'false');
   });
 });

@@ -48,13 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $prioridadesPermitidas = ['baja', 'media', 'alta'];
 
         if ($asunto === '' || $descripcion === '') {
-            $error = 'El asunto y la descripcion son obligatorios.';
+            $error = 'El asunto y la descripción son obligatorios.';
         } elseif (strlen($asunto) > 120) {
             $error = 'El asunto no puede superar 120 caracteres.';
         } elseif (!in_array($categoria, $categoriasPermitidas, true)) {
-            $error = 'La categoria seleccionada no es valida.';
+            $error = 'La categoría seleccionada no es válida.';
         } elseif (!in_array($prioridad, $prioridadesPermitidas, true)) {
-            $error = 'La prioridad seleccionada no es valida.';
+            $error = 'La prioridad seleccionada no es válida.';
         } else {
             try {
                 $stmt = $pdo->prepare("
@@ -148,7 +148,7 @@ if ($display_name === '') {
       <div class="dropdown" id="dropdownMenu">
         <a href="perfil.php">Mi perfil</a>
         <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-        <a href="logout.php">Cerrar sesion</a>
+        <a href="logout.php">Cerrar sesión</a>
       </div>
     </div>
 
@@ -157,7 +157,7 @@ if ($display_name === '') {
     </a>
 
     <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
+      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
         <a href="usuario.php">Inicio</a>
         <a href="carta.php">Ver carta</a>
@@ -187,7 +187,7 @@ if ($display_name === '') {
         <div class="support-hero-copy">
             <span class="support-kicker">Atencion al cliente</span>
             <h1>Gestion de incidencias y tickets</h1>
-            <p>Desde aqui puedes comunicar cualquier problema con tu pedido, tu cuenta o un pago, y al mismo tiempo seguir teniendo a mano tus tickets de compra.</p>
+            <p>Desde aquí puedes comunicar cualquier problema con tu pedido, tu cuenta o un pago, y al mismo tiempo seguir teniendo a mano tus tickets de compra.</p>
         </div>
         <div class="support-summary">
             <article class="support-summary-card">
@@ -209,8 +209,8 @@ if ($display_name === '') {
         <section class="profile-card support-form-card">
             <div class="profile-card-header">
                 <span class="profile-section-kicker">Nueva incidencia</span>
-                <h2>Cuéntanos que ha pasado</h2>
-                <p>Describe el problema con claridad para que podamos ayudarte mas rapido.</p>
+                <h2>Cuéntanos qué ha pasado</h2>
+                <p>Describe el problema con claridad para que podamos ayudarte más rápido.</p>
             </div>
 
             <form method="POST" action="tickets.php" class="support-form">
@@ -223,13 +223,13 @@ if ($display_name === '') {
 
                 <div class="support-form-split">
                     <label for="categoria">
-                        Categoria
+                        Categoría
                         <select id="categoria" name="categoria">
                             <option value="pedido">Pedido</option>
                             <option value="pago">Pago</option>
                             <option value="cuenta">Cuenta</option>
                             <option value="producto">Producto</option>
-                            <option value="tecnico">Tecnico</option>
+                            <option value="tecnico">Técnico</option>
                             <option value="general">General</option>
                         </select>
                     </label>
@@ -245,7 +245,7 @@ if ($display_name === '') {
                 </div>
 
                 <label for="descripcion">
-                    Descripcion <span class="required">*</span>
+                    Descripción <span class="required">*</span>
                     <textarea id="descripcion" name="descripcion" rows="6" required placeholder="Explica la incidencia con el mayor detalle posible"></textarea>
                 </label>
 
@@ -291,7 +291,7 @@ if ($display_name === '') {
         <div class="profile-card-header">
             <span class="profile-section-kicker">Compras</span>
             <h2>Tickets de compra</h2>
-            <p>Aqui sigues teniendo acceso a tus comprobantes de pedido.</p>
+            <p>Aquí sigues teniendo acceso a tus comprobantes de pedido.</p>
         </div>
 
         <?php if (empty($pedidos)): ?>
@@ -315,9 +315,9 @@ if ($display_name === '') {
 <footer>
     <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
     <p class="footer-legal-links">
-        <a href="politica_cookies.php">Politica de Cookies</a>
+        <a href="politica_cookies.php">Política de Cookies</a>
         <span>|</span>
-        <a href="politica_privacidad.php">Politica de Privacidad</a>
+        <a href="politica_privacidad.php">Política de Privacidad</a>
         <span>|</span>
         <a href="aviso_legal.php">Aviso Legal</a>
     </p>
