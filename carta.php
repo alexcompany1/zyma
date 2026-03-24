@@ -156,6 +156,7 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zyma - Carta</title>
+<link rel="icon" type="image/png" href="assets/favicon.png">
 <link rel="stylesheet" href="styles.css?v=20260227-2">
 </head>
 <body>
