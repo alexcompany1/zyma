@@ -5,7 +5,7 @@ if (!headers_sent()) {
 
 /**
  * login.php
- * Inicio de SesiÃ³n.
+ * Inicio de Sesión.
  */
 
 session_start();
@@ -35,10 +35,10 @@ $info = '';
 $supportsBloqueado = usuariosTieneBloqueado($pdo);
 
 if (isset($_GET['reset']) && $_GET['reset'] === '1') {
-    $info = 'Tu ContraseÃ±a se ha actualizado. Ya puedes iniciar SesiÃ³n.';
+    $info = 'Tu Contraseña se ha actualizado. Ya puedes iniciar Sesión.';
 }
 if (isset($_GET['cookie_rejected']) && $_GET['cookie_rejected'] === '1') {
-    $info = 'Para usar tu cuenta en Zyma necesitamos aceptar las cookies tÃ©cnicas. Puedes volver a iniciar sesiÃ³n y configurar tus preferencias.';
+    $info = 'Para usar tu cuenta en Zyma necesitamos aceptar las cookies técnicas. Puedes volver a iniciar sesión y configurar tus preferencias.';
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $workerCode = trim($_POST['workerCode'] ?? '');
 
     if (empty($email) || empty($password)) {
-        $error = 'El email y la ContraseÃ±a son obligatorios.';
+        $error = 'El email y la Contraseña son obligatorios.';
     } else {
         try {
             $sql = "SELECT id, nombre, email, password_hash, worker_code" . ($supportsBloqueado ? ", bloqueado" : ", 0 AS bloqueado") . " FROM usuarios WHERE email = :email";
@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iniciar SesiÃ³n - Zyma</title>
+  <title>Iniciar Sesión - Zyma</title>
   <link rel="stylesheet" href="styles.css?v=20260211-5">
 </head>
 <body>
@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="POST" action="login.php">
-      <h2>Iniciar SesiÃ³n</h2>
+      <h2>Iniciar Sesión</h2>
 
       <label for="email">
         Email <span class="required">*</span>
@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </label>
 
       <label for="password">
-        ContraseÃ±a <span class="required">*</span>
+        Contraseña <span class="required">*</span>
         <div class="password-field">
           <input type="password" id="password" name="password" required>
           <button type="button" class="password-toggle" data-password-toggle="password" aria-label="Mostrar contrasena" aria-pressed="false">
@@ -148,19 +148,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <span class="optional-label">Trabajador: ej. TRAB001<br>Administrador: ADMIN</span>
       </label>
 
-      <button type="submit">Iniciar SesiÃ³n</button>
+      <button type="submit">Iniciar Sesión</button>
     </form>
 
     <div class="center mt-3">
       <a href="registro.php">No tienes cuenta? Registrate</a>
     </div>
     <div class="center mt-2">
-      <a href="forgot_password.php">He olvidado la ContraseÃ±a</a>
+      <a href="forgot_password.php">He olvidado la Contraseña</a>
     </div>
     <div class="center mt-3 footer-legal-links">
-      <a href="politica_cookies.php">PolÃ­tica de Cookies</a>
+      <a href="politica_cookies.php">Política de Cookies</a>
       <span>|</span>
-      <a href="politica_privacidad.php">PolÃ­tica de Privacidad</a>
+      <a href="politica_privacidad.php">Política de Privacidad</a>
       <span>|</span>
       <a href="aviso_legal.php">Aviso Legal</a>
     </div>
