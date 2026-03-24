@@ -258,7 +258,7 @@ try {
       <span class="landing-logo-text">Zyma</span>
     </a>
                 <div class="quick-menu-section">
-            <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
+            <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
             <div class="dropdown quick-dropdown" id="quickDropdown">
                 <a href="usuario.php">Inicio</a>
                 <a href="carta.php">Ver carta</a>
@@ -337,7 +337,7 @@ window.addEventListener('click', e => {
     }
 });
 
-// Auto-refresh para mantener datos al dia sin interrumpir interacciones.
+// Auto-refresh para mantener datos al día sin interrumpir interacciones.
 const AUTO_REFRESH_MS = 800;
 let hasPendingInput = false;
 

@@ -129,7 +129,7 @@ $unread_count = (int)$stmt->fetchColumn();
     </a>
 
         <div class="quick-menu-section">
-        <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
+        <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
         <div class="dropdown quick-dropdown" id="quickDropdown">
           <a href="usuario.php">Inicio</a>
           <a href="carta.php">Ver carta</a>

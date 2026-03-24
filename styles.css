@@ -377,6 +377,74 @@ input[type="number"] {
   font-family: inherit;
 }
 
+.password-field {
+  position: relative;
+  width: 100%;
+}
+
+.password-field input {
+  display: block;
+  width: 100%;
+  padding-right: 3.8rem;
+}
+
+.password-toggle {
+  all: unset;
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  left: auto;
+  transform: translateY(-50%);
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  margin: 0;
+  padding: 0;
+  color: var(--dark-red);
+  cursor: pointer;
+  line-height: 1;
+  z-index: 2;
+}
+
+.password-toggle:hover {
+  transform: translateY(-50%);
+  box-shadow: none;
+  background: transparent;
+}
+
+.password-toggle:focus-visible {
+  border-radius: 999px;
+}
+
+.password-toggle svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.profile-form .password-field > .password-toggle {
+  position: absolute !important;
+  top: 50% !important;
+  right: 1rem !important;
+  left: auto !important;
+  width: 2rem !important;
+  height: 2rem !important;
+  min-width: 2rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: translateY(-50%) !important;
+}
+
 input:focus,
 textarea:focus,
 select:focus {

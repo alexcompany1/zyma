@@ -40,7 +40,7 @@ $is_logged_in = !empty($_SESSION['user_id']);
     <main class="legal-main-card">
       <section class="legal-hero">
         <h1>Política de Cookies</h1>
-        <p>Esta web usa cookies para ofrecer una experiencia mas rapida, util y personalizada para nuestros clientes.</p>
+        <p>Esta web usa cookies para ofrecer una experiencia más rápida, útil y personalizada para nuestros clientes.</p>
       </section>
 
       <section class="legal-section">
@@ -70,7 +70,7 @@ $is_logged_in = !empty($_SESSION['user_id']);
 
       <section class="legal-section">
         <h2>6. Actualizaciones</h2>
-        <p>Podemos actualizar esta politica para reflejar cambios legales o tecnicos. Publicaremos siempre la versión vigente en esta página.</p>
+        <p>Podemos actualizar esta política para reflejar cambios legales o técnicos. Publicaremos siempre la versión vigente en esta página.</p>
       </section>
     </main>
 

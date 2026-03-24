@@ -20,14 +20,14 @@ function usuariosTieneBloqueado(PDO $pdo): bool
 
 function prepararConsentimientoCookiesSesion(PDO $pdo, int $userId): void
 {
-  $consent = getCookieConsentByUser($pdo, $userId);
-  $_SESSION['cookie_preferences'] = [
-    'analytics' => (int)($consent['analytics'] ?? 0) === 1,
-    'marketing' => (int)($consent['marketing'] ?? 0) === 1,
-    'policy_version' => $consent['policy_version'] ?? null,
-    'estado' => $consent['estado'] ?? null,
-  ];
-  $_SESSION['show_cookie_popup'] = shouldShowCookiePopup($pdo, $userId);
+    $consent = getCookieConsentByUser($pdo, $userId);
+    $_SESSION['cookie_preferences'] = [
+        'analytics' => (int)($consent['analytics'] ?? 0) === 1,
+        'marketing' => (int)($consent['marketing'] ?? 0) === 1,
+        'policy_version' => $consent['policy_version'] ?? null,
+        'estado' => $consent['estado'] ?? null,
+    ];
+    $_SESSION['show_cookie_popup'] = shouldShowCookiePopup($pdo, $userId);
 }
 
 $error = '';
@@ -38,7 +38,7 @@ if (isset($_GET['reset']) && $_GET['reset'] === '1') {
     $info = 'Tu Contraseña se ha actualizado. Ya puedes iniciar Sesión.';
 }
 if (isset($_GET['cookie_rejected']) && $_GET['cookie_rejected'] === '1') {
-  $info = 'Para usar tu cuenta en Zyma necesitamos aceptar las cookies técnicas. Puedes volver a iniciar sesión y configurar tus preferencias.';
+    $info = 'Para usar tu cuenta en Zyma necesitamos aceptar las cookies técnicas. Puedes volver a iniciar sesión y configurar tus preferencias.';
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $credencialesOk = $user && password_verify($password, $user['password_hash']);
 
             if ($credencialesOk && (int) ($user['bloqueado'] ?? 0) === 1) {
-                $error = 'Tu cuenta esta bloqueada. Contacta con administracion.';
+                $error = 'Tu cuenta está bloqueada. Contacta con administración.';
             } elseif ($credencialesOk) {
                 if (!empty($workerCode)) {
                     if (!empty($user['worker_code']) && hash_equals($user['worker_code'], $workerCode)) {
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         header('Location: trabajador.php');
                         exit;
                     }
-                    $error = 'Codigo de trabajador incorrecto.';
+                    $error = 'Código de trabajador incorrecto.';
                 } else {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['nombre'] = $user['nombre'] ?? '';
@@ -132,11 +132,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       <label for="password">
         Contraseña <span class="required">*</span>
-        <input type="password" id="password" name="password" required>
+        <div class="password-field">
+          <input type="password" id="password" name="password" required>
+          <button type="button" class="password-toggle" data-password-toggle="password" aria-label="Mostrar contraseña" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
       </label>
 
       <label for="workerCode">
-        Codigo de trabajador (opcional)
+        Código de trabajador (opcional)
         <input type="text" id="workerCode" name="workerCode" value="<?= htmlspecialchars($_POST['workerCode'] ?? '') ?>">
         <span class="optional-label">Trabajador: ej. TRAB001<br>Administrador: ADMIN</span>
       </label>
@@ -159,6 +167,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </div>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script>
+document.querySelectorAll('[data-password-toggle]').forEach((button) => {
+  button.addEventListener('click', () => {
+    const input = document.getElementById(button.dataset.passwordToggle);
+    if (!input) return;
+
+    const showPassword = input.type === 'password';
+    input.type = showPassword ? 'text' : 'password';
+    button.setAttribute('aria-label', showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
+    button.setAttribute('aria-pressed', showPassword ? 'true' : 'false');
+  });
+});
+</script>
 </body>
 </html>
-

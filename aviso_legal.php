@@ -40,7 +40,7 @@ $is_logged_in = !empty($_SESSION['user_id']);
     <main class="legal-main-card">
       <section class="legal-hero">
         <h1>Aviso Legal</h1>
-        <p>Informacion legal sobre el uso de la web de Zyma y las condiciones de acceso a nuestros servicios digitales.</p>
+        <p>Información legal sobre el uso de la web de Zyma y las condiciones de acceso a nuestros servicios digitales.</p>
       </section>
 
       <section class="legal-section">
@@ -50,7 +50,7 @@ $is_logged_in = !empty($_SESSION['user_id']);
 
       <section class="legal-section">
         <h2>2. Condiciones de uso</h2>
-        <p>El acceso y uso de esta web implica la aceptación de este aviso legal y del resto de politicas publicadas.</p>
+        <p>El acceso y uso de esta web implica la aceptación de este aviso legal y del resto de políticas publicadas.</p>
       </section>
 
       <section class="legal-section">
@@ -65,7 +65,7 @@ $is_logged_in = !empty($_SESSION['user_id']);
 
       <section class="legal-section">
         <h2>5. Enlaces externos</h2>
-        <p>La web puede contener enlaces a terceros. Zyma no controla ni asume responsabilidad sobre su contenido o politicas.</p>
+        <p>La web puede contener enlaces a terceros. Zyma no controla ni asume responsabilidad sobre su contenido o políticas.</p>
       </section>
 
       <section class="legal-section">

@@ -124,7 +124,7 @@ try {
       <div class="dropdown" id="dropdownMenu">
         <a href="perfil.php">Mi perfil</a>
         <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-        <a href="logout.php">Cerrar sesion</a>
+        <a href="logout.php">Cerrar sesión</a>
       </div>
     </div>
 
@@ -133,7 +133,7 @@ try {
     </a>
 
     <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
+      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
         <a href="usuario.php">Inicio</a>
         <a href="carta.php">Ver carta</a>
@@ -162,7 +162,7 @@ try {
           <span class="user-home-greeting-name"><?= htmlspecialchars($first_name) ?></span>
         </h1>
       </div>
-      <p>Descubre una experiencia mas cuidada, con acceso rapido a la carta, valoraciones reales y un panel mucho mas limpio para moverte por la web.</p>
+      <p>Descubre una experiencia más cuidada, con acceso rápido a la carta, valoraciones reales y un panel mucho más limpio para moverte por la web.</p>
 
       <div class="user-home-actions">
         <a href="carta.php" class="btn-cart">Ver la carta</a>
@@ -183,13 +183,13 @@ try {
         </article>
         <article class="user-stat-card">
           <strong><?= $stats['promedio'] > 0 ? number_format($stats['promedio'], 1) : '5.0' ?></strong>
-          <span>media de satisfaccion</span>
+          <span>media de satisfacción</span>
         </article>
       </div>
     </div>
 
     <aside class="user-home-spotlight">
-      <span class="user-home-card-kicker">Acceso rapido</span>
+      <span class="user-home-card-kicker">Acceso rápido</span>
       <h2>Todo lo importante en un vistazo</h2>
       <ul class="user-home-shortcuts">
         <?php if ($starProduct): ?>
@@ -202,7 +202,7 @@ try {
       </ul>
       <div class="user-home-note">
         <strong>Consejo</strong>
-        <p>Empieza por la carta para descubrir los productos mejor valorados y anadirlos al carrito en pocos pasos.</p>
+        <p>Empieza por la carta para descubrir los productos mejor valorados y añadirlos al carrito en pocos pasos.</p>
       </div>
     </aside>
   </section>
@@ -228,7 +228,7 @@ try {
     <a class="user-link-card" href="tickets.php">
       <span class="user-link-tag">Soporte</span>
       <h3>Gestiona dudas o incidencias</h3>
-      <p>Accede a tus tickets y mantente al dia con las respuestas.</p>
+      <p>Accede a tus tickets y mantente al día con las respuestas.</p>
     </a>
   </section>
 
@@ -257,7 +257,7 @@ try {
                 <h3><?= htmlspecialchars($product['nombre']) ?></h3>
                 <span class="user-featured-price"><?= number_format((float) $product['precio'], 2, ',', '.') ?> EUR</span>
               </div>
-              <p><?= htmlspecialchars($product['descripcion'] ?: 'Producto destacado de la casa con preparacion cuidada y sabor potente.') ?></p>
+              <p><?= htmlspecialchars($product['descripcion'] ?: 'Producto destacado de la casa con preparación cuidada y sabor potente.') ?></p>
               <div class="user-featured-meta">
                 <span><?= number_format((float) ($product['promedio'] ?? 0), 1) ?> / 5</span>
                 <span><?= (int) ($product['total_valoraciones'] ?? 0) ?> valoraciones</span>
@@ -302,9 +302,9 @@ try {
 <footer>
   <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php">Politica de Cookies</a>
+    <a href="politica_cookies.php">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php">Politica de Privacidad</a>
+    <a href="politica_privacidad.php">Política de Privacidad</a>
     <span>|</span>
     <a href="aviso_legal.php">Aviso Legal</a>
   </p>

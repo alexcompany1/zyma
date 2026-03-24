@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pagar_online'])) {
                     throw new Exception('Número de tarjeta inválido.');
                 }
                 if (!preg_match('/^\d{2}\/\d{2}$/', $caducidad)) {
-                    throw new Exception('Fecha de caducidad invalida.');
+                    throw new Exception('Fecha de caducidad inválida.');
                 }
                 if (strlen($cvv) < 3 || strlen($cvv) > 4) {
                     throw new Exception('CVV inválido.');
@@ -146,7 +146,7 @@ if ($display_name === '') {
     </a>
 
         <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
+      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
         <a href="usuario.php">Inicio</a>
         <a href="carta.php">Ver carta</a>
