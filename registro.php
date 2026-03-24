@@ -1,14 +1,14 @@
 <?php
 /**
- * PÃ¡gina de registro de nuevos usuarios
+ * Página de registro de nuevos usuarios
  *
  * Permite crear nuevas cuentas en el sistema.
  * Valida el formato del email y la unicidad del mismo.
- * Requiere confirmaciÃ³n de contraseÃ±a.
- * Muestra un popup de confirmaciÃ³n antes de redirigir al login.
+ * Requiere confirmación de contraseña.
+ * Muestra un popup de confirmación antes de redirigir al login.
  *
  * @author Equipo Zyma
- * @versiÃ³n 1.0
+ * @versión 1.0
  */
 
 require_once 'config.php';
@@ -23,19 +23,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $workerCode = trim($_POST['workerCode'] ?? '');
 
     if (empty($email) || empty($password) || empty($confirmPassword)) {
-        $error = "El email y ambas contraseÃ±as son obligatorios.";
+        $error = "El email y ambas contraseñas son obligatorios.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = "Formato de email invÃ¡lido.";
+        $error = "Formato de email inválido.";
     } elseif ($password !== $confirmPassword) {
-        $error = "Las contraseÃ±as no coinciden.";
+        $error = "Las contraseñas no coinciden.";
     } elseif (strlen($password) < 6) {
-        $error = "La contraseÃ±a debe tener al menos 6 caracteres.";
+        $error = "La contraseña debe tener al menos 6 caracteres.";
     } else {
         try {
             $stmt = $pdo->prepare("SELECT id FROM usuarios WHERE email = :email");
             $stmt->execute(['email' => $email]);
             if ($stmt->fetch()) {
-                $error = "Este email ya estÃ¡ registrado.";
+                $error = "Este email ya está registrado.";
             } else {
                 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
                 $stmt = $pdo->prepare("INSERT INTO usuarios (email, password_hash, worker_code) VALUES (:email, :password, :workerCode)");
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
         } catch (Exception $e) {
-            $error = "Error al registrar. IntÃ©ntalo mÃ¡s tarde.";
+            $error = "Error al registrar. Inténtalo más tarde.";
         }
     }
 }
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </label>
 
       <label for="password">
-        ContraseÃ±a <span class="required">*</span>
+        Contraseña <span class="required">*</span>
         <div class="password-field">
           <input type="password" id="password" name="password" required minlength="6">
           <button type="button" class="password-toggle" data-password-toggle="password" aria-label="Mostrar contrasena" aria-pressed="false">
@@ -100,11 +100,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </svg>
           </button>
         </div>
-        <span class="optional-label">MÃ­nimo 6 caracteres.</span>
+        <span class="optional-label">Mínimo 6 caracteres.</span>
       </label>
 
       <label for="confirmPassword">
-        Confirmar contraseÃ±a <span class="required">*</span>
+        Confirmar contraseña <span class="required">*</span>
         <div class="password-field">
           <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
           <button type="button" class="password-toggle" data-password-toggle="confirmPassword" aria-label="Mostrar contrasena" aria-pressed="false">
@@ -114,20 +114,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </svg>
           </button>
         </div>
-        <span class="optional-label">Repite tu contraseÃ±a para confirmar.</span>
+        <span class="optional-label">Repite tu contraseña para confirmar.</span>
       </label>
 
       <label for="workerCode">
-        CÃ³digo de trabajador (opcional)
+        Código de trabajador (opcional)
         <input type="text" id="workerCode" name="workerCode" value="<?= htmlspecialchars($_POST['workerCode'] ?? '') ?>">
-        <span class="optional-label">Si lo tienes, accederÃ¡s a funciones especiales.</span>
+        <span class="optional-label">Si lo tienes, accederás a funciones especiales.</span>
       </label>
 
       <button type="submit">Registrarse</button>
     </form>
 
     <div style="text-align: center; margin-top: 1.8rem;">
-      <a href="login.php">Â¿Ya tienes cuenta? Inicia sesiÃ³n</a>
+      <a href="login.php">¿Ya tienes cuenta? Inicia sesión</a>
     </div>
   </div>
 
@@ -163,9 +163,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       popup.innerHTML = `
         <div style="width: 80px; height: 80px; background: #EECF6D; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 1.5rem; box-shadow: 0 8px 20px rgba(238, 207, 109, 0.4);">
-          <span style="font-size: 2.5rem; color: #45050C;">âœ“</span>
+          <span style="font-size: 2.5rem; color: #45050C;">✓</span>
         </div>
-        <h2 style="color: #45050C; margin-bottom: 1rem; font-size: 1.8rem;">Â¡Registro exitoso!</h2>
+        <h2 style="color: #45050C; margin-bottom: 1rem; font-size: 1.8rem;">¡Registro exitoso!</h2>
         <p style="color: #555; margin-bottom: 1.5rem; font-size: 1.1rem;">
           Tu cuenta ha sido creada correctamente.<br>
           <strong><?= htmlspecialchars($_SESSION['registered_email']) ?></strong>
@@ -232,9 +232,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <footer>
     <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
     <p class="footer-legal-links">
-      <a href="politica_cookies.php">PolÃ­tica de Cookies</a>
+      <a href="politica_cookies.php">Política de Cookies</a>
       <span>|</span>
-      <a href="politica_privacidad.php">PolÃ­tica de Privacidad</a>
+      <a href="politica_privacidad.php">Política de Privacidad</a>
       <span>|</span>
       <a href="aviso_legal.php">Aviso Legal</a>
     </p>
