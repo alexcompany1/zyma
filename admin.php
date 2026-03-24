@@ -312,6 +312,7 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>Panel de Administracion</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="styles.css?v=20260317-1">
 </head>
 <body>
