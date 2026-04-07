@@ -3,11 +3,9 @@ if (!headers_sent()) {
     header('Content-Type: text/html; charset=UTF-8');
 }
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
 require_once 'config.php';
+require_once 'auth.php';
+zymaRequireRole('client');
 
 $pedido_id = $_GET['id'] ?? null;
 if (!$pedido_id) {
@@ -202,4 +200,3 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
 <script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
 </html>
-

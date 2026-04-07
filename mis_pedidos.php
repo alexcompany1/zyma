@@ -11,11 +11,8 @@ if (!headers_sent()) {
 
 session_start();
 require_once 'config.php';
-
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
+require_once 'auth.php';
+zymaRequireRole('client');
 
 // Cancelar pedido
 if (isset($_GET['cancelar']) && isset($_GET['id'])) {
@@ -186,4 +183,3 @@ setInterval(() => {
   </p></footer>
 </body>
 </html>
-

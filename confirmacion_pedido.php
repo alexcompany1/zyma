@@ -10,10 +10,8 @@ if (!headers_sent()) {
  */
 
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
+require_once 'auth.php';
+zymaRequireRole('client');
 
 require_once 'config.php'; // Conexión PDO
 
@@ -182,5 +180,4 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
 <script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
 </html>
-
 

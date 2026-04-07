@@ -1,14 +1,17 @@
 <?php
 /**
  * header.php
- * Cabecera unificada para paginas con Sesión.
+ * Cabecera unificada para páginas con sesión.
  */
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$is_logged_in = !empty($_SESSION['user_id']);
+require_once 'auth.php';
+
+$current_role = zymaCurrentRole();
+$is_logged_in = $current_role !== 'guest';
 $display_name = '';
 if ($is_logged_in) {
     $display_name = trim($_SESSION['nombre'] ?? '');
@@ -17,10 +20,34 @@ if ($is_logged_in) {
     }
 }
 
-$show_cart = $show_cart ?? true;
-$show_notif = $show_notif ?? false;
-$home_link = $home_link ?? 'usuario.php';
+$show_cart = $show_cart ?? ($current_role === 'client');
+$show_notif = $show_notif ?? ($current_role === 'client');
+$home_link = $home_link ?? zymaHomeForRole($current_role);
 $cart_count = count($_SESSION['cart'] ?? []);
+
+$quick_links = [];
+if ($current_role === 'client') {
+    $quick_links = [
+        ['href' => 'usuario.php', 'label' => 'Inicio'],
+        ['href' => 'carta.php', 'label' => 'Ver carta'],
+        ['href' => 'valoraciones.php', 'label' => 'Valoraciones'],
+        ['href' => 'incidencias.php', 'label' => 'Incidencias'],
+        ['href' => 'tickets.php', 'label' => 'Tickets de compra'],
+    ];
+} elseif ($current_role === 'worker') {
+    $quick_links = [
+        ['href' => 'trabajador.php', 'label' => 'Panel'],
+        ['href' => 'gestionar_pedidos.php', 'label' => 'Pedidos'],
+        ['href' => 'editar_carta.php', 'label' => 'Editar carta'],
+        ['href' => 'estadisticas.php', 'label' => 'Estadísticas'],
+        ['href' => 'perfil.php', 'label' => 'Mi perfil'],
+    ];
+} elseif ($current_role === 'admin') {
+    $quick_links = [
+        ['href' => 'admin.php', 'label' => 'Panel admin'],
+        ['href' => 'perfil.php', 'label' => 'Mi perfil'],
+    ];
+}
 
 $unread_notifications = null;
 if ($show_notif && $is_logged_in) {
@@ -28,7 +55,7 @@ if ($show_notif && $is_logged_in) {
         require_once 'config.php';
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM notificaciones WHERE id_usuario = :id_usuario AND leida = 0");
         $stmt->execute([':id_usuario' => $_SESSION['user_id'] ?? 0]);
-        $unread_notifications = (int)$stmt->fetchColumn();
+        $unread_notifications = (int) $stmt->fetchColumn();
     } catch (Exception $e) {
         $unread_notifications = 0;
     }
@@ -48,7 +75,7 @@ if ($show_notif && $is_logged_in) {
         <div class="dropdown" id="dropdownMenu">
           <a href="perfil.php">Mi perfil</a>
           <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-          <a href="logout.php">Cerrar Sesión</a>
+          <a href="logout.php">Cerrar sesión</a>
         </div>
       </div>
     <?php endif; ?>
@@ -63,15 +90,13 @@ if ($show_notif && $is_logged_in) {
         <a href="registro.php" class="landing-cta">Crear cuenta</a>
       <?php endif; ?>
 
-      <?php if ($is_logged_in): ?>
+      <?php if ($is_logged_in && $quick_links): ?>
         <div class="quick-menu-section">
           <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
           <div class="dropdown quick-dropdown" id="quickDropdown">
-            <a href="usuario.php">Inicio</a>
-            <a href="carta.php">Ver carta</a>
-            <a href="valoraciones.php">Valoraciones</a>
-            <a href="incidencias.php">Incidencias</a>
-            <a href="tickets.php">Tickets de compra</a>
+            <?php foreach ($quick_links as $quick_link): ?>
+              <a href="<?= htmlspecialchars($quick_link['href']) ?>"><?= htmlspecialchars($quick_link['label']) ?></a>
+            <?php endforeach; ?>
           </div>
         </div>
       <?php endif; ?>
@@ -113,4 +138,3 @@ if ($show_notif && $is_logged_in) {
     }
   });
 </script>
-

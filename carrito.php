@@ -10,11 +10,8 @@ if (!headers_sent()) {
 
 require_once 'config.php';
 session_start();
-
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
+require_once 'auth.php';
+zymaRequireRole('client');
 
 $products = [
     ['id' => 1, 'name' => 'Nachos con Queso', 'price' => 6.00, 'image' => 'assets/nachos.png'],

@@ -5,6 +5,7 @@ if (!headers_sent()) {
 
 require_once 'config.php';
 session_start();
+require_once 'auth.php';
 
 $guestMode = false;
 if (!isset($_SESSION['user_id'])) {
@@ -20,6 +21,10 @@ if (!isset($_SESSION['user_id'])) {
     }
 } else {
     unset($_SESSION['guest_mode']);
+
+    if (zymaCurrentRole() !== 'client') {
+        zymaRedirectToHomeForCurrentRole();
+    }
 }
 
 $selectedProductId = isset($_GET['producto']) ? (int) $_GET['producto'] : 0;
@@ -337,4 +342,3 @@ if (toast) {
   </p></footer>
 </body>
 </html>
-

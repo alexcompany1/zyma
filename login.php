@@ -10,7 +10,12 @@ if (!headers_sent()) {
 
 session_start();
 require_once 'config.php';
+require_once 'auth.php';
 require_once 'cookie_consent_helper.php';
+
+if (zymaIsLoggedIn()) {
+    zymaRedirectToHomeForCurrentRole();
+}
 
 function usuariosTieneBloqueado(PDO $pdo): bool
 {
@@ -60,29 +65,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($credencialesOk && (int) ($user['bloqueado'] ?? 0) === 1) {
                 $error = 'Tu cuenta está bloqueada. Contacta con administración.';
             } elseif ($credencialesOk) {
-                if (!empty($workerCode)) {
-                    if (!empty($user['worker_code']) && hash_equals($user['worker_code'], $workerCode)) {
-                        $_SESSION['user_id'] = $user['id'];
-                        $_SESSION['nombre'] = $user['nombre'] ?? '';
-                        $_SESSION['email'] = $user['email'];
-                        $_SESSION['worker_code'] = $user['worker_code'];
+                $accountRole = zymaRoleFromWorkerCode($user['worker_code'] ?? null);
+
+                if ($accountRole === 'admin') {
+                    if (empty($workerCode) || !hash_equals((string) $user['worker_code'], $workerCode)) {
+                        $error = 'Introduce el código de administrador correcto para acceder a este panel.';
+                    } else {
+                        zymaSetAuthenticatedUser($user, 'admin');
                         prepararConsentimientoCookiesSesion($pdo, (int)$user['id']);
-                        if ($user['worker_code'] === 'ADMIN') {
-                            header('Location: admin.php');
-                            exit;
-                        }
-                        header('Location: trabajador.php');
-                        exit;
+                        zymaRedirect(zymaHomeForRole('admin'));
                     }
-                    $error = 'Código de trabajador incorrecto.';
+                } elseif ($accountRole === 'worker') {
+                    if (empty($workerCode)) {
+                        $error = 'Introduce tu código de trabajador para acceder a tu panel.';
+                    } elseif (!hash_equals((string) $user['worker_code'], $workerCode)) {
+                        $error = 'Código de trabajador incorrecto.';
+                    } else {
+                        zymaSetAuthenticatedUser($user, 'worker');
+                        prepararConsentimientoCookiesSesion($pdo, (int)$user['id']);
+                        zymaRedirect(zymaHomeForRole('worker'));
+                    }
                 } else {
-                    $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['nombre'] = $user['nombre'] ?? '';
-                    $_SESSION['email'] = $user['email'];
-                    $_SESSION['worker_code'] = $user['worker_code'];
-                    prepararConsentimientoCookiesSesion($pdo, (int)$user['id']);
-                    header('Location: usuario.php');
-                    exit;
+                    if (!empty($workerCode)) {
+                        $error = 'Esta cuenta no tiene acceso de trabajador.';
+                    } else {
+                        zymaSetAuthenticatedUser($user, 'client');
+                        prepararConsentimientoCookiesSesion($pdo, (int)$user['id']);
+                        zymaRedirect(zymaHomeForRole('client'));
+                    }
                 }
             } else {
                 $error = 'Credenciales incorrectas.';

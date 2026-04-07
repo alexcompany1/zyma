@@ -11,11 +11,8 @@ if (!headers_sent()) {
 
 session_start();
 require_once 'config.php';
-
-// Validar acceso trabajador
-if (!isset($_SESSION['user_id']) || !$_SESSION['worker_code']) {
-    die("<h2 class='page-error'>Acceso denegado. Solo trabajadores.</h2>");
-}
+require_once 'auth.php';
+zymaRequireRole('worker');
 
 // Cargar ingredientes
 try {
@@ -187,5 +184,4 @@ setInterval(() => {
   </p></footer>
 </body>
 </html>
-
 

@@ -11,6 +11,8 @@ if (!headers_sent()) {
 
 session_start();
 require_once 'config.php';
+require_once 'auth.php';
+zymaRequireRole('admin');
 
 function hasTableColumn(PDO $pdo, string $table, string $column): bool
 {
@@ -160,10 +162,6 @@ function deleteUserCascade(PDO $pdo, int $userId): bool
         }
         throw $e;
     }
-}
-
-if (!isset($_SESSION['user_id']) || ($_SESSION['worker_code'] ?? '') !== 'ADMIN') {
-    die("<h2 class='page-error'>Acceso denegado. Solo administradores.</h2>");
 }
 
 $show_cookie_popup = !empty($_SESSION['show_cookie_popup']);
@@ -493,4 +491,3 @@ if (profileBtn && dropdownMenu) {
 <script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
 </html>
-

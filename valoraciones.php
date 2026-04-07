@@ -11,6 +11,11 @@ if (!headers_sent()) {
 
 session_start();
 require_once 'config.php';
+require_once 'auth.php';
+
+if (zymaIsLoggedIn() && zymaCurrentRole() !== 'client') {
+    zymaRedirectToHomeForCurrentRole();
+}
 
 // Verificar y crear tabla de valoraciones si no existe
 try {
@@ -748,4 +753,3 @@ if ($is_logged_in) {
 
 </body>
 </html>
-

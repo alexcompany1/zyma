@@ -10,6 +10,8 @@ if (!headers_sent()) {
  */
 
 session_start();
+require_once 'auth.php';
+zymaRequireRole('client');
 
 if (!isset($_SESSION['mensaje_pedido'])) {
     header('Location: carrito.php');
@@ -113,4 +115,3 @@ window.addEventListener('click', e => {
   </p></footer>
 </body>
 </html>
-

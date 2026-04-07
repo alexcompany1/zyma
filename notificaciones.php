@@ -10,12 +10,9 @@ if (!headers_sent()) {
  */
 
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
-
 require_once 'config.php';
+require_once 'auth.php';
+zymaRequireRole('client');
 
 $alert = '';
 $user_id = (int)$_SESSION['user_id'];
@@ -219,4 +216,3 @@ setInterval(() => {
 <script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
 </html>
-
