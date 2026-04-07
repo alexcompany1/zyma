@@ -189,9 +189,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add'])) {
     } elseif (!in_array($role, ['cliente', 'trabajador', 'admin'], true)) {
         $msg = "<div class='alert alert-error'>Rol inválido.</div>";
     } elseif ($workerCodeInput !== '' && !isValidWorkerCode($workerCodeInput)) {
-        $msg = "<div class='alert alert-error'>Codigo trabajador inválido. Usa 3-32 caracteres A-Z, 0-9, _ o -.</div>";
+        $msg = "<div class='alert alert-error'>Código de trabajador inválido. Usa 3-32 caracteres A-Z, 0-9, _ o -.</div>";
     } elseif ($workerCodeInput !== '' && workerCodeExists($pdo, $workerCodeInput)) {
-        $msg = "<div class='alert alert-error'>Ese codigo de trabajador ya esta en uso.</div>";
+        $msg = "<div class='alert alert-error'>Ese código de trabajador ya está en uso.</div>";
     } else {
         try {
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
@@ -220,7 +220,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add'])) {
                     ':worker_code' => $generatedCode,
                     ':id' => $newUserId
                 ]);
-                $msg = "<div class='alert alert-success'>Usuario creado correctamente. Codigo trabajador: " . htmlspecialchars($generatedCode) . ".</div>";
+                $msg = "<div class='alert alert-success'>Usuario creado correctamente. Código de trabajador: " . htmlspecialchars($generatedCode) . ".</div>";
             } else {
                 $msg = "<div class='alert alert-success'>Usuario creado correctamente.</div>";
             }
@@ -239,7 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $targetId = filter_input(INPUT_POST, 'user_id', FILTER_VALIDATE_INT);
 
     if (!in_array($action, ['delete', 'role', 'toggle_block'], true)) {
-        $msg = "<div class='alert alert-error'>Accion invalida.</div>";
+        $msg = "<div class='alert alert-error'>Acción inválida.</div>";
     } elseif (!$targetId) {
         $msg = "<div class='alert alert-error'>ID inválido.</div>";
     } elseif ($targetId === (int)$_SESSION['user_id']) {
@@ -268,9 +268,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 } else {
                     $customCode = trim($_POST['new_worker_code'] ?? '');
                     if ($newRole === 'trabajador' && $customCode !== '' && !isValidWorkerCode($customCode)) {
-                        $msg = "<div class='alert alert-error'>Codigo trabajador inválido. Usa 3-32 caracteres A-Z, 0-9, _ o -.</div>";
+                        $msg = "<div class='alert alert-error'>Código de trabajador inválido. Usa 3-32 caracteres A-Z, 0-9, _ o -.</div>";
                     } elseif ($customCode !== '' && workerCodeExists($pdo, $customCode, (int)$targetId)) {
-                        $msg = "<div class='alert alert-error'>Ese codigo de trabajador ya esta en uso.</div>";
+                        $msg = "<div class='alert alert-error'>Ese código de trabajador ya está en uso.</div>";
                     } else {
                         $newWorkerCode = workerCodeFromRole($newRole, (int)$targetId, $customCode !== '' ? $customCode : null);
                         if ($newRole === 'trabajador' && $customCode === '') {
@@ -312,6 +312,7 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>Panel de Administracion</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="styles.css?v=20260317-1">
 </head>
 <body>
@@ -342,12 +343,13 @@ if ($display_name === '') {
     </a>
 
                 <div class="quick-menu-section">
-            <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
+            <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
             <div class="dropdown quick-dropdown" id="quickDropdown">
                 <a href="usuario.php">Inicio</a>
                 <a href="carta.php">Ver carta</a>
                 <a href="valoraciones.php">Valoraciones</a>
-                <a href="tickets.php">Tickets</a>
+                <a href="incidencias.php">Incidencias</a>
+                <a href="tickets.php">Tickets de compra</a>
             </div>
         </div>
     <div class="cart-section">
@@ -378,7 +380,7 @@ if ($display_name === '') {
                 <option value="trabajador">Trabajador</option>
                 <option value="admin">Admin</option>
             </select>
-            <input type="text" name="worker_code" placeholder="Codigo trabajador (opcional)">
+            <input type="text" name="worker_code" placeholder="Código de trabajador (opcional)">
             <button type="submit" name="add">Crear usuario</button>
         </form>
     </div>
@@ -393,7 +395,7 @@ if ($display_name === '') {
                         <th>Nombre</th>
                         <th>Email</th>
                         <th>Rol</th>
-                        <th>Codigo</th>
+                        <th>Código</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
@@ -428,7 +430,7 @@ if ($display_name === '') {
                                                 <option value="trabajador" <?= $rol === 'trabajador' ? 'selected' : '' ?>>Trabajador</option>
                                                 <option value="admin" <?= $rol === 'admin' ? 'selected' : '' ?>>Admin</option>
                                             </select>
-                                            <input type="text" name="new_worker_code" placeholder="Codigo opcional">
+                                            <input type="text" name="new_worker_code" placeholder="Código opcional">
                                             <button type="submit">Guardar rol</button>
                                         </form>
 

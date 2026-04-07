@@ -41,6 +41,7 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ticket #<?= htmlspecialchars($pedido_num) ?> - Zyma</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="styles.css?v=20260211-5">
     <style>
         .ticket-box{max-width:720px;margin:16px auto;padding:20px;border-radius:8px;background:#fff;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
@@ -79,12 +80,13 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
     </a>
 
         <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
+      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
         <a href="usuario.php">Inicio</a>
         <a href="carta.php">Ver carta</a>
         <a href="valoraciones.php">Valoraciones</a>
-        <a href="tickets.php">Tickets</a>
+        <a href="incidencias.php">Incidencias</a>
+        <a href="tickets.php">Tickets de compra</a>
       </div>
     </div>
     <div class="cart-section">

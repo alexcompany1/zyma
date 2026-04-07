@@ -15,6 +15,7 @@ $is_logged_in = !empty($_SESSION['user_id']);
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Política de Privacidad - Zyma</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="stylesheet" href="styles.css?v=20260317-1">
 </head>
 <body>
@@ -64,7 +65,7 @@ $is_logged_in = !empty($_SESSION['user_id']);
 
       <section class="legal-section">
         <h2>5. Conservacion de datos</h2>
-        <p>Conservamos la informacion durante el tiempo necesario para la finalidad indicada y los plazos legales exigibles.</p>
+        <p>Conservamos la información durante el tiempo necesario para la finalidad indicada y los plazos legales exigibles.</p>
       </section>
 
       <section class="legal-section">
@@ -79,12 +80,12 @@ $is_logged_in = !empty($_SESSION['user_id']);
 
       <section class="legal-section">
         <h2>8. Seguridad</h2>
-        <p>Aplicamos medidas técnicas y organizativas para proteger la informacion y evitar accesos no autorizados.</p>
+        <p>Aplicamos medidas técnicas y organizativas para proteger la información y evitar accesos no autorizados.</p>
       </section>
 
       <section class="legal-section">
         <h2>9. Contacto de privacidad</h2>
-        <p>Si tienes dudas sobre esta politica, puedes contactar con nuestro equipo en privacidad@zyma.com.</p>
+        <p>Si tienes dudas sobre esta política, puedes contactar con nuestro equipo en privacidad@zyma.com.</p>
       </section>
     </main>
 

@@ -1,12 +1,12 @@
 <?php
 /**
  * Página de registro de nuevos usuarios
- * 
+ *
  * Permite crear nuevas cuentas en el sistema.
  * Valida el formato del email y la unicidad del mismo.
  * Requiere confirmación de contraseña.
  * Muestra un popup de confirmación antes de redirigir al login.
- * 
+ *
  * @author Equipo Zyma
  * @versión 1.0
  */
@@ -45,7 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'workerCode' => $workerCode ?: null
                 ]);
 
-                // Guardar email en sesión para mostrar en el popup
                 $_SESSION['registered_email'] = $email;
                 header("Location: registro.php?success=1");
                 exit;
@@ -63,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registrarse - Zyma</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png">>
   <link rel="stylesheet" href="styles.css?v=20260211-5">
 </head>
 <body>
@@ -87,26 +87,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       <label for="email">
         Email <span class="required">*</span>
-        <input type="email" id="email" name="email" required 
-               value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
+        <input type="email" id="email" name="email" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
       </label>
 
       <label for="password">
         Contraseña <span class="required">*</span>
-        <input type="password" id="password" name="password" required minlength="6">
+        <div class="password-field">
+          <input type="password" id="password" name="password" required minlength="6">
+          <button type="button" class="password-toggle" data-password-toggle="password" aria-label="Mostrar contraseña" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
         <span class="optional-label">Mínimo 6 caracteres.</span>
       </label>
 
       <label for="confirmPassword">
         Confirmar contraseña <span class="required">*</span>
-        <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
+        <div class="password-field">
+          <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
+          <button type="button" class="password-toggle" data-password-toggle="confirmPassword" aria-label="Mostrar contraseña" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
         <span class="optional-label">Repite tu contraseña para confirmar.</span>
       </label>
 
       <label for="workerCode">
         Código de trabajador (opcional)
-        <input type="text" id="workerCode" name="workerCode" 
-               value="<?= htmlspecialchars($_POST['workerCode'] ?? '') ?>">
+        <input type="text" id="workerCode" name="workerCode" value="<?= htmlspecialchars($_POST['workerCode'] ?? '') ?>">
         <span class="optional-label">Si lo tienes, accederás a funciones especiales.</span>
       </label>
 
@@ -120,9 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <?php if (isset($_GET['success']) && $_GET['success'] == 1 && isset($_SESSION['registered_email'])): ?>
   <script>
-    // Mostrar popup de éxito con animación
     document.addEventListener('DOMContentLoaded', function() {
-      // Crear overlay oscuro
       const overlay = document.createElement('div');
       overlay.style.cssText = `
         position: fixed;
@@ -137,8 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         z-index: 9999;
         animation: fadeIn 0.4s ease;
       `;
-      
-      // Crear contenedor del popup
+
       const popup = document.createElement('div');
       popup.style.cssText = `
         background: white;
@@ -150,8 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
         animation: scaleUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       `;
-      
-      // Contenido del popup
+
       popup.innerHTML = `
         <div style="width: 80px; height: 80px; background: #EECF6D; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 1.5rem; box-shadow: 0 8px 20px rgba(238, 207, 109, 0.4);">
           <span style="font-size: 2.5rem; color: #45050C;">✓</span>
@@ -166,17 +176,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Redirigiendo al login en <span id="countdown">3</span> segundos...
           </p>
         </div>
-        <button onclick="window.location.href='login.php'" 
+        <button onclick="window.location.href='login.php'"
           style="background: #720E07; color: white; border: none; padding: 1rem 2rem; border-radius: 12px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: all 0.3s; width: 100%;">
           Ir al Login ahora
         </button>
       `;
-      
-      // Añadir elementos al DOM
+
       overlay.appendChild(popup);
       document.body.appendChild(overlay);
-      
-      // Animaciones CSS
+
       const style = document.createElement('style');
       style.textContent = `
         @keyframes fadeIn {
@@ -189,11 +197,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
       `;
       document.head.appendChild(style);
-      
-      // Contador de redirección automática
+
       let countdown = 3;
       const countdownElement = document.getElementById('countdown');
-      
+
       const redirectTimer = setInterval(() => {
         countdown--;
         if (countdown >= 0) {
@@ -204,21 +211,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           window.location.href = 'login.php';
         }
       }, 1000);
-      
-      // Eliminar la variable de sesión
+
       <?php unset($_SESSION['registered_email']); ?>
     });
   </script>
   <?php endif; ?>
   <script src="assets/mobile-header.js?v=20260211-6"></script>
-<footer>
-  <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
-  <p class="footer-legal-links">
-    <a href="politica_cookies.php">Política de Cookies</a>
-    <span>|</span>
-    <a href="politica_privacidad.php">Política de Privacidad</a>
-    <span>|</span>
-    <a href="aviso_legal.php">Aviso Legal</a>
-  </p></footer>
+  <script>
+    document.querySelectorAll('[data-password-toggle]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const input = document.getElementById(button.dataset.passwordToggle);
+        if (!input) return;
+
+        const showPassword = input.type === 'password';
+        input.type = showPassword ? 'text' : 'password';
+        button.setAttribute('aria-label', showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
+        button.setAttribute('aria-pressed', showPassword ? 'true' : 'false');
+      });
+    });
+  </script>
+  <footer>
+    <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+    <p class="footer-legal-links">
+      <a href="politica_cookies.php">Política de Cookies</a>
+      <span>|</span>
+      <a href="politica_privacidad.php">Política de Privacidad</a>
+      <span>|</span>
+      <a href="aviso_legal.php">Aviso Legal</a>
+    </p>
+  </footer>
 </body>
 </html>

@@ -9,7 +9,7 @@ $cookie_policy_version = isset($cookie_preferences['policy_version']) ? (string)
   class="cookie-modal-overlay"
   id="cookieModal"
   data-force-show="<?= $show_cookie_popup ? '1' : '0' ?>"
-  data-policy-versión="<?= htmlspecialchars($cookie_policy_version) ?>"
+  data-policy-version="<?= htmlspecialchars($cookie_policy_version) ?>"
   data-endpoint="cookie_consent_action.php"
   hidden
 >
