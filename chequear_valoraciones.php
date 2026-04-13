@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * chequear_valoraciones.php
  * Verificación rápida del estado
@@ -67,5 +67,7 @@ try {
     <span>|</span>
     <a href="aviso_legal.php">Aviso Legal</a>
   </p></footer>
+  <script src="assets/language-switcher.js?v=20260413-1"></script>
 </body>
 </html>
+

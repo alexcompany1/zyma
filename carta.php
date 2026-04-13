@@ -325,6 +325,7 @@ if (toast) {
 }
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/language-switcher.js?v=20260413-1"></script>
 <footer>
   <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
@@ -336,4 +337,5 @@ if (toast) {
   </p></footer>
 </body>
 </html>
+
 

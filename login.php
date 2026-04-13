@@ -38,7 +38,7 @@ if (isset($_GET['reset']) && $_GET['reset'] === '1') {
     $info = 'Tu Contraseña se ha actualizado. Ya puedes iniciar Sesión.';
 }
 if (isset($_GET['cookie_rejected']) && $_GET['cookie_rejected'] === '1') {
-    $info = 'Para usar tu cuenta en Zyma necesitamos aceptar las cookies técnicas. Puedes volver a iniciar sesión y configurar tus preferencias.';
+    $info = 'Has rechazado las cookies. Puedes seguir usando Zyma';
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -167,6 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </div>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/language-switcher.js?v=20260413-1"></script>
 <script>
 document.querySelectorAll('[data-password-toggle]').forEach((button) => {
   button.addEventListener('click', () => {
@@ -182,3 +183,4 @@ document.querySelectorAll('[data-password-toggle]').forEach((button) => {
 </script>
 </body>
 </html>
+

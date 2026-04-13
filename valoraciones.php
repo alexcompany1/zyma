@@ -23,7 +23,7 @@ try {
             FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE,
             id_producto INT NOT NULL,
             FOREIGN KEY (id_producto) REFERENCES productos(id) ON DELETE CASCADE,
-            puntuacion INT NOT NULL CHECK (puntuacion >= 1 AND puntuacion <= 5),
+            puntuacion INT NOT NULL CHECK (puntuacion >= 0 AND puntuacion <= 5),
             comentario TEXT,
             fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
             fecha_actualizacion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -144,13 +144,27 @@ try {
             height: 32px;
         }
         
-        .quick-star-label img,
-        .star-img-empty,
-        .star-img-filled {
-            width: 32px !important;
-            height: 32px !important;
-            object-fit: contain;
+        .quick-star-label.zero-star {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 32px;
+            border: 2px solid #d4af37;
+            border-radius: 8px;
+            background: #fff;
+            color: #333;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
         }
+
+        .quick-star-label.zero-star.selected {
+            background: #d4af37;
+            color: #fff;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.15);
+        }
+
         
         .star-img-empty,
         .star-img-filled {
@@ -317,6 +331,19 @@ if ($is_logged_in) {
                                     
                                     <!-- Selector de estrellas con imágenes -->
                                     <div class="quick-star-selector" data-product-id="<?= $pid ?>">
+                                        <input
+                                            type="radio"
+                                            name="puntuacion_<?= $pid ?>"
+                                            value="0"
+                                            id="star-<?= $pid ?>-0"
+                                            class="quick-star-radio"
+                                            <?php if ($mi_valoracion && $mi_valoracion['puntuacion'] === 0): ?>
+                                                checked
+                                            <?php endif; ?>
+                                        >
+                                        <label for="star-<?= $pid ?>-0" class="quick-star-label zero-star" data-star="0" title="0 estrellas">
+                                            0
+                                        </label>
                                         <?php for ($i = 1; $i <= 5; $i++): ?>
                                             <input 
                                                 type="radio" 
@@ -408,7 +435,7 @@ if ($is_logged_in) {
                                                     </span>
                                                 </div>
                                                 <span class="opinión-stars" style="display: flex; gap: 3px;">
-                                                    <?php for ($i = 0; $i <= 5; $i++): ?>
+                                                    <?php for ($i = 1; $i <= 5; $i++): ?>
                                                         <img src="assets/<?= $i <= $op['puntuacion'] ? 'estrellaSelecionada' : 'estrellaNegra' ?>.png" 
                                                              alt="Estrella" 
                                                              class="star-opinión-img"
@@ -495,15 +522,21 @@ if ($is_logged_in) {
                     const starNumber = parseInt(label.getAttribute('data-star'));
                     const filledImg = label.querySelector('.star-img-filled');
                     const emptyImg = label.querySelector('.star-img-empty');
-                    
-                    if (starNumber <= upToStar) {
-                        // Llenar estrellas de izquierda a derecha
-                        filledImg.style.opacity = '1';
-                        emptyImg.style.opacity = '0';
-                    } else {
-                        // Vaciar estrellas a la derecha
-                        filledImg.style.opacity = '0';
-                        emptyImg.style.opacity = '1';
+                    const isZeroLabel = starNumber === 0;
+
+                    if (isZeroLabel) {
+                        label.classList.toggle('selected', upToStar === 0);
+                        return;
+                    }
+
+                    if (filledImg && emptyImg) {
+                        if (starNumber <= upToStar) {
+                            filledImg.style.opacity = '1';
+                            emptyImg.style.opacity = '0';
+                        } else {
+                            filledImg.style.opacity = '0';
+                            emptyImg.style.opacity = '1';
+                        }
                     }
                 });
             }
@@ -744,8 +777,10 @@ if ($is_logged_in) {
 
 <?php if ($is_logged_in): ?>
     <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/language-switcher.js?v=20260413-1"></script>
 <?php endif; ?>
 
 </body>
 </html>
+
 

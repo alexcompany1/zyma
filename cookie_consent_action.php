@@ -62,18 +62,18 @@ try {
     if ($action === 'reject_all') {
         saveCookieConsent($pdo, $userId, 'rejected', false, false);
 
-        $_SESSION = [];
-        if (ini_get('session.use_cookies')) {
-            $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
-        }
-        session_destroy();
+        $_SESSION['cookie_preferences'] = [
+            'analytics' => false,
+            'marketing' => false,
+            'policy_version' => ZYMA_COOKIE_POLICY_VERSION,
+            'estado' => 'rejected',
+        ];
+        $_SESSION['show_cookie_popup'] = false;
 
         jsonResponse(200, [
             'ok' => true,
             'action' => 'reject_all',
-            'redirect' => 'login.php?cookie_rejected=1',
-            'message' => 'Necesitamos cookies técnicas para mantener la seguridad y la sesión de tu cuenta.'
+            'message' => 'Has rechazado las cookies opcionales. '
         ]);
     }
 

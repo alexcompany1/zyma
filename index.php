@@ -113,6 +113,7 @@ if ($basePath === '.' || $basePath === '/') {
     </footer>
   </div>
 <script src="<?= $basePath ?>/assets/mobile-header.js?v=20260211-6"></script>
+<script src="<?= $basePath ?>/assets/language-switcher.js?v=20260413-1"></script>
 <script>
 // Carrusel de reseñas
 const carousel = document.getElementById('reviewsCarousel');
@@ -156,3 +157,4 @@ if (carousel && prevBtn && nextBtn) {
 </script>
 </body>
 </html>
+

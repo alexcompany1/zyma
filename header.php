@@ -112,4 +112,5 @@ if ($show_notif && $is_logged_in) {
     }
   });
 </script>
+<script src="assets/language-switcher.js?v=20260413-1"></script>
 

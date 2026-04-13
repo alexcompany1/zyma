@@ -217,6 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </script>
   <?php endif; ?>
   <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/language-switcher.js?v=20260413-1"></script>
   <script>
     document.querySelectorAll('[data-password-toggle]').forEach((button) => {
       button.addEventListener('click', () => {
@@ -242,3 +243,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </footer>
 </body>
 </html>
+

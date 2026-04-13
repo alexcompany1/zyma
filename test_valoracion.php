@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * test_valoracion.php
  * Script de prueba para testear manualmente el guardado de valoraciones 
@@ -142,6 +142,8 @@ document.getElementById('testForm')?.addEventListener('submit', async function(e
   </p>
 </footer>
 
+  <script src="assets/language-switcher.js?v=20260413-1"></script>
 </body>
 </html>
+
 

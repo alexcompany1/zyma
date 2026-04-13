@@ -71,7 +71,7 @@ function shouldShowCookiePopup(PDO $pdo, int $userId): bool
 
     $estado = $consent['estado'] ?? '';
 
-    return $estado === 'rejected' && !$samePolicyVersion;;
+    return $estado === 'rejected';
 }
 
 function saveCookieConsent(PDO $pdo, int $userId, string $estado, bool $analytics, bool $marketing): void

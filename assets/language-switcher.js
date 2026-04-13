@@ -1,0 +1,975 @@
+(() => {
+  // Translations dictionary - using double quotes to avoid syntax errors with apostrophes
+  const translations = {
+    // Basic UI
+    "Iniciar Sesión": { en: "Sign In", fr: "Se connecter" },
+    "Email": { en: "Email", fr: "Email" },
+    "Contraseña": { en: "Password", fr: "Mot de passe" },
+    "Mostrar contraseña": { en: "Show password", fr: "Afficher le mot de passe" },
+    "Ocultar contraseña": { en: "Hide password", fr: "Masquer le mot de passe" },
+    "Crear cuenta": { en: "Create account", fr: "Créer un compte" },
+    "Entrar": { en: "Sign in", fr: "Se connecter" },
+    "He olvidado la Contraseña": { en: "I forgot my password", fr: "J'ai oublié mon mot de passe" },
+    
+    // Policies
+    "Política de Cookies": { en: "Cookie Policy", fr: "Politique de cookies" },
+    "Política de Privacidad": { en: "Privacy Policy", fr: "Politique de confidentialité" },
+    "Aviso Legal": { en: "Legal Notice", fr: "Mentions légales" },
+    
+    // Messages
+    "Tu Contraseña se ha actualizado. Ya puedes iniciar Sesión.": { en: "Your password has been updated. You can now sign in.", fr: "Votre mot de passe a été mis à jour. Vous pouvez maintenant vous connecter." },
+    "Has rechazado las cookies. Puedes seguir usando Zyma": { en: "You have rejected cookies. You can continue using Zyma.", fr: "Vous avez refusé les cookies. Vous pouvez continuer à utiliser Zyma." },
+    "Credenciales incorrectas.": { en: "Incorrect credentials.", fr: "Identifiants incorrects." },
+    "El email y la Contraseña son obligatorios.": { en: "Email and password are required.", fr: "Email et mot de passe sont obligatoires." },
+    "Tu cuenta está bloqueada. Contacta con administración.": { en: "Your account is locked. Contact administration.", fr: "Votre compte est bloqué. Contactez l'administration." },
+    "Código de trabajador incorrecto.": { en: "Worker code is incorrect.", fr: "Le code employé est incorrect." },
+    "Error interno del sistema.": { en: "Internal system error.", fr: "Erreur interne du système." },
+    
+    // Navigation
+    "Inicio": { en: "Home", fr: "Accueil" },
+    "Carta": { en: "Menu", fr: "Menu" },
+    "Carrito": { en: "Cart", fr: "Panier" },
+    "Mi perfil": { en: "My profile", fr: "Mon profil" },
+    "Notificaciones": { en: "Notifications", fr: "Notifications" },
+    "Cerrar Sesión": { en: "Sign out", fr: "Déconnexion" },
+    "Cerrar sesión": { en: "Log out", fr: "Déconnexion" },
+    "Personalizar cookies": { en: "Customize cookies", fr: "Personnaliser les cookies" },
+    "Menú": { en: "Menu", fr: "Menu" },
+    "Usuario": { en: "User", fr: "Utilisateur" },
+    
+    // Cookies section
+    "Aceptar todas": { en: "Accept all", fr: "Accepter tout" },
+    "Rechazar opcionales": { en: "Reject optional", fr: "Refuser les optionnels" },
+    "Personalizar": { en: "Customize", fr: "Personnaliser" },
+    "Guardar preferencias": { en: "Save preferences", fr: "Enregistrer les préférences" },
+    "Cookies técnicas (siempre activas)": { en: "Technical cookies (always active)", fr: "Cookies techniques (toujours actifs)" },
+    "Cookies analíticas": { en: "Analytical cookies", fr: "Cookies analytiques" },
+    "Cookies de marketing": { en: "Marketing cookies", fr: "Cookies marketing" },
+    
+    // Forms and buttons
+    "Enviar": { en: "Submit", fr: "Envoyer" },
+    "Guardar": { en: "Save", fr: "Enregistrer" },
+    "Actualizar": { en: "Update", fr: "Mettre à jour" },
+    "Aceptar": { en: "Accept", fr: "Accepter" },
+    "Rechazar": { en: "Reject", fr: "Refuser" },
+    "Cancelar": { en: "Cancel", fr: "Annuler" },
+    
+    // Pages
+    "Zyma - Tu Carrito": { en: "Zyma - Your Cart", fr: "Zyma - Votre panier" },
+    "Tu Carrito": { en: "Your Cart", fr: "Votre panier" },
+    "Tu carrito esta vacio.": { en: "Your cart is empty.", fr: "Votre panier est vide." },
+    "Zyma - Carta": { en: "Zyma - Menu", fr: "Zyma - Menu" },
+    "Zyma - Estadísticas": { en: "Zyma - Statistics", fr: "Zyma - Statistiques" },
+    "Panel de Administracion": { en: "Administration Panel", fr: "Panneau d'administration" },
+    "Confirmación de Pedido - Zyma": { en: "Order Confirmation - Zyma", fr: "Confirmation de commande - Zyma" },
+    "Zyma - Valoraciones y Opiniones": { en: "Zyma - Reviews and Opinions", fr: "Zyma - Avis et opinions" },
+    
+    // Cart and checkout
+    "Número de tarjeta": { en: "Card number", fr: "Numéro de carte" },
+    "MM/AA": { en: "MM/YY", fr: "MM/AA" },
+    "CVV": { en: "CVV", fr: "CVV" },
+    "Pagar online": { en: "Pay online", fr: "Payer en ligne" },
+    "Bizum": { en: "Bizum", fr: "Bizum" },
+    "Teléfono Bizum (+34XXXXXXXXX)": { en: "Bizum phone (+34XXXXXXXXX)", fr: "Téléphone Bizum (+34XXXXXXXXX)" },
+    
+    // Worker codes
+    "Código de trabajador (opcional)": { en: "Worker Code (optional)", fr: "Code employé (optionnel)" },
+    "Trabajador: ej. TRAB001": { en: "Worker: e.g. TRAB001", fr: "Employé : ex. TRAB001" },
+    "Administrador: ADMIN": { en: "Administrator: ADMIN", fr: "Administrateur : ADMIN" },
+    "Código opcional": { en: "Optional code", fr: "Code optionnel" },
+    
+    // Quick menu
+    "Menú rápido": { en: "Quick menu", fr: "Menu rapide" },
+    "Perfil": { en: "Profile", fr: "Profil" },
+    
+    // Products
+    "Carta de Zyma": { en: "Zyma Menu", fr: "Menu Zyma" },
+    "Nombre del producto": { en: "Product name", fr: "Nom du produit" },
+    "Precio": { en: "Price", fr: "Prix" },
+    "Imagen": { en: "Image", fr: "Image" },
+    "Ruta de la imagen (ej: assets/nachos.png)": { en: "Image path (e.g. assets/nachos.png)", fr: "Chemin de l'image (ex : assets/nachos.png)" },
+    "Cantidad": { en: "Quantity", fr: "Quantité" },
+    "Total:": { en: "Total:", fr: "Total :" },
+    "Total: EUR": { en: "Total: EUR", fr: "Total : EUR" },
+    "Total: $": { en: "Total: $", fr: "Total : $" },
+    
+    // Orders
+    "Resumen del Pedido": { en: "Order summary", fr: "Résumé de la commande" },
+    "¡Pedido confirmado!": { en: "Order confirmed!", fr: "Commande confirmée !" },
+    "Gracias,": { en: "Thank you,", fr: "Merci," },
+    "Tu pedido ha sido registrado exitosamente.": { en: "Your order has been successfully registered.", fr: "Votre commande a été enregistrée avec succès." },
+    "Volver al Inicio": { en: "Back to Home", fr: "Retour à l'accueil" },
+    "Volver al inicio": { en: "Back to home", fr: "Retour à l'accueil" },
+    "Ver Ticket": { en: "View Ticket", fr: "Voir le ticket" },
+    "Ver carta": { en: "View menu", fr: "Voir le menu" },
+    "Cancelar Pedido": { en: "Cancel Order", fr: "Annuler la commande" },
+    
+    // Reviews
+    "Valorar producto": { en: "Rate product", fr: "Noter le produit" },
+    "Añadir al carrito": { en: "Add to cart", fr: "Ajouter au panier" },
+    "Ver opiniones de clientes": { en: "See customer reviews", fr: "Voir les avis des clients" },
+    "Compartir opinión": { en: "Share opinion", fr: "Partager avis" },
+    "Ver más opiniones": { en: "See more reviews", fr: "Voir plus d'avis" },
+    
+    // Notifications
+    "Marcar como leída": { en: "Mark as read", fr: "Marquer comme lu" },
+    "Marcar todas como leídas": { en: "Mark all as read", fr: "Marquer tout comme lu" },
+    "No tienes notificaciones todavía.": { en: "You have no notifications yet.", fr: "Vous n'avez pas encore de notifications." },
+    
+    // Other
+    "Zyma": { en: "Zyma", fr: "Zyma" },
+    "Zyma. Hotdogs con alma.": { en: "Zyma. Hotdogs with soul.", fr: "Zyma. Hot-dogs avec âme." },
+    "Acceso rápido a la carta": { en: "Quick access to menu", fr: "Accès rapide au menu" },
+    "Inventario de Ingredientes (únicos)": { en: "Inventory of Ingredients (unique)", fr: "Inventaire des ingrédients (uniques)" },
+    "Estado de Valoraciones": { en: "Review Status", fr: "État des avis" },
+    "Todos los derechos reservados.": { en: "All rights reserved.", fr: "Tous droits réservés." },
+    "&copy; 2025 Zyma. Todos los derechos reservados.": { en: "&copy; 2025 Zyma. All rights reserved.", fr: "&copy; 2025 Zyma. Tous droits réservés." },
+    "&copy; 2026 Zyma. Todos los derechos reservados.": { en: "&copy; 2026 Zyma. All rights reserved.", fr: "&copy; 2026 Zyma. Tous droits réservés." },
+  };
+
+  const NODE_SKIP_TAGS = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT', 'IFRAME', 'CODE', 'PRE', 'TEXTAREA']);
+
+  function getSavedLanguage() {
+    return window.localStorage.getItem('zymaLanguage') || 'es';
+  }
+
+  function normalizeText(text) {
+    return text.trim().replace(/\s+/g, ' ').toLowerCase();
+  }
+
+  const normalizedTranslations = Object.fromEntries(
+    Object.entries(translations).map(([key, value]) => [normalizeText(key), value])
+  );
+
+  function translateText(text, lang) {
+    if (!text) return text;
+    const trimmed = text.trim();
+    const translation = translations[trimmed] || normalizedTranslations[normalizeText(trimmed)];
+    if (translation && translation[lang]) {
+      return translation[lang];
+    }
+    return lang === 'es' ? trimmed : text;
+  }
+
+  function translateTextNode(node, lang) {
+    const original = node._i18nOriginalText !== undefined ? node._i18nOriginalText : node.nodeValue;
+    if (original == null) return;
+    const trimmed = original.trim();
+    if (!trimmed) return;
+    if (node._i18nOriginalText === undefined) {
+      node._i18nOriginalText = original;
+    }
+    const translated = translateText(trimmed, lang);
+    if (translated !== trimmed) {
+      node.nodeValue = original.replace(trimmed, translated);
+    } else if (lang === 'es' && node.nodeValue !== original) {
+      node.nodeValue = original;
+    }
+  }
+
+  function translateAttributes(element, lang) {
+    ['placeholder', 'title', 'aria-label', 'alt'].forEach((attribute) => {
+      if (!element.hasAttribute(attribute)) {
+        return;
+      }
+      const original = element.dataset[`i18nOriginal${attribute}`] || element.getAttribute(attribute);
+      if (original == null) {
+        return;
+      }
+      if (!element.dataset[`i18nOriginal${attribute}`]) {
+        element.dataset[`i18nOriginal${attribute}`] = original;
+      }
+      const translated = translateText(original, lang);
+      if (translated !== original || lang === 'es') {
+        element.setAttribute(attribute, translated);
+      }
+    });
+  }
+
+  function translateFormValues(lang) {
+    // Translate input[type=submit] and input[type=button]
+    document.querySelectorAll('input[type=submit], input[type=button]').forEach((element) => {
+      const original = element.dataset.i18nOriginalValue || element.value;
+      if (!original) return;
+      if (!element.dataset.i18nOriginalValue) {
+        element.dataset.i18nOriginalValue = original;
+      }
+      const translated = translateText(original, lang);
+      if (translated !== original || lang === 'es') {
+        element.value = translated;
+      }
+    });
+
+    // Translate button text content
+    document.querySelectorAll('button').forEach((element) => {
+      // Skip language switcher buttons
+      if (element.classList.contains('language-floating-toggle') || element.classList.contains('language-floating-menu') || element.dataset.lang) {
+        return;
+      }
+      const children = element.childNodes;
+      let hasOnlyTextChild = children.length === 1 && children[0].nodeType === Node.TEXT_NODE;
+      if (!hasOnlyTextChild) {
+        return;
+      }
+      const original = element.dataset.i18nOriginalValue !== undefined ? element.dataset.i18nOriginalValue : element.textContent.trim();
+      if (!original) return;
+      if (element.dataset.i18nOriginalValue === undefined) {
+        element.dataset.i18nOriginalValue = original;
+      }
+      const translated = translateText(original, lang);
+      if (translated !== original || lang === 'es') {
+        element.textContent = translated;
+      }
+    });
+  }
+
+  function translatePage(lang) {
+    // Translate text nodes
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+    let node;
+    while ((node = walker.nextNode())) {
+      const parent = node.parentElement;
+      if (!parent || NODE_SKIP_TAGS.has(parent.tagName)) {
+        continue;
+      }
+      // Skip language switcher elements
+      if (parent.closest('.language-floating-switcher')) {
+        continue;
+      }
+      translateTextNode(node, lang);
+    }
+
+    // Translate all attributes
+    document.querySelectorAll('input, textarea, button, select, [title], [aria-label], [alt], [placeholder]').forEach((element) => {
+      translateAttributes(element, lang);
+    });
+
+    // Translate form values
+    translateFormValues(lang);
+
+    // Translate page title
+    const title = document.querySelector('title');
+    if (title) {
+      const original = title.dataset.i18nOriginal || title.textContent;
+      if (!title.dataset.i18nOriginal) {
+        title.dataset.i18nOriginal = original;
+      }
+      const translated = translateText(original, lang);
+      if (translated !== original || lang === 'es') {
+        title.textContent = translated;
+      }
+    }
+
+    // Set document language
+    document.documentElement.lang = lang;
+  }
+
+  function setLanguage(lang) {
+    window.localStorage.setItem('zymaLanguage', lang);
+    document.documentElement.lang = lang;
+    translatePage(lang);
+    updateSwitcher(lang);
+  }
+
+  function createFloatingSwitcher() {
+    // Remove any duplicate switchers created by other scripts
+    const existing = document.querySelectorAll('.language-floating-switcher');
+    existing.forEach((el, idx) => {
+      if (idx > 0) el.remove();
+    });
+
+    if (document.getElementById('languageFloatingSwitcher')) {
+      return;
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.id = 'languageFloatingSwitcher';
+    wrapper.className = 'language-floating-switcher';
+    wrapper.innerHTML = `
+      <button type="button" class="language-floating-toggle" aria-label="Cambiar idioma">${getSavedLanguage().toUpperCase()}</button>
+      <div class="language-floating-menu" aria-label="Seleccionar idioma">
+        <button type="button" data-lang="es">ES</button>
+        <button type="button" data-lang="en">EN</button>
+        <button type="button" data-lang="fr">FR</button>
+      </div>
+    `;
+
+    document.body.appendChild(wrapper);
+
+    const toggle = wrapper.querySelector('.language-floating-toggle');
+    const menu = wrapper.querySelector('.language-floating-menu');
+    const buttons = wrapper.querySelectorAll('button[data-lang]');
+
+    toggle.addEventListener('click', (event) => {
+      event.stopPropagation();
+      menu.classList.toggle('active');
+    });
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const lang = button.dataset.lang;
+        setLanguage(lang);
+        menu.classList.remove('active');
+      });
+    });
+
+    window.addEventListener('click', () => {
+      menu.classList.remove('active');
+    });
+  }
+
+  function updateSwitcher(lang) {
+    const floating = document.querySelector('.language-floating-toggle');
+    if (floating) {
+      floating.textContent = lang.toUpperCase();
+    }
+    document.querySelectorAll('.language-floating-menu button').forEach((button) => {
+      button.classList.toggle('active', button.dataset.lang === lang);
+    });
+  }
+
+  function init() {
+    // Wait a bit to allow other scripts to load
+    setTimeout(() => {
+      // Remove any duplicate language switchers created by other scripts
+      const switchers = document.querySelectorAll('.language-floating-switcher');
+      if (switchers.length > 1) {
+        for (let i = 1; i < switchers.length; i++) {
+          switchers[i].remove();
+        }
+      }
+
+      // Ensure we have a switcher
+      createFloatingSwitcher();
+      
+      // Translate page with saved language
+      const saved = getSavedLanguage();
+      document.documentElement.lang = saved;
+      translatePage(saved);
+      updateSwitcher(saved);
+    }, 100);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+(() => {
+  const translations = {
+    'Iniciar Sesión': { en: 'Sign In', fr: 'Se connecter' },
+    'Email': { en: 'Email', fr: 'Email' },
+    'Contraseña': { en: 'Password', fr: 'Mot de passe' },
+    'Mostrar contraseña': { en: 'Show password', fr: 'Afficher le mot de passe' },
+    'Ocultar contraseña': { en: 'Hide password', fr: 'Masquer le mot de passe' },
+    'Código de trabajador (opcional)': { en: 'Worker Code (optional)', fr: 'Code employé (optionnel)' },
+    'Trabajador: ej. TRAB001': { en: 'Worker: e.g. TRAB001', fr: 'Employé : ex. TRAB001' },
+    'Administrador: ADMIN': { en: 'Administrator: ADMIN', fr: 'Administrateur : ADMIN' },
+    'Crear cuenta': { en: 'Create account', fr: 'Créer un compte' },
+    'Entrar': { en: 'Sign in', fr: 'Se connecter' },
+    'No tienes cuenta? Registrate': { en: "Don't have an account? Register", fr: "Vous n'avez pas de compte ? Inscrivez-vous" },
+    'He olvidado la Contraseña': { en: 'I forgot my password', fr: 'J’ai oublié mon mot de passe' },
+    'Política de Cookies': { en: 'Cookie Policy', fr: 'Politique de cookies' },
+    'Política de Privacidad': { en: 'Privacy Policy', fr: 'Politique de confidentialité' },
+    'Aviso Legal': { en: 'Legal Notice', fr: 'Mentions légales' },
+    'Tu Contraseña se ha actualizado. Ya puedes iniciar Sesión.': { en: 'Your password has been updated. You can now sign in.', fr: 'Votre mot de passe a été mis à jour. Vous pouvez maintenant vous connecter.' },
+    'Has rechazado las cookies. Puedes seguir usando Zyma': { en: 'You have rejected cookies. You can continue using Zyma.', fr: 'Vous avez refusé les cookies. Vous pouvez continuer à utiliser Zyma.' },
+    'Credenciales incorrectas.': { en: 'Incorrect credentials.', fr: 'Identifiants incorrects.' },
+    'El email y la Contraseña son obligatorios.': { en: 'Email and password are required.', fr: 'Email et mot de passe sont obligatoires.' },
+    'Tu cuenta está bloqueada. Contacta con administración.': { en: 'Your account is locked. Contact administration.', fr: 'Votre compte est bloqué. Contactez l’administration.' },
+    'Código de trabajador incorrecto.': { en: 'Worker code is incorrect.', fr: 'Le code employé est incorrect.' },
+    'Error interno del sistema.': { en: 'Internal system error.', fr: 'Erreur interne du système.' },
+    'Recuperar Contraseña': { en: 'Recover Password', fr: 'Récupérer le mot de passe' },
+    'Enviar enlace': { en: 'Send link', fr: 'Envoyer le lien' },
+    'Todos los derechos reservados.': { en: 'All rights reserved.', fr: 'Tous droits réservés.' },
+    'Inicio': { en: 'Home', fr: 'Accueil' },
+    'Mi perfil': { en: 'My profile', fr: 'Mon profil' },
+    'Cerrar Sesión': { en: 'Sign out', fr: 'Déconnexion' },
+    'Carta': { en: 'Menu', fr: 'Menu' },
+    'Carrito': { en: 'Cart', fr: 'Panier' },
+    'Notificaciones': { en: 'Notifications', fr: 'Notifications' },
+    'Personalizar cookies': { en: 'Customize cookies', fr: 'Personnaliser les cookies' },
+    'Menú': { en: 'Menu', fr: 'Menu' },
+    'Usuario': { en: 'User', fr: 'Utilisateur' },
+    'Aceptar todas': { en: 'Accept all', fr: 'Accepter tout' },
+    'Rechazar opcionales': { en: 'Reject optional', fr: 'Refuser les optionnels' },
+    'Personalizar': { en: 'Customize', fr: 'Personnaliser' },
+    'Guardar preferencias': { en: 'Save preferences', fr: 'Enregistrer les préférences' },
+    'Información de cuenta': { en: 'Account information', fr: 'Informations sur le compte' },
+    'Resumen': { en: 'Summary', fr: 'Résumé' },
+    'Seguridad': { en: 'Security', fr: 'Sécurité' },
+    'Cambiar contraseña': { en: 'Change password', fr: 'Changer le mot de passe' },
+    'Actualiza tu clave para mantener protegido el acceso a la cuenta.': { en: 'Update your password to keep account access secure.', fr: 'Mettez à jour votre mot de passe pour maintenir l’accès au compte sécurisé.' },
+    'Contraseña actual': { en: 'Current password', fr: 'Mot de passe actuel' },
+    'Nueva contraseña': { en: 'New password', fr: 'Nouveau mot de passe' },
+    'Confirmar nueva contraseña': { en: 'Confirm new password', fr: 'Confirmer le nouveau mot de passe' },
+    'Mínimo 8 caracteres': { en: 'Minimum 8 characters', fr: 'Minimum 8 caractères' },
+    'Repite la nueva contraseña': { en: 'Repeat the new password', fr: 'Répétez le nouveau mot de passe' },
+    'Consejo profesional': { en: 'Pro tip', fr: 'Conseil professionnel' },
+    'Usa tu nombre completo y revisa tu contraseña con frecuencia para mayor seguridad.': { en: 'Use your full name and review your password frequently for better security.', fr: 'Utilisez votre nom complet et vérifiez votre mot de passe fréquemment pour plus de sécurité.' },
+    'Perfil operativo': { en: 'Operating profile', fr: 'Profil opérationnel' },
+    'Nombre': { en: 'Name', fr: 'Nom' },
+    'Rol': { en: 'Role', fr: 'Rôle' },
+    'Estado': { en: 'Status', fr: 'Statut' },
+    'Enviar': { en: 'Submit', fr: 'Envoyer' },
+    'Guardar': { en: 'Save', fr: 'Enregistrer' },
+    'Actualizar': { en: 'Update', fr: 'Mettre à jour' },
+    'Aceptar': { en: 'Accept', fr: 'Accepter' },
+    'Rechazar': { en: 'Reject', fr: 'Refuser' },
+    'Perfil operativo': { en: 'Operational profile', fr: 'Profil opérationnel' },
+    'Guardar cambios': { en: 'Save changes', fr: 'Enregistrer les modifications' },
+    'Ver carta sin cuenta': { en: 'View menu without account', fr: 'Voir le menu sans compte' },
+    '¡Pedido confirmado!': { en: 'Order confirmed!', fr: 'Commande confirmée !' },
+    'Gracias,': { en: 'Thank you,', fr: 'Merci,' },
+    'Tu pedido ha sido registrado exitosamente.': { en: 'Your order has been successfully registered.', fr: 'Votre commande a été enregistrée avec succès.' },
+    'Resumen del Pedido': { en: 'Order summary', fr: 'Résumé de la commande' },
+    'Volver al Inicio': { en: 'Back to Home', fr: 'Retour à l’accueil' },
+    'Valorar producto': { en: 'Rate product', fr: 'Noter le produit' },
+    'Añadir al carrito': { en: 'Add to cart', fr: 'Ajouter au panier' },
+    'Total: EUR': { en: 'Total: EUR', fr: 'Total : EUR' },
+    'Total: $': { en: 'Total: $', fr: 'Total : $' },
+    'Ver Ticket': { en: 'View Ticket', fr: 'Voir le ticket' },
+    'Ver carta': { en: 'View menu', fr: 'Voir le menu' },
+    'Volver al inicio': { en: 'Back to home', fr: 'Retour à l’accueil' },
+    'Ver carta sin cuenta': { en: 'View menu without account', fr: 'Voir le menu sans compte' },
+    'Recetas de la casa, ingredientes frescos y un sabor que no se olvida.': { en: 'House recipes, fresh ingredients and a flavor you will not forget.', fr: 'Recettes de la maison, ingrédients frais et une saveur que l’on n’oublie pas.' },
+    'Cantidad': { en: 'Quantity', fr: 'Quantité' },
+    'Precio Unitario': { en: 'Unit Price', fr: 'Prix unitaire' },
+    'Total:': { en: 'Total:', fr: 'Total :' },
+    '&copy; 2025 Zyma. Todos los derechos reservados.': { en: '&copy; 2025 Zyma. All rights reserved.', fr: '&copy; 2025 Zyma. Tous droits réservés.' },
+    '&copy; 2026 Zyma. Todos los derechos reservados.': { en: '&copy; 2026 Zyma. All rights reserved.', fr: '&copy; 2026 Zyma. Tous droits réservés.' },
+    'Bienvenido a Zyma': { en: 'Welcome to Zyma', fr: 'Bienvenue sur Zyma' },
+    'Bienvenido,': { en: 'Welcome,', fr: 'Bienvenue,' },
+    'Crea tu cuenta': { en: 'Create your account', fr: 'Créez votre compte' },
+    'Crea tu cuenta o inicia sesión y descubre la carta.': { en: 'Create your account or sign in and discover the menu.', fr: 'Créez votre compte ou connectez-vous et découvrez le menu.' },
+    'Cancelar': { en: 'Cancel', fr: 'Annuler' },
+    'Cancelar Pedido': { en: 'Cancel Order', fr: 'Annuler la commande' },
+    'Carrito de Pedidos': { en: 'Order Cart', fr: 'Panier de commande' },
+    'Carta de Zyma': { en: 'Zyma Menu', fr: 'Menu Zyma' },
+    'Categoría': { en: 'Category', fr: 'Catégorie' },
+    'Categorías': { en: 'Categories', fr: 'Catégories' },
+    'Cerrar sesión': { en: 'Log out', fr: 'Déconnexion' },
+    'Cliente': { en: 'Customer', fr: 'Client' },
+    'Cliente:': { en: 'Customer:', fr: 'Client :' },
+    'Comentario (opcional):': { en: 'Comment (optional):', fr: 'Commentaire (optionnel) :' },
+    'Confirmación de Pedido - Zyma': { en: 'Order Confirmation - Zyma', fr: 'Confirmation de commande - Zyma' },
+    'Confirmar Contraseña': { en: 'Confirm Password', fr: 'Confirmer le mot de passe' },
+    'Confirmar contraseña': { en: 'Confirm password', fr: 'Confirmer le mot de passe' },
+    'Cookies analíticas': { en: 'Analytical cookies', fr: 'Cookies analytiques' },
+    'Cookies de marketing': { en: 'Marketing cookies', fr: 'Cookies marketing' },
+    'Cookies en Zyma': { en: 'Cookies on Zyma', fr: 'Cookies sur Zyma' },
+    'Cookies técnicas (siempre activas)': { en: 'Technical cookies (always active)', fr: 'Cookies techniques (toujours actifs)' },
+    'Crear usuario': { en: 'Create user', fr: 'Créer un utilisateur' },
+    'Cuenta': { en: 'Account', fr: 'Compte' },
+    'Cuenta activa': { en: 'Active account', fr: 'Compte actif' },
+    'Datos personales': { en: 'Personal information', fr: 'Informations personnelles' },
+    'Descripción': { en: 'Description', fr: 'Description' },
+    'Descubre una experiencia más cuidada, con acceso rápido a la carta, valoraciones reales y un panel mucho más limpio para moverte por la web.': { en: 'Discover a more refined experience, with quick access to the menu, real reviews, and a much cleaner dashboard to navigate the site.', fr: 'Découvrez une expérience plus soignée, avec un accès rapide à la carte, des avis réels et un tableau de bord beaucoup plus clair pour naviguer sur le site.' },
+    'Descubre el producto estrella': { en: 'Discover the star product', fr: 'Découvrez le produit vedette' },
+    'productos disponibles': { en: 'products available', fr: 'produits disponibles' },
+    'valoraciones reales': { en: 'real reviews', fr: 'avis réels' },
+    'media de satisfacción': { en: 'satisfaction average', fr: 'moyenne de satisfaction' },
+    'Ver opiniones de clientes': { en: 'See customer reviews', fr: 'Voir les avis des clients' },
+    'Abrir o revisar tickets': { en: 'Open or review tickets', fr: 'Ouvrir ou consulter des tickets' },
+    'Actualizar perfil': { en: 'Update profile', fr: 'Mettre à jour le profil' },
+    'Destacados': { en: 'Featured', fr: 'En vedette' },
+    'Editar Carta': { en: 'Edit Menu', fr: 'Modifier le menu' },
+    'Editar carta': { en: 'Edit menu', fr: 'Modifier le menu' },
+    'Editar perfil': { en: 'Edit profile', fr: 'Modifier le profil' },
+    'Eliminar': { en: 'Delete', fr: 'Supprimer' },
+    'Enviar Prueba': { en: 'Send Test', fr: 'Envoyer le test' },
+    'Enviar incidencia': { en: 'Submit issue', fr: 'Envoyer un incident' },
+    'Enviar pedido': { en: 'Submit order', fr: 'Envoyer la commande' },
+    'Error al crear pedido': { en: 'Error creating order', fr: 'Erreur lors de la création de la commande' },
+    'Error al crear usuario.': { en: 'Error creating user.', fr: 'Erreur lors de la création de l’utilisateur.' },
+    'Error de conexión a la base de datos': { en: 'Database connection error', fr: 'Erreur de connexion à la base de données' },
+    'Error en la base de datos.': { en: 'Database error.', fr: 'Erreur de base de données.' },
+    'Error:': { en: 'Error:', fr: 'Erreur :' },
+    'Explorar carta completa': { en: 'Explore the full menu', fr: 'Explorer la carte complète' },
+    'Gestiona dudas o incidencias': { en: 'Manage questions or issues', fr: 'Gérez les questions ou incidents' },
+    'Gestionar Pedidos': { en: 'Manage Orders', fr: 'Gérer les commandes' },
+    'Gestionar pedidos': { en: 'Manage orders', fr: 'Gérer les commandes' },
+    'No hay pedidos.': { en: 'There are no orders.', fr: 'Il n’y a pas de commandes.' },
+    'No hay productos disponibles en este momento.': { en: 'No products are available at this time.', fr: 'Aucun produit disponible pour le moment.' },
+    'No tienes cuenta? Registrate': { en: "Don't have an account? Register", fr: "Vous n'avez pas de compte ? Inscrivez-vous" },
+    'No tienes pedidos realizados.': { en: 'You have no completed orders.', fr: 'Vous n’avez aucune commande effectuée.' },
+    'Nombre completo': { en: 'Full name', fr: 'Nom complet' },
+    'Notificaciones': { en: 'Notifications', fr: 'Notifications' },
+    'Pagar online': { en: 'Pay online', fr: 'Payer en ligne' },
+    'Pago': { en: 'Payment', fr: 'Paiement' },
+    'Panel de Administracion': { en: 'Administration Panel', fr: 'Panneau d’administration' },
+    'Panel de Control': { en: 'Control Panel', fr: 'Panneau de contrôle' },
+    'Panel personal': { en: 'Personal dashboard', fr: 'Espace personnel' },
+    'Acceso rápido': { en: 'Quick access', fr: 'Accès rapide' },
+    'Todo lo importante en un vistazo': { en: 'Everything important at a glance', fr: 'Tout ce qui est important en un coup d’œil' },
+    'Producto estrella': { en: 'Star product', fr: 'Produit vedette' },
+    'Ir al producto estrella': { en: 'Go to the star product', fr: 'Aller au produit vedette' },
+    'Consejo': { en: 'Tip', fr: 'Conseil' },
+    'Empieza por la carta para descubrir los productos mejor valorados y añadirlos al carrito en pocos pasos.': { en: 'Start with the menu to discover the highest rated products and add them to the cart in a few steps.', fr: 'Commencez par la carte pour découvrir les produits les mieux notés et les ajouter au panier en quelques étapes.' },
+    'Hola,': { en: 'Hello,', fr: 'Bonjour,' },
+    'Pedido': { en: 'Order', fr: 'Commande' },
+    'Pedido #': { en: 'Order #', fr: 'Commande #' },
+    'Pedidos': { en: 'Orders', fr: 'Commandes' },
+    'Pedidos Pendientes': { en: 'Pending Orders', fr: 'Commandes en attente' },
+    'Pedidos Totales': { en: 'Total Orders', fr: 'Commandes totales' },
+    'Política de Cookies - Zyma': { en: 'Cookie Policy - Zyma', fr: 'Politique de cookies - Zyma' },
+    'Política de Privacidad - Zyma': { en: 'Privacy Policy - Zyma', fr: 'Politique de confidentialité - Zyma' },
+    'Precio unidad': { en: 'Unit price', fr: 'Prix unitaire' },
+    'Precio:': { en: 'Price:', fr: 'Prix :' },
+    'Preparando': { en: 'Preparing', fr: 'Préparation' },
+    'Seguir Comprando': { en: 'Keep shopping', fr: 'Continuer vos achats' },
+    'Seguir comprando': { en: 'Continue shopping', fr: 'Continuer vos achats' },
+    'Sin imagen': { en: 'No image', fr: 'Pas d’image' },
+    'Solicitar nuevo enlace': { en: 'Request new link', fr: 'Demander un nouveau lien' },
+    'Total: EUR': { en: 'Total: EUR', fr: 'Total : EUR' },
+    'Total: $': { en: 'Total: $', fr: 'Total : $' },
+    'Usuario': { en: 'User', fr: 'Utilisateur' },
+    'Ver ticket': { en: 'View ticket', fr: 'Voir le ticket' },
+    'Volver al Panel': { en: 'Back to Panel', fr: 'Retour au panneau' },
+    'Volver a Tickets': { en: 'Back to Tickets', fr: 'Retour aux tickets' },
+    'Volver a toda la carta': { en: 'Back to the full menu', fr: 'Retour à la carte complète' },
+    'Volver al panel principal': { en: 'Back to the main panel', fr: 'Retour au panneau principal' },
+    'Ya tengo cuenta': { en: 'I already have an account', fr: 'J’ai déjà un compte' },
+    'Mis Pedidos': { en: 'My Orders', fr: 'Mes commandes' },
+    'Mis incidencias': { en: 'My issues', fr: 'Mes incidents' },
+    'Mis pedidos': { en: 'My orders', fr: 'Mes commandes' },
+    'Cookie': { en: 'Cookie', fr: 'Cookie' },
+    'Cookies': { en: 'Cookies', fr: 'Cookies' },
+    'Aviso Legal - Zyma': { en: 'Legal Notice - Zyma', fr: 'Mentions légales - Zyma' },
+    'Gestión de incidencias y tickets': { en: 'Issue and ticket management', fr: 'Gestion des incidents et tickets' },
+    'Información legal sobre el uso de la web de Zyma y las condiciones de acceso a nuestros servicios digitales.': { en: 'Legal information about using the Zyma website and the terms of access to our digital services.', fr: 'Informations juridiques sur l’utilisation du site Zyma et les conditions d’accès à nos services numériques.' },
+    'Esta web usa cookies para ofrecer una experiencia más rápida, útil y personalizada para nuestros clientes.': { en: 'This website uses cookies to offer a faster, more useful and personalized experience for our customers.', fr: 'Ce site utilise des cookies pour offrir une expérience plus rapide, utile et personnalisée à nos clients.' },
+    'No cedemos datos a terceros salvo obligación legal o proveedores necesarios para operar la plataforma bajo contrato de confidencialidad.': { en: 'We do not share data with third parties except when legally required or with necessary providers to operate the platform under confidentiality agreements.', fr: 'Nous ne communiquons pas de données à des tiers sauf obligation légale ou fournisseurs nécessaires pour faire fonctionner la plateforme sous contrat de confidentialité.' },
+    'Aplicamos medidas técnicas y organizativas para proteger la información y evitar accesos no autorizados.': { en: 'We apply technical and organizational measures to protect information and prevent unauthorized access.', fr: 'Nous appliquons des mesures techniques et organisationnelles pour protéger les informations et empêcher tout accès non autorisé.' },
+    'Conservamos la información durante el tiempo necesario para la finalidad indicada y los plazos legales exigibles.': { en: 'We keep information for the time needed for the stated purpose and for the legally required periods.', fr: 'Nous conservons les informations pendant le temps nécessaire à la finalité indiquée et les délais légaux applicables.' },
+    'Podemos actualizar esta política para reflejar cambios legales o técnicos. Publicaremos siempre la versión vigente en esta página.': { en: 'We may update this policy to reflect legal or technical changes. We will always publish the current version on this page.', fr: 'Nous pouvons mettre à jour cette politique pour refléter des changements juridiques ou techniques. Nous publierons toujours la version en vigueur sur cette page.' },
+    'Podemos tratar datos de identificación y contacto, datos de cuenta, historial de pedidos y comunicaciones de soporte o valoraciones.': { en: 'We may process identification and contact data, account data, order history and support or review communications.', fr: 'Nous pouvons traiter des données d’identification et de contact, des données de compte, l’historique des commandes et les communications de support ou d’évaluations.' },
+    'Zyma': { en: 'Zyma', fr: 'Zyma' },
+    'Menú rápido': { en: 'Quick menu', fr: 'Menu rapide' },
+    'Tickets': { en: 'Tickets', fr: 'Tickets' },
+    'Valoraciones': { en: 'Reviews', fr: 'Avis' },
+    'Estrella': { en: 'Star', fr: 'Étoile' },
+    'Fecha:': { en: 'Date:', fr: 'Date :' },
+    'EUR': { en: 'EUR', fr: 'EUR' },
+    'Perfil': { en: 'Profile', fr: 'Profil' },
+    'Producto': { en: 'Product', fr: 'Produit' },
+    'Volver al Panel de Control': { en: 'Back to Control Panel', fr: 'Retour au panneau de contrôle' },
+    '© 2025 Zyma. Todos los derechos reservados.': { en: '© 2025 Zyma. All rights reserved.', fr: '© 2025 Zyma. Tous droits réservés.' },
+    '© 2026 Zyma. Todos los derechos reservados.': { en: '© 2026 Zyma. All rights reserved.', fr: '© 2026 Zyma. Tous droits réservés.' },
+    'Admin': { en: 'Admin', fr: 'Admin' },
+    'Estado:': { en: 'Status:', fr: 'Statut :' },
+    'Lo que dicen nuestros clientes': { en: 'What our customers say', fr: 'Ce que disent nos clients' },
+    'Trabajador': { en: 'Worker', fr: 'Employé' },
+    'Ver Carta': { en: 'View Menu', fr: 'Voir la carte' },
+    'Volver al login': { en: 'Back to login', fr: 'Retour à la connexion' },
+    'Accede a tus tickets y mantente al día con las respuestas.': { en: 'Access your tickets and stay up to date with replies.', fr: 'Accédez à vos tickets et restez informé des réponses.' },
+    'Accede directamente al hotdog estrella del momento en una vista dedicada solo para ese producto.': { en: 'Access the trending hotdog directly in a dedicated view for that product.', fr: 'Accédez directement au hotdog vedette du moment dans une vue dédiée à ce produit.' },
+    'Accede vía QR para hacer pedidos': { en: 'Access via QR to place orders', fr: 'Accédez via QR pour passer des commandes' },
+    'Acciones': { en: 'Actions', fr: 'Actions' },
+    'Actualiza la información visible de tu cuenta para dar una imagen más profesional.': { en: 'Update the visible information on your account to look more professional.', fr: 'Mettez à jour les informations visibles de votre compte pour avoir une image plus professionnelle.' },
+    'Actualizada:': { en: 'Updated:', fr: 'Mis à jour :' },
+    'Actualizar contraseña': { en: 'Update password', fr: 'Mettre à jour le mot de passe' },
+    'Aquí sigues teniendo acceso a tus comprobantes de pedido.': { en: 'Here you still have access to your order receipts.', fr: 'Ici, vous avez toujours accès à vos reçus de commande.' },
+    'Aquí verás los avisos sobre tus pedidos y actualizaciones.': { en: 'Here you will see notices about your orders and updates.', fr: 'Ici, vous verrez les avis sur vos commandes et mises à jour.' },
+    'Asunto': { en: 'Subject', fr: 'Sujet' },
+    'Atencion al cliente': { en: 'Customer support', fr: 'Service client' },
+    'Aun no tienes pedidos registrados.': { en: 'You do not have any registered orders yet.', fr: 'Vous n’avez pas encore de commandes enregistrées.' },
+    'Añadir Nuevo Producto': { en: 'Add New Product', fr: 'Ajouter un nouveau produit' },
+    'Añadir Producto': { en: 'Add Product', fr: 'Ajouter un produit' },
+    'Añadir usuario': { en: 'Add user', fr: 'Ajouter un utilisateur' },
+    'Baja': { en: 'Deactivate', fr: 'Désactiver' },
+    'Bizum': { en: 'Bizum', fr: 'Bizum' },
+    'Bloqueo no disponible. Ejecuta: ALTER TABLE usuarios ADD COLUMN bloqueado TINYINT(1) NOT NULL DEFAULT 0;': { en: 'Blocking unavailable. Run: ALTER TABLE usuarios ADD COLUMN bloqueado TINYINT(1) NOT NULL DEFAULT 0;', fr: 'Blocage indisponible. Exécutez : ALTER TABLE usuarios ADD COLUMN bloqueado TINYINT(1) NOT NULL DEFAULT 0;' },
+    'Calle Falsa 123, Barcelona': { en: 'Fake Street 123, Barcelona', fr: 'Rue Fausse 123, Barcelone' },
+    'Combina letras, números y símbolos para conseguir una clave más fuerte.': { en: 'Combine letters, numbers and symbols to get a stronger password.', fr: 'Combinez des lettres, des chiffres et des symboles pour obtenir un mot de passe plus fort.' },
+    'Como trabajador, ve a tu panel y haz clic en:': { en: 'As a worker, go to your panel and click on:', fr: 'En tant que travailleur, accédez à votre panneau et cliquez sur :' },
+    'Comparte tu opinión sobre los productos de Zyma. Tu valoración ayuda a otros clientes a tomar mejores decisiones.': { en: 'Share your opinion about Zyma products. Your rating helps other customers make better decisions.', fr: 'Partagez votre avis sur les produits Zyma. Votre note aide les autres clients à prendre de meilleures décisions.' },
+    'Comparte tu opinión...': { en: 'Share your opinion...', fr: 'Partagez votre avis...' },
+    'Compras': { en: 'Purchases', fr: 'Achats' },
+    'Conoce las reseñas recientes y valora tus productos favoritos.': { en: 'See recent reviews and rate your favorite products.', fr: 'Découvrez les avis récents et notez vos produits préférés.' },
+    'Consulta el estado de cada incidencia registrada desde tu cuenta.': { en: 'Check the status of each incident registered from your account.', fr: 'Consultez l’état de chaque incident enregistré depuis votre compte.' },
+    'Cookies técnicas (necesarias), analíticas (medición de uso) y de marketing (contenido promocional personalizado).': { en: 'Technical (necessary), analytical (usage measurement) and marketing (personalized promotional content) cookies.', fr: 'Cookies techniques (nécessaires), analytiques (mesure d’utilisation) et marketing (contenu promotionnel personnalisé).' },
+    'Creada:': { en: 'Created:', fr: 'Créée :' },
+    'Cuéntanos qué ha pasado': { en: 'Tell us what happened', fr: 'Dites-nous ce qui s’est passé' },
+    'Código': { en: 'Code', fr: 'Code' },
+    'Código opcional': { en: 'Optional code', fr: 'Code optionnel' },
+    'Describe el problema con claridad para que podamos ayudarte más rápido.': { en: 'Describe the problem clearly so we can help you faster.', fr: 'Décrivez le problème clairement afin que nous puissions vous aider plus rapidement.' },
+    'Desde aquí puedes comunicar cualquier problema con tu pedido, tu cuenta o un pago, y al mismo tiempo seguir teniendo a mano tus tickets de compra.': { en: 'From here you can report any issue with your order, account or payment, while keeping your purchase tickets handy.', fr: 'Depuis ici, vous pouvez signaler tout problème avec votre commande, votre compte ou un paiement, tout en gardant vos tickets d’achat à portée de main.' },
+    'Ejemplo: Problema con un pedido': { en: 'Example: Problem with an order', fr: 'Exemple : Problème avec une commande' },
+    'El acceso y uso de esta web implica la aceptación de este aviso legal y del resto de políticas publicadas.': { en: 'Accessing and using this website implies acceptance of this legal notice and the rest of the published policies.', fr: 'L’accès et l’utilisation de ce site impliquent l’acceptation de cet avis légal et du reste des politiques publiées.' },
+    'El sistema de valoraciones está funcionando correctamente.': { en: 'The review system is working correctly.', fr: 'Le système d’évaluations fonctionne correctement.' },
+    'En Zyma cuidamos tus datos igual que cuidamos nuestros ingredientes: con transparencia y responsabilidad.': { en: 'At Zyma we take care of your data just as we take care of our ingredients: with transparency and responsibility.', fr: 'Chez Zyma, nous prenons soin de vos données comme de nos ingrédients : avec transparence et responsabilité.' },
+    'Enlaces legales': { en: 'Legal links', fr: 'Liens juridiques' },
+    'Entra directamente a la vista del producto destacado y revisalo sin distracciones.': { en: 'Enter directly to the featured product view and review it without distractions.', fr: 'Accédez directement à la vue du produit mis en avant et examinez-le sans distractions.' },
+    'Entregado': { en: 'Delivered', fr: 'Livré' },
+    'Entregando': { en: 'Delivering', fr: 'En cours de livraison' },
+    'Escribe tu nombre completo': { en: 'Write your full name', fr: 'Écrivez votre nom complet' },
+    'Escribe tu opinión...': { en: 'Write your opinion...', fr: 'Écrivez votre avis...' },
+    'Establecer nueva Contraseña': { en: 'Set new Password', fr: 'Définir un nouveau mot de passe' },
+    'Estadisticas': { en: 'Statistics', fr: 'Statistiques' },
+    'Estado de Valoraciones': { en: 'Review Status', fr: 'État des avis' },
+    'Estado del Sistema de Valoraciones': { en: 'Review System Status', fr: 'État du système d’avis' },
+    'Estadísticas - Trabajador': { en: 'Statistics - Worker', fr: 'Statistiques - Travailleur' },
+    'Estas condiciones se rigen por la legislacion española y la jurisdiccion que corresponda segun normativa de consumo.': { en: 'These conditions are governed by Spanish law and the jurisdiction applicable under consumer regulations.', fr: 'Ces conditions sont régies par la législation espagnole et la juridiction applicable selon la réglementation de consommation.' },
+    'Este formulario permite enviar una prueba de valoración para verificar que el sistema funciona correctamente.': { en: 'This form allows sending a rating test to verify that the system works correctly.', fr: 'Ce formulaire permet d’envoyer un test d’évaluation pour vérifier que le système fonctionne correctement.' },
+    'Este nombre se mostrará en tu área privada y ayuda a que el perfil se vea más serio y ordenado.': { en: 'This name will be shown in your private area and helps your profile look more serious and organized.', fr: 'Ce nom sera affiché dans votre espace privé et aide à rendre votre profil plus sérieux et ordonné.' },
+    'Estrella seleccionada': { en: 'Selected Star', fr: 'Étoile sélectionnée' },
+    'Facebook': { en: 'Facebook', fr: 'Facebook' },
+    'Foto de': { en: 'Photo of', fr: 'Photo de' },
+    'General': { en: 'General', fr: 'Général' },
+    'Gestion de incidencias y tickets': { en: 'Incident and ticket management', fr: 'Gestion des incidents et tickets' },
+    'Gestiona tu cuenta desde un espacio más claro, profesional y fácil de usar.': { en: 'Manage your account from a clearer, more professional and easy-to-use space.', fr: 'Gérez votre compte depuis un espace plus clair, professionnel et facile à utiliser.' },
+    'Gluten': { en: 'Gluten', fr: 'Gluten' },
+    'Gracias,  . Tu pedido ha sido registrado exitosamente.': { en: 'Thank you. Your order has been successfully registered.', fr: 'Merci. Votre commande a été enregistrée avec succès.' },
+    'Guardar Contraseña': { en: 'Save Password', fr: 'Enregistrer le mot de passe' },
+    'Guardar rol': { en: 'Save role', fr: 'Enregistrer le rôle' },
+    'ID': { en: 'ID', fr: 'ID' },
+    'IVA %': { en: 'VAT %', fr: 'TVA %' },
+    'IVA importe': { en: 'VAT amount', fr: 'Montant TVA' },
+    'IVA: $': { en: 'VAT: $', fr: 'TVA : $' },
+    'Ingrediente': { en: 'Ingredient', fr: 'Ingrédient' },
+    'Inicia Sesión para pedir': { en: 'Sign in to order', fr: 'Connectez-vous pour commander' },
+    'Inicia sesión': { en: 'Sign in', fr: 'Se connecter' },
+    'Iniciar Sesión - Zyma': { en: 'Sign In - Zyma', fr: 'Connexion - Zyma' },
+    'Instagram': { en: 'Instagram', fr: 'Instagram' },
+    'Introduce tu contraseña actual': { en: 'Enter your current password', fr: 'Entrez votre mot de passe actuel' },
+    'Introduce un nombre valido': { en: 'Enter a valid name', fr: 'Entrez un nom valide' },
+    'Inventario de Ingredientes (únicos)': { en: 'Inventory of Ingredients (unique)', fr: 'Inventaire des ingrédients (uniques)' },
+    'Ir a Valoraciones': { en: 'Go to Reviews', fr: 'Aller aux avis' },
+    'La web puede contener enlaces a terceros. Zyma no controla ni asume responsabilidad sobre su contenido o políticas.': { en: 'The website may contain third-party links. Zyma does not control or assume responsibility for their content or policies.', fr: 'Le site peut contenir des liens vers des tiers. Zyma ne contrôle pas et n’assume pas la responsabilité de leur contenu ou de leurs politiques.' },
+    'Lacteos': { en: 'Dairy', fr: 'Produits laitiers' },
+    'Leída': { en: 'Read', fr: 'Lue' },
+    'Listo': { en: 'Ready', fr: 'Prêt' },
+    'MM/AA': { en: 'MM/YY', fr: 'MM/AA' },
+    'Marcar como leída': { en: 'Mark as read', fr: 'Marquer comme lu' },
+    'Marcar todas como leídas': { en: 'Mark all as read', fr: 'Marquer tout comme lu' },
+    'Media': { en: 'Average', fr: 'Moyenne' },
+    'Menú - Restaurante': { en: 'Menu - Restaurant', fr: 'Menu - Restaurant' },
+    'Modo invitado: puedes ver la carta, para pedir necesitas iniciar Sesión.': { en: 'Guest mode: you can view the menu, to order you need to sign in.', fr: 'Mode invité : vous pouvez voir la carte, pour commander vous devez vous connecter.' },
+    'Método de pago online': { en: 'Online payment method', fr: 'Mode de paiement en ligne' },
+    'Mínimo 6 caracteres.': { en: 'Minimum 6 characters.', fr: 'Minimum 6 caractères.' },
+    'Necesitas instalar el sistema.': { en: 'You need to install the system.', fr: 'Vous devez installer le système.' },
+    'No cedemos datos a terceros salvo obligacion legal o proveedores necesarios para operar la plataforma bajo contrato de confidencialidad.': { en: 'We do not transfer data to third parties except for legal obligation or necessary providers to run the platform under confidentiality agreements.', fr: 'Nous ne cédons pas de données à des tiers sauf obligation légale ou fournisseurs nécessaires pour faire fonctionner la plateforme sous contrat de confidentialité.' },
+    'No hay ingredientes registrados en la base de datos.': { en: 'There are no ingredients registered in the database.', fr: 'Aucun ingrédient enregistré dans la base de données.' },
+    'No hay productos disponibles en esta categoría.': { en: 'There are no products available in this category.', fr: 'Aucun produit disponible dans cette catégorie.' },
+    'No hay productos disponibles en la base de datos.': { en: 'There are no products available in the database.', fr: 'Aucun produit disponible dans la base de données.' },
+    'No hay reseñas disponibles.': { en: 'No reviews available.', fr: 'Aucun avis disponible.' },
+    'No leídas:': { en: 'Unread:', fr: 'Non lus :' },
+    'No tienes notificaciones todavía.': { en: 'You have no notifications yet.', fr: 'Vous n’avez pas encore de notifications.' },
+    'Nombre del producto': { en: 'Product name', fr: 'Nom du produit' },
+    'Nuestro equipo está preparando tu pedido. ¡Gracias por confiar en Zyma!': { en: 'Our team is preparing your order. Thank you for trusting Zyma!', fr: 'Notre équipe prépare votre commande. Merci de faire confiance à Zyma !' },
+    'Nueva Contraseña': { en: 'New Password', fr: 'Nouveau mot de passe' },
+    'Nueva Contraseña - Zyma': { en: 'New Password - Zyma', fr: 'Nouveau mot de passe - Zyma' },
+    'Nueva incidencia': { en: 'New incident', fr: 'Nouvel incident' },
+    'Número de tarjeta': { en: 'Card number', fr: 'Numéro de carte' },
+    'Opiniones': { en: 'Reviews', fr: 'Avis' },
+    'Permiten mantener tu Sesión, recordar configuraciones, analizar comportamiento de uso y optimizar el rendimiento del sitio.': { en: 'They allow maintaining your session, remembering settings, analyzing usage behavior and optimizing site performance.', fr: 'Ils permettent de maintenir votre session, de mémoriser les paramètres, d’analyser le comportement d’utilisation et d’optimiser les performances du site.' },
+    'Precio': { en: 'Price', fr: 'Prix' },
+    'Prioridad': { en: 'Priority', fr: 'Priorité' },
+    'Producto a valorar:': { en: 'Product to rate:', fr: 'Produit à noter :' },
+    'Producto estrella:': { en: 'Star product:', fr: 'Produit vedette :' },
+    'Productos Existentes': { en: 'Existing Products', fr: 'Produits existants' },
+    'Productos que mejor impresion causan': { en: 'Products that make the best impression', fr: 'Produits qui font la meilleure impression' },
+    'Productos:': { en: 'Products:', fr: 'Produits :' },
+    'Puedes aceptar todas, rechazar las opcionales o personalizar tu elección. Las cookies técnicas son necesarias para que la web funcione correctamente.': { en: 'You can accept all, reject optional ones or personalize your choice. Technical cookies are necessary for the website to function properly.', fr: 'Vous pouvez tout accepter, refuser les optionnelles ou personnaliser votre choix. Les cookies techniques sont nécessaires au fonctionnement correct du site.' },
+    'Puedes aceptar, rechazar o personalizar las cookies opcionales desde el popup al iniciar Sesión.': { en: 'You can accept, reject or customize optional cookies from the popup when signing in.', fr: 'Vous pouvez accepter, refuser ou personnaliser les cookies optionnels depuis le popup lors de la connexion.' },
+    'Puntuación (1-5):': { en: 'Rating (1-5):', fr: 'Note (1-5) :' },
+    'Recetas de la casa, ingredientes frescos y un sabor que no se olvida. Crea tu cuenta o inicia sesión y descubre la carta.': { en: 'House recipes, fresh ingredients and a flavor you will not forget. Create your account or sign in and discover the menu.', fr: 'Recettes de la maison, ingrédients frais et une saveur inoubliable. Créez votre compte ou connectez-vous et découvrez la carte.' },
+    'Recuperar Contraseña - Zyma': { en: 'Recover Password - Zyma', fr: 'Récupérer le mot de passe - Zyma' },
+    'Registrarse': { en: 'Register', fr: 'S’inscrire' },
+    'Registrarse - Zyma': { en: 'Register - Zyma', fr: 'S’inscrire - Zyma' },
+    'Repite tu contraseña para confirmar.': { en: 'Repeat your password to confirm.', fr: 'Répétez votre mot de passe pour confirmer.' },
+    'Resenas': { en: 'Reviews', fr: 'Avis' },
+    'Resumen del Pedido #': { en: 'Order Summary #', fr: 'Résumé de la commande #' },
+    'Revisa lo que opinan otros clientes': { en: 'See what other customers are saying', fr: 'Voyez ce que disent les autres clients' },
+    'Revisa tus productos antes de finalizar el pedido': { en: 'Review your products before completing the order', fr: 'Vérifiez vos produits avant de finaliser la commande' },
+    'Ruta de la imagen (ej: assets/nachos.png)': { en: 'Image path (e.g. assets/nachos.png)', fr: 'Chemin de l’image (ex : assets/nachos.png)' },
+    'Seguimiento': { en: 'Tracking', fr: 'Suivi' },
+    'Seguridad reforzada': { en: 'Enhanced security', fr: 'Sécurité renforcée' },
+    'Si lo tienes, accederás a funciones especiales.': { en: 'If you have it, you will access special features.', fr: "Si vous l'avez, vous aurez accès à des fonctionnalités spéciales." },
+    'Sistema de Valoraciones - Instalar/Activar': { en: 'Review System - Install/Activate', fr: "Système d'avis - Installer/Activer" },
+    'Soja': { en: 'Soy', fr: 'Soja' },
+    'Solución:': { en: 'Solution:', fr: 'Solution :' },
+    'Son pequeños archivos que se guardan en tu dispositivo para recordar preferencias y mejorar la navegación.': { en: 'They are small files stored on your device to remember preferences and improve navigation.', fr: 'Ce sont de petits fichiers enregistrés sur votre appareil pour mémoriser les préférences et améliorer la navigation.' },
+    'Soporte': { en: 'Support', fr: 'Support' },
+    'Soporte e Incidencias - Zyma': { en: 'Support and Incidents - Zyma', fr: 'Support et incidents - Zyma' },
+    'Stock Mínimo': { en: 'Minimum stock', fr: 'Stock minimum' },
+    'Subtotal': { en: 'Subtotal', fr: 'Sous-total' },
+    'Subtotal (sin IVA)': { en: 'Subtotal (without VAT)', fr: 'Sous-total (hors TVA)' },
+    'Subtotal: $': { en: 'Subtotal: $', fr: 'Sous-total : $' },
+    'TABLA ACTIVA': { en: 'ACTIVE TABLE', fr: 'TABLE ACTIVE' },
+    'TABLA NO EXISTE': { en: 'TABLE DOES NOT EXIST', fr: 'TABLE INEXISTANTE' },
+    'Tambien puedes borrar o bloquear cookies desde la configuración de tu navegador en cualquier momento.': { en: 'You can also delete or block cookies from your browser settings at any time.', fr: 'Vous pouvez également supprimer ou bloquer les cookies depuis les paramètres de votre navigateur à tout moment.' },
+    'Tarjeta': { en: 'Card', fr: 'Carte' },
+    'Teléfono Bizum (+34XXXXXXXXX)': { en: 'Bizum phone (+34XXXXXXXXX)', fr: 'Téléphone Bizum (+34XXXXXXXXX)' },
+    'Test de Valoración': { en: 'Rating Test', fr: "Test d'évaluation" },
+    'Zyma - Tu Carrito': { en: 'Zyma - Your Cart', fr: 'Zyma - Votre panier' },
+    'Tu Carrito': { en: 'Your Cart', fr: 'Votre panier' },
+    'Tu carrito esta vacio.': { en: 'Your cart is empty.', fr: 'Votre panier est vide.' },
+    'Zyma - Carta': { en: 'Zyma - Menu', fr: 'Zyma - Menu' },
+    'Zyma - Estadísticas': { en: 'Zyma - Statistics', fr: 'Zyma - Statistiques' },
+    'Panel de Administracion': { en: 'Administration Panel', fr: "Panneau d'administration" },
+    'Número de tarjeta': { en: 'Card number', fr: 'Numéro de carte' },
+    'MM/AA': { en: 'MM/YY', fr: 'MM/AA' },
+    'CVV': { en: 'CVV', fr: 'CVV' },
+    'Código de trabajador (opcional)': { en: 'Worker code (optional)', fr: 'Code employé (optionnel)' },
+    'Código opcional': { en: 'Optional code', fr: 'Code optionnel' },
+    'Menú rápido': { en: 'Quick menu', fr: 'Menu rapide' },
+    'Perfil': { en: 'Profile', fr: 'Profil' },
+    'Notificaciones': { en: 'Notifications', fr: 'Notifications' },
+    'Carrito': { en: 'Cart', fr: 'Panier' },
+    'Carta de Zyma': { en: 'Zyma Menu', fr: 'Menu Zyma' },
+    'Inventario de Ingredientes (únicos)': { en: 'Inventory of Ingredients (unique)', fr: 'Inventaire des ingrédients (uniques)' },
+    'Estado de Valoraciones': { en: 'Review Status', fr: 'État des avis' },
+    'Zyma - Valoraciones y Opiniones': { en: 'Zyma - Reviews and Opinions', fr: 'Zyma - Avis et opinions' },
+    'Zyma': { en: 'Zyma', fr: 'Zyma' },
+    'Nombre': { en: 'Name', fr: 'Nom' },
+    'Contraseña': { en: 'Password', fr: 'Mot de passe' },
+    'Email': { en: 'Email', fr: 'Email' },
+    'Ruta de la imagen (ej: assets/nachos.png)': { en: 'Image path (e.g. assets/nachos.png)', fr: 'Chemin de l'image (ex : assets/nachos.png)' },
+    'Nombre del producto': { en: 'Product name', fr: 'Nom du produit' },
+    'Precio': { en: 'Price', fr: 'Prix' },
+    'Imagen': { en: 'Image', fr: 'Image' },
+    'Zyma. Hotdogs con alma.': { en: 'Zyma. Hotdogs with soul.', fr: 'Zyma. Hot-dogs avec âme.' },
+    'Acceso rápido a la carta': { en: 'Quick access to menu', fr: 'Accès rapide au menu' },
+    'Valorar producto': { en: 'Rate product', fr: 'Noter le produit' },
+    'Compartir opinión': { en: 'Share opinion', fr: 'Partager avis' },
+    'Ver más opiniones': { en: 'See more reviews', fr: "Voir plus d'avis" },
+    'Compra': { en: 'Purchase', fr: 'Achat' },
+    'Estado': { en: 'Status', fr: 'Statut' },
+    'Marcar como leída': { en: 'Mark as read', fr: 'Marquer comme lu' },
+    'Marcar todas como leídas': { en: 'Mark all as read', fr: 'Marquer tout comme lu' }
+  };
+
+  const NODE_SKIP_TAGS = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT', 'IFRAME', 'CODE', 'PRE', 'TEXTAREA']);
+
+  function getSavedLanguage() {
+    return window.localStorage.getItem('zymaLanguage') || 'es';
+  }
+
+  function normalizeText(text) {
+    return text.trim().replace(/\s+/g, ' ').toLowerCase();
+  }
+
+  const normalizedTranslations = Object.fromEntries(
+    Object.entries(translations).map(([key, value]) => [normalizeText(key), value])
+  );
+
+  function translateText(text, lang) {
+    if (!text) return text;
+    const trimmed = text.trim();
+    const translation = translations[trimmed] || normalizedTranslations[normalizeText(trimmed)];
+    if (translation && translation[lang]) {
+      return translation[lang];
+    }
+    return lang === 'es' ? trimmed : text;
+  }
+
+  function translateTextNode(node, lang) {
+    const original = node._i18nOriginalText !== undefined ? node._i18nOriginalText : node.nodeValue;
+    if (original == null) return;
+    const trimmed = original.trim();
+    if (!trimmed) return;
+    if (node._i18nOriginalText === undefined) {
+      node._i18nOriginalText = original;
+    }
+    const translated = translateText(trimmed, lang);
+    if (translated !== trimmed) {
+      node.nodeValue = original.replace(trimmed, translated);
+    } else if (lang === 'es' && node.nodeValue !== original) {
+      node.nodeValue = original;
+    }
+  }
+
+  function translateAttributes(element, lang) {
+    ['placeholder', 'title', 'aria-label', 'alt'].forEach((attribute) => {
+      if (!element.hasAttribute(attribute)) {
+        return;
+      }
+      const original = element.dataset[`i18nOriginal${attribute}`] || element.getAttribute(attribute);
+      if (original == null) {
+        return;
+      }
+      if (!element.dataset[`i18nOriginal${attribute}`]) {
+        element.dataset[`i18nOriginal${attribute}`] = original;
+      }
+      const translated = translateText(original, lang);
+      if (translated !== original || lang === 'es') {
+        element.setAttribute(attribute, translated);
+      }
+    });
+  }
+
+  function translateFormValues(lang) {
+    // Translate input[type=submit] and input[type=button]
+    document.querySelectorAll('input[type=submit], input[type=button]').forEach((element) => {
+      const original = element.dataset.i18nOriginalValue || element.value;
+      if (!original) return;
+      if (!element.dataset.i18nOriginalValue) {
+        element.dataset.i18nOriginalValue = original;
+      }
+      const translated = translateText(original, lang);
+      if (translated !== original || lang === 'es') {
+        element.value = translated;
+      }
+    });
+
+    // Translate button text content
+    document.querySelectorAll('button').forEach((element) => {
+      // Skip language switcher buttons
+      if (element.classList.contains('language-floating-toggle') || element.classList.contains('language-floating-menu') || element.dataset.lang) {
+        return;
+      }
+      const children = element.childNodes;
+      let hasOnlyTextChild = children.length === 1 && children[0].nodeType === Node.TEXT_NODE;
+      if (!hasOnlyTextChild) {
+        return;
+      }
+      const original = element.dataset.i18nOriginalValue !== undefined ? element.dataset.i18nOriginalValue : element.textContent.trim();
+      if (!original) return;
+      if (element.dataset.i18nOriginalValue === undefined) {
+        element.dataset.i18nOriginalValue = original;
+      }
+      const translated = translateText(original, lang);
+      if (translated !== original || lang === 'es') {
+        element.textContent = translated;
+      }
+    });
+  }
+
+  function translatePage(lang) {
+    // Translate text nodes
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+    let node;
+    while ((node = walker.nextNode())) {
+      const parent = node.parentElement;
+      if (!parent || NODE_SKIP_TAGS.has(parent.tagName)) {
+        continue;
+      }
+      // Skip language switcher elements
+      if (parent.closest('.language-floating-switcher')) {
+        continue;
+      }
+      translateTextNode(node, lang);
+    }
+
+    // Translate all attributes
+    document.querySelectorAll('input, textarea, button, select, [title], [aria-label], [alt], [placeholder]').forEach((element) => {
+      translateAttributes(element, lang);
+    });
+
+    // Translate form values
+    translateFormValues(lang);
+
+    // Translate page title
+    const title = document.querySelector('title');
+    if (title) {
+      const original = title.dataset.i18nOriginal || title.textContent;
+      if (!title.dataset.i18nOriginal) {
+        title.dataset.i18nOriginal = original;
+      }
+      const translated = translateText(original, lang);
+      if (translated !== original || lang === 'es') {
+        title.textContent = translated;
+      }
+    }
+
+    // Set document language
+    document.documentElement.lang = lang;
+  }
+
+  function setLanguage(lang) {
+    window.localStorage.setItem('zymaLanguage', lang);
+    document.documentElement.lang = lang;
+    translatePage(lang);
+    updateSwitcher(lang);
+  }
+
+  function createFloatingSwitcher() {
+    // Remove any duplicate switchers created by other scripts
+    const existing = document.querySelectorAll('.language-floating-switcher');
+    existing.forEach((el, idx) => {
+      if (idx > 0) el.remove();
+    });
+
+    if (document.getElementById('languageFloatingSwitcher')) {
+      return;
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.id = 'languageFloatingSwitcher';
+    wrapper.className = 'language-floating-switcher';
+    wrapper.innerHTML = `
+      <button type="button" class="language-floating-toggle" aria-label="Cambiar idioma">${getSavedLanguage().toUpperCase()}</button>
+      <div class="language-floating-menu" aria-label="Seleccionar idioma">
+        <button type="button" data-lang="es">ES</button>
+        <button type="button" data-lang="en">EN</button>
+        <button type="button" data-lang="fr">FR</button>
+      </div>
+    `;
+
+    document.body.appendChild(wrapper);
+
+    const toggle = wrapper.querySelector('.language-floating-toggle');
+    const menu = wrapper.querySelector('.language-floating-menu');
+    const buttons = wrapper.querySelectorAll('button[data-lang]');
+
+    toggle.addEventListener('click', (event) => {
+      event.stopPropagation();
+      menu.classList.toggle('active');
+    });
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const lang = button.dataset.lang;
+        setLanguage(lang);
+        menu.classList.remove('active');
+      });
+    });
+
+    window.addEventListener('click', () => {
+      menu.classList.remove('active');
+    });
+  }
+
+  function updateSwitcher(lang) {
+    const floating = document.querySelector('.language-floating-toggle');
+    if (floating) {
+      floating.textContent = lang.toUpperCase();
+    }
+    document.querySelectorAll('.language-floating-menu button').forEach((button) => {
+      button.classList.toggle('active', button.dataset.lang === lang);
+    });
+  }
+
+  function init() {
+    // Wait a bit to allow other scripts to load
+    setTimeout(() => {
+      // Remove any duplicate language switchers created by other scripts
+      const switchers = document.querySelectorAll('.language-floating-switcher');
+      if (switchers.length > 1) {
+        for (let i = 1; i < switchers.length; i++) {
+          switchers[i].remove();
+        }
+      }
+
+      // Ensure we have a switcher
+      createFloatingSwitcher();
+      
+      // Translate page with saved language
+      const saved = getSavedLanguage();
+      document.documentElement.lang = saved;
+      translatePage(saved);
+      updateSwitcher(saved);
+    }, 100);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();

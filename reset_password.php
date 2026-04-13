@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * reset_password.php
  * Establece nueva Contraseña con token. :)
@@ -137,6 +137,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $error === '') {
     <span>|</span>
     <a href="aviso_legal.php">Aviso Legal</a>
   </p></footer>
+  <script src="assets/language-switcher.js?v=20260413-1"></script>
 </body>
 </html>
+
 

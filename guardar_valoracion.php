@@ -39,7 +39,7 @@ try {
             FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE,
             id_producto INT NOT NULL,
             FOREIGN KEY (id_producto) REFERENCES productos(id) ON DELETE CASCADE,
-            puntuacion INT NOT NULL CHECK (puntuacion >= 1 AND puntuacion <= 5),
+            puntuacion INT NOT NULL CHECK (puntuacion >= 0 AND puntuacion <= 5),
             comentario TEXT,
             fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
             fecha_actualizacion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -83,9 +83,9 @@ try {
     }
 
     // Validar puntuación
-    if ($puntuacion === null || $puntuacion < 1 || $puntuacion > 5) {
+    if ($puntuacion === null || $puntuacion < 0 || $puntuacion > 5) {
         http_response_code(400);
-        echo json_encode(['error' => 'La puntuación debe estar entre 1 y 5.']);
+        echo json_encode(['error' => 'La puntuación debe estar entre 0 y 5.']);
         exit;
     }
 
