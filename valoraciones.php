@@ -254,13 +254,13 @@ if ($is_logged_in) {
         
         <!-- Título de la página -->
         <div class="center mb-4">
-            <h1 class="welcome">Valoraciones de Productos</h1>
+            <h1 class="welcome" data-i18n="reviews.title">Valoraciones de Productos</h1>
             <p class="muted lead">
-                Comparte tu opinión sobre los productos de Zyma.
+                <span data-i18n="reviews.subtitle">Comparte tu opinión sobre los productos de Zyma.</span>
                 <?php if ($is_logged_in): ?>
-                    Tu valoración ayuda a otros clientes a tomar mejores decisiones.
+                    <span data-i18n="reviews.loggedInHint">Tu valoración ayuda a otros clientes a tomar mejores decisiones.</span>
                 <?php else: ?>
-                    Inicia sesión para valorar nuestros productos.
+                    <span data-i18n="reviews.loggedOutHint">Inicia sesión para valorar nuestros productos.</span>
                 <?php endif; ?>
             </p>
         </div>
@@ -289,7 +289,7 @@ if ($is_logged_in) {
                             <?php if (!empty($producto['imagen'])): ?>
                                 <img src="<?= htmlspecialchars($producto['imagen']) ?>" alt="<?= htmlspecialchars($producto['nombre']) ?>">
                             <?php else: ?>
-                                <div class="product-placeholder">Sin imagen</div>
+                                <div class="product-placeholder" data-i18n="reviews.noImage">Sin imagen</div>
                             <?php endif; ?>
                         </div>
 
@@ -346,7 +346,7 @@ if ($is_logged_in) {
                                     ><?php if ($mi_valoracion && !empty($mi_valoracion['comentario'])): ?><?= htmlspecialchars($mi_valoracion['comentario']) ?><?php endif; ?></textarea>
 
                                     <!-- Botón enviar -->
-                                    <button type="submit" class="btn-rate-product">
+                                    <button type="submit" class="btn-rate-product" data-i18n="<?= $mi_valoracion ? 'reviews.update' : 'reviews.rate' ?>">
                                         <?php if ($mi_valoracion): ?>
                                             Actualizar
                                         <?php else: ?>
@@ -358,7 +358,7 @@ if ($is_logged_in) {
                                 </form>
                             <?php else: ?>
                                 <p class="login-hint">
-                                    <a href="login.php">Inicia sesión</a> para valorar este producto
+                                    <a href="login.php" data-i18n="reviews.loginHint">Inicia sesión</a> <span data-i18n="reviews.loginToRate">para valorar este producto</span>
                                 </p>
                             <?php endif; ?>
                         </div>
@@ -386,7 +386,7 @@ if ($is_logged_in) {
                             ?>
                             <div class="product-recent-opinions">
                                 <button id="reviewToggle-<?= $pid ?>" class="review-toggle-btn" onclick="toggleReviewsDropdown(<?= $pid ?>)" style="cursor: pointer; padding: 10px; background: linear-gradient(135deg, #d4af37, #f4e4a6); border-radius: 6px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; font-weight: 600; width: 100%; border: none; font-size: 1em;">
-                                    Ver reseñas (<?= $stats['total'] ?>)
+                                    <span data-i18n="reviews.viewReviews">Ver reseñas</span> (<?= $stats['total'] ?>)
                                 </button>
                                 <div id="reviewsDropdown-<?= $pid ?>" style="display: none; background: #f9f9f9; border: 1px solid #ddd; border-radius: 6px; padding: 15px; margin-top: 10px; max-height: 400px; overflow-y: auto;">
                                 <?php if (count($opiniones) > 0): ?>
@@ -423,7 +423,7 @@ if ($is_logged_in) {
                                             
                                             <?php if (!empty($op['respuesta'])): ?>
                                                 <div style="background: #e8f4f8; padding: 1rem; border-radius: 6px; margin-top: 1rem; border-left: 4px solid #2196F3;">
-                                                    <div style="font-weight: 700; color: #0c47a1; margin-bottom: 0.5rem;">
+                                                    <div style="font-weight: 700; color: #0c47a1; margin-bottom: 0.5rem;" data-i18n="reviews.restaurantReply">
                                                         [Respuesta del restaurante Zyma]:
                                                     </div>
                                                     <p style="color: #555; margin: 0; line-height: 1.5;">
@@ -442,7 +442,7 @@ if ($is_logged_in) {
                                         </div>
                                     <?php endforeach; ?>
                                 <?php else: ?>
-                                    <p style="color: #666; text-align: center;">No hay reseñas disponibles.</p>
+                                    <p style="color: #666; text-align: center;" data-i18n="reviews.noReviews">No hay reseñas disponibles.</p>
                                 <?php endif; ?>
                                 </div>
                             </div>
@@ -455,8 +455,8 @@ if ($is_logged_in) {
         <!-- Botón para volver a inicio (si está logueado) -->
         <?php if ($is_logged_in): ?>
             <div class="btn-row center mt-4">
-                <a href="usuario.php" class="btn-secondary">Volver al inicio</a>
-                <a href="carta.php" class="btn-secondary">Ver Carta</a>
+                <a href="usuario.php" class="btn-secondary" data-i18n="reviews.backHome">Volver al inicio</a>
+                <a href="carta.php" class="btn-secondary" data-i18n="reviews.viewMenu">Ver Carta</a>
             </div>
         <?php endif; ?>
 
@@ -467,11 +467,11 @@ if ($is_logged_in) {
 <footer>
     <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php">Política de Cookies</a>
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php">Aviso Legal</a>
+    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
   </p>
 </footer>
 
@@ -745,6 +745,7 @@ if ($is_logged_in) {
 <?php if ($is_logged_in): ?>
     <script src="assets/mobile-header.js?v=20260211-6"></script>
 <?php endif; ?>
+<script src="assets/lang.js?v=1"></script>
 
 </body>
 </html>

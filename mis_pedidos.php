@@ -80,9 +80,9 @@ unset($_SESSION['mensaje']);
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-          <a href="perfil.php">Mi perfil</a>
-          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-          <a href="logout.php">Cerrar Sesión</a>
+          <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
+          <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
+          <a href="logout.php" data-i18n="nav.logout">Cerrar Sesión</a>
         </div>
     </div>
     <a href="usuario.php" class="landing-logo">
@@ -91,10 +91,10 @@ unset($_SESSION['mensaje']);
             <div class="quick-menu-section">
             <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
             <div class="dropdown quick-dropdown" id="quickDropdown">
-                <a href="usuario.php">Inicio</a>
-                <a href="carta.php">Ver carta</a>
-                <a href="valoraciones.php">Valoraciones</a>
-                <a href="tickets.php">Tickets</a>
+                <a href="usuario.php" data-i18n="nav.home">Inicio</a>
+                <a href="carta.php" data-i18n="nav.viewMenu">Ver carta</a>
+                <a href="valoraciones.php" data-i18n="nav.reviews">Valoraciones</a>
+                <a href="tickets.php" data-i18n="nav.tickets">Tickets</a>
             </div>
         </div>
     <div class="cart-section">
@@ -108,16 +108,16 @@ unset($_SESSION['mensaje']);
 
 <div class="container">
     <div class="main-content">
-        <h2 class="welcome">Mis Pedidos</h2>
+        <h2 class="welcome" data-i18n="orders.title">Mis Pedidos</h2>
         
         <?php if ($mensaje): ?>
             <div class="alert alert-success"><?= htmlspecialchars($mensaje) ?></div>
         <?php endif; ?>
         
         <?php if (empty($pedidos)): ?>
-            <p class="empty-state">No tienes pedidos realizados.</p>
+            <p class="empty-state" data-i18n="orders.empty">No tienes pedidos realizados.</p>
             <div class="btn-row center">
-                <a href="carta.php" class="btn-cart">Ver Carta</a>
+                <a href="carta.php" class="btn-cart" data-i18n="orders.viewMenu">Ver Carta</a>
             </div>
         <?php else: ?>
             <?php foreach ($pedidos as $pedido): ?>
@@ -125,9 +125,9 @@ unset($_SESSION['mensaje']);
                 <div class="row-between mb-2">
                     <div>
                         <h3>Pedido #<?= htmlspecialchars($pedido['id_pedido']) ?></h3>
-                        <p><strong>Estado:</strong> <?= ucfirst($pedido['estado']) ?></p>
-                        <p><strong>Total:</strong> ?<?= number_format($pedido['total'], 2, ',', '.') ?></p>
-                        <p><strong>Fecha:</strong> <?= date('d/m/Y H:i', strtotime($pedido['fecha_hora'])) ?></p>
+                        <p><strong data-i18n="orders.status">Estado:</strong> <?= ucfirst($pedido['estado']) ?></p>
+                        <p><strong data-i18n="orders.total">Total:</strong> €<?= number_format($pedido['total'], 2, ',', '.') ?></p>
+                        <p><strong data-i18n="orders.date">Fecha:</strong> <?= date('d/m/Y H:i', strtotime($pedido['fecha_hora'])) ?></p>
                     </div>
                     <div class="text-right">
                         <span class="badge-status badge-estado-<?= $pedido['estado'] ?>">
@@ -135,10 +135,10 @@ unset($_SESSION['mensaje']);
                         </span>
                     </div>
                 </div>
-                <p><strong>Productos:</strong> <?= htmlspecialchars($pedido['items']) ?></p>
-                
+                <p><strong data-i18n="orders.products">Productos:</strong> <?= htmlspecialchars($pedido['items']) ?></p>
+
                 <?php if (in_array($pedido['estado'], ['pendiente', 'preparando'])): ?>
-                    <button type="button" class="btn-cancelar" onclick="confirmarCancelacion(<?= htmlspecialchars($pedido['id_pedido']) ?>)">
+                    <button type="button" class="btn-cancelar" onclick="confirmarCancelacion(<?= htmlspecialchars($pedido['id_pedido']) ?>)" data-i18n="orders.cancel">
                         Cancelar Pedido
                     </button>
                 <?php endif; ?>
@@ -174,14 +174,15 @@ setInterval(() => {
 }, AUTO_REFRESH_MS);
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/lang.js?v=1"></script>
 <footer>
   <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php">Política de Cookies</a>
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php">Aviso Legal</a>
+    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
   </p></footer>
 </body>
 </html>

@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registrarse - Zyma</title>
-  <link rel="icon" type="image/png" href="assets/favicon.png">>
+  <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="stylesheet" href="styles.css?v=20260211-5">
 </head>
 <body>
@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <span class="landing-logo-text">Zyma</span>
         </a>
         <div class="landing-actions">
-          <a href="login.php" class="landing-link">Entrar</a>
+          <a href="login.php" class="landing-link" data-i18n="nav.enter">Entrar</a>
         </div>
       </div>
     </header>
@@ -83,52 +83,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="POST" action="registro.php">
-      <h2>Crea tu cuenta</h2>
+      <h2 data-i18n="register.title">Crea tu cuenta</h2>
 
       <label for="email">
-        Email <span class="required">*</span>
+        <span data-i18n="common.email">Email</span> <span class="required">*</span>
         <input type="email" id="email" name="email" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
       </label>
 
       <label for="password">
-        Contraseña <span class="required">*</span>
+        <span data-i18n="register.passwordLabel">Contraseña</span> <span class="required">*</span>
         <div class="password-field">
           <input type="password" id="password" name="password" required minlength="6">
-          <button type="button" class="password-toggle" data-password-toggle="password" aria-label="Mostrar contraseña" aria-pressed="false">
+          <button type="button" class="password-toggle" data-password-toggle="password" data-i18n-aria="common.showPassword" aria-label="Mostrar contraseña" aria-pressed="false">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
           </button>
         </div>
-        <span class="optional-label">Mínimo 6 caracteres.</span>
+        <span class="optional-label" data-i18n="register.passwordMin">Mínimo 6 caracteres.</span>
       </label>
 
       <label for="confirmPassword">
-        Confirmar contraseña <span class="required">*</span>
+        <span data-i18n="register.confirmPassword">Confirmar contraseña</span> <span class="required">*</span>
         <div class="password-field">
           <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
-          <button type="button" class="password-toggle" data-password-toggle="confirmPassword" aria-label="Mostrar contraseña" aria-pressed="false">
+          <button type="button" class="password-toggle" data-password-toggle="confirmPassword" data-i18n-aria="common.showPassword" aria-label="Mostrar contraseña" aria-pressed="false">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
           </button>
         </div>
-        <span class="optional-label">Repite tu contraseña para confirmar.</span>
+        <span class="optional-label" data-i18n="register.repeatHint">Repite tu contraseña para confirmar.</span>
       </label>
 
       <label for="workerCode">
-        Código de trabajador (opcional)
+        <span data-i18n="common.workerCode">Código de trabajador (opcional)</span>
         <input type="text" id="workerCode" name="workerCode" value="<?= htmlspecialchars($_POST['workerCode'] ?? '') ?>">
-        <span class="optional-label">Si lo tienes, accederás a funciones especiales.</span>
+        <span class="optional-label" data-i18n="register.workerHint">Si lo tienes, accederás a funciones especiales.</span>
       </label>
 
-      <button type="submit">Registrarse</button>
+      <button type="submit" data-i18n="register.submit">Registrarse</button>
     </form>
 
     <div style="text-align: center; margin-top: 1.8rem;">
-      <a href="login.php">¿Ya tienes cuenta? Inicia sesión</a>
+      <a href="login.php" data-i18n="register.hasAccount">¿Ya tienes cuenta? Inicia sesión</a>
     </div>
   </div>
 
@@ -166,9 +166,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div style="width: 80px; height: 80px; background: #EECF6D; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 1.5rem; box-shadow: 0 8px 20px rgba(238, 207, 109, 0.4);">
           <span style="font-size: 2.5rem; color: #45050C;">✓</span>
         </div>
-        <h2 style="color: #45050C; margin-bottom: 1rem; font-size: 1.8rem;">¡Registro exitoso!</h2>
+        <h2 style="color: #45050C; margin-bottom: 1rem; font-size: 1.8rem;" data-i18n="register.successTitle">¡Registro exitoso!</h2>
         <p style="color: #555; margin-bottom: 1.5rem; font-size: 1.1rem;">
-          Tu cuenta ha sido creada correctamente.<br>
+          <span data-i18n="register.successCreated">Tu cuenta ha sido creada correctamente.</span><br>
           <strong><?= htmlspecialchars($_SESSION['registered_email']) ?></strong>
         </p>
         <div style="background: #f8f9fa; padding: 1rem; border-radius: 10px; margin: 1.5rem 0;">
@@ -177,7 +177,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </p>
         </div>
         <button onclick="window.location.href='login.php'"
-          style="background: #720E07; color: white; border: none; padding: 1rem 2rem; border-radius: 12px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: all 0.3s; width: 100%;">
+          style="background: #720E07; color: white; border: none; padding: 1rem 2rem; border-radius: 12px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: all 0.3s; width: 100%;"
+          data-i18n="register.goLogin">
           Ir al Login ahora
         </button>
       `;
@@ -217,6 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </script>
   <?php endif; ?>
   <script src="assets/mobile-header.js?v=20260211-6"></script>
+  <script src="assets/lang.js?v=1"></script>
   <script>
     document.querySelectorAll('[data-password-toggle]').forEach((button) => {
       button.addEventListener('click', () => {
@@ -231,13 +233,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     });
   </script>
   <footer>
-    <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+    <p data-i18n="footer.rights">&copy; 2025 Zyma. Todos los derechos reservados.</p>
     <p class="footer-legal-links">
-      <a href="politica_cookies.php">Política de Cookies</a>
+      <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
       <span>|</span>
-      <a href="politica_privacidad.php">Política de Privacidad</a>
+      <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
       <span>|</span>
-      <a href="aviso_legal.php">Aviso Legal</a>
+      <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
     </p>
   </footer>
 </body>

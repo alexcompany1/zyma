@@ -46,9 +46,9 @@ if ($show_notif && $is_logged_in) {
         </button>
         <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
         <div class="dropdown" id="dropdownMenu">
-          <a href="perfil.php">Mi perfil</a>
-          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-          <a href="logout.php">Cerrar Sesión</a>
+          <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
+          <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
+          <a href="logout.php" data-i18n="nav.logout">Cerrar Sesión</a>
         </div>
       </div>
     <?php endif; ?>
@@ -59,18 +59,18 @@ if ($show_notif && $is_logged_in) {
 
     <div class="landing-actions">
       <?php if (!$is_logged_in): ?>
-        <a href="login.php" class="landing-link">Entrar</a>
-        <a href="registro.php" class="landing-cta">Crear cuenta</a>
+        <a href="login.php" class="landing-link" data-i18n="nav.enter">Entrar</a>
+        <a href="registro.php" class="landing-cta" data-i18n="nav.createAccount">Crear cuenta</a>
       <?php endif; ?>
 
       <?php if ($is_logged_in): ?>
         <div class="quick-menu-section">
           <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
           <div class="dropdown quick-dropdown" id="quickDropdown">
-            <a href="usuario.php">Inicio</a>
-            <a href="carta.php">Ver carta</a>
-            <a href="valoraciones.php">Valoraciones</a>
-            <a href="tickets.php">Tickets</a>
+            <a href="usuario.php" data-i18n="nav.home">Inicio</a>
+            <a href="carta.php" data-i18n="nav.viewMenu">Ver carta</a>
+            <a href="valoraciones.php" data-i18n="nav.reviews">Valoraciones</a>
+            <a href="tickets.php" data-i18n="nav.tickets">Tickets</a>
           </div>
         </div>
       <?php endif; ?>
@@ -89,7 +89,7 @@ if ($show_notif && $is_logged_in) {
 
         <?php if ($show_cart && $is_logged_in): ?>
           <a href="carrito.php" class="cart-btn">
-            <img src="assets/cart-icon.png" alt="Carrito">
+            <img src="assets/cart-icon.png" alt="Carrito" data-i18n-aria="nav.cart">
             <span class="cart-count"><?= $cart_count ?></span>
           </a>
         <?php endif; ?>
@@ -112,4 +112,5 @@ if ($show_notif && $is_logged_in) {
     }
   });
 </script>
+<script src="assets/lang.js?v=1"></script>
 
