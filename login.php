@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <span class="landing-logo-text">Zyma</span>
         </a>
         <div class="landing-actions">
-          <a href="registro.php" class="landing-cta">Crear cuenta</a>
+          <a href="registro.php" class="landing-cta" data-i18n="nav.createAccount">Crear cuenta</a>
         </div>
       </div>
     </header>
@@ -123,18 +123,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="POST" action="login.php">
-      <h2>Iniciar Sesión</h2>
+      <h2 data-i18n="login.title">Iniciar Sesión</h2>
 
       <label for="email">
-        Email <span class="required">*</span>
+        <span data-i18n="common.email">Email</span> <span class="required">*</span>
         <input type="email" id="email" name="email" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
       </label>
 
       <label for="password">
-        Contraseña <span class="required">*</span>
+        <span data-i18n="common.password">Contraseña</span> <span class="required">*</span>
         <div class="password-field">
           <input type="password" id="password" name="password" required>
-          <button type="button" class="password-toggle" data-password-toggle="password" aria-label="Mostrar contraseña" aria-pressed="false">
+          <button type="button" class="password-toggle" data-password-toggle="password" data-i18n-aria="common.showPassword" aria-label="Mostrar contraseña" aria-pressed="false">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
               <circle cx="12" cy="12" r="3"></circle>
@@ -144,29 +144,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </label>
 
       <label for="workerCode">
-        Código de trabajador (opcional)
+        <span data-i18n="common.workerCode">Código de trabajador (opcional)</span>
         <input type="text" id="workerCode" name="workerCode" value="<?= htmlspecialchars($_POST['workerCode'] ?? '') ?>">
-        <span class="optional-label">Trabajador: ej. TRAB001<br>Administrador: ADMIN</span>
+        <span class="optional-label" data-i18n-html="login.workerHint">Trabajador: ej. TRAB001<br>Administrador: ADMIN</span>
       </label>
 
-      <button type="submit">Iniciar Sesión</button>
+      <button type="submit" data-i18n="login.submit">Iniciar Sesión</button>
     </form>
 
     <div class="center mt-3">
-      <a href="registro.php">No tienes cuenta? Registrate</a>
+      <a href="registro.php" data-i18n="login.noAccount">No tienes cuenta? Registrate</a>
     </div>
     <div class="center mt-2">
-      <a href="forgot_password.php">He olvidado la Contraseña</a>
+      <a href="forgot_password.php" data-i18n="login.forgot">He olvidado la Contraseña</a>
     </div>
     <div class="center mt-3 footer-legal-links">
-      <a href="politica_cookies.php">Política de Cookies</a>
+      <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
       <span>|</span>
-      <a href="politica_privacidad.php">Política de Privacidad</a>
+      <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
       <span>|</span>
-      <a href="aviso_legal.php">Aviso Legal</a>
+      <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
     </div>
   </div>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/lang.js?v=1"></script>
 <script>
 document.querySelectorAll('[data-password-toggle]').forEach((button) => {
   button.addEventListener('click', () => {

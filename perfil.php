@@ -126,9 +126,9 @@ if ($initials === '') {
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-        <a href="perfil.php">Mi perfil</a>
-        <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-        <a href="logout.php">Cerrar sesión</a>
+        <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
+        <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
+        <a href="logout.php" data-i18n="nav.logout">Cerrar sesión</a>
       </div>
     </div>
 
@@ -139,10 +139,10 @@ if ($initials === '') {
     <div class="quick-menu-section">
       <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="usuario.php">Inicio</a>
-        <a href="carta.php">Ver carta</a>
-        <a href="valoraciones.php">Valoraciones</a>
-        <a href="tickets.php">Tickets</a>
+        <a href="usuario.php" data-i18n="nav.home">Inicio</a>
+        <a href="carta.php" data-i18n="nav.viewMenu">Ver carta</a>
+        <a href="valoraciones.php" data-i18n="nav.reviews">Valoraciones</a>
+        <a href="tickets.php" data-i18n="nav.tickets">Tickets</a>
       </div>
     </div>
     <div class="cart-section">
@@ -166,65 +166,65 @@ if ($initials === '') {
     <div class="profile-hero-main">
       <div class="profile-avatar" aria-hidden="true"><?= htmlspecialchars($initials) ?></div>
       <div class="profile-hero-copy">
-        <span class="profile-eyebrow">Panel personal</span>
+        <span class="profile-eyebrow" data-i18n="profile.personalPanel">Panel personal</span>
         <h1><?= htmlspecialchars($profileName !== '' ? $profileName : $display_name) ?></h1>
-        <p>Gestiona tu cuenta desde un espacio más claro, profesional y fácil de usar.</p>
+        <p data-i18n="profile.description">Gestiona tu cuenta desde un espacio más claro, profesional y fácil de usar.</p>
       </div>
     </div>
     <div class="profile-badges">
-      <span class="profile-badge">Cuenta activa</span>
+      <span class="profile-badge" data-i18n="profile.activeAccount">Cuenta activa</span>
       <span class="profile-badge"><?= htmlspecialchars($profileRole) ?></span>
-      <span class="profile-badge">Seguridad reforzada</span>
+      <span class="profile-badge" data-i18n="profile.strongSecurity">Seguridad reforzada</span>
     </div>
   </section>
 
   <div class="profile-grid profile-grid-pro">
     <aside class="profile-card profile-summary-card">
       <div class="profile-card-header">
-        <span class="profile-section-kicker">Resumen</span>
-        <h2>Información de cuenta</h2>
+        <span class="profile-section-kicker" data-i18n="profile.summaryKicker">Resumen</span>
+        <h2 data-i18n="profile.accountInfo">Información de cuenta</h2>
       </div>
 
       <dl class="profile-data-list">
         <div class="profile-data-row">
-          <dt>Nombre</dt>
+          <dt data-i18n="profile.name">Nombre</dt>
           <dd><?= htmlspecialchars($profileName) ?></dd>
         </div>
         <div class="profile-data-row">
-          <dt>Email</dt>
+          <dt data-i18n="profile.email">Email</dt>
           <dd><?= htmlspecialchars($profileEmail) ?></dd>
         </div>
         <div class="profile-data-row">
-          <dt>Rol</dt>
+          <dt data-i18n="profile.role">Rol</dt>
           <dd><?= htmlspecialchars($profileRole) ?></dd>
         </div>
         <div class="profile-data-row">
-          <dt>Estado</dt>
-          <dd>Perfil operativo</dd>
+          <dt data-i18n="profile.status">Estado</dt>
+          <dd data-i18n="profile.operative">Perfil operativo</dd>
         </div>
       </dl>
 
       <div class="profile-highlight-box">
-        <strong>Consejo profesional</strong>
-        <p>Usa tu nombre completo y revisa tu contraseña con frecuencia para mantener una imagen más cuidada y segura.</p>
+        <strong data-i18n="profile.proTipTitle">Consejo profesional</strong>
+        <p data-i18n="profile.proTipBody">Usa tu nombre completo y revisa tu contraseña con frecuencia para mantener una imagen más cuidada y segura.</p>
       </div>
 
-      <a class="profile-secondary-link" href="usuario.php">Volver al panel principal</a>
+      <a class="profile-secondary-link" href="usuario.php" data-i18n="profile.backToPanel">Volver al panel principal</a>
     </aside>
 
     <div class="profile-stack">
       <section class="profile-card profile-form-card">
         <div class="profile-card-header">
-          <span class="profile-section-kicker">Datos personales</span>
-          <h2>Editar perfil</h2>
-          <p>Actualiza la información visible de tu cuenta para dar una imagen más profesional.</p>
+          <span class="profile-section-kicker" data-i18n="profile.personalDataKicker">Datos personales</span>
+          <h2 data-i18n="profile.editProfile">Editar perfil</h2>
+          <p data-i18n="profile.editDesc">Actualiza la información visible de tu cuenta para dar una imagen más profesional.</p>
         </div>
 
         <form method="POST" action="perfil.php" class="profile-form">
           <input type="hidden" name="action" value="update_profile">
 
           <label for="nombre">
-            Nombre completo <span class="required">*</span>
+            <span data-i18n="profile.fullName">Nombre completo</span> <span class="required">*</span>
             <input
               type="text"
               id="nombre"
@@ -234,30 +234,31 @@ if ($initials === '') {
               title="Introduce un nombre valido"
               value="<?= htmlspecialchars($profileName) ?>"
               placeholder="Escribe tu nombre completo"
+              data-i18n-placeholder="profile.fullName"
             >
           </label>
 
-          <p class="profile-field-note">Este nombre se mostrará en tu área privada y ayuda a que el perfil se vea más serio y ordenado.</p>
+          <p class="profile-field-note" data-i18n="profile.nameNote">Este nombre se mostrará en tu área privada y ayuda a que el perfil se vea más serio y ordenado.</p>
 
-          <button type="submit">Guardar cambios</button>
+          <button type="submit" data-i18n="common.saveChanges">Guardar cambios</button>
         </form>
       </section>
 
       <section class="profile-card profile-form-card">
         <div class="profile-card-header">
-          <span class="profile-section-kicker">Seguridad</span>
-          <h2>Cambiar contraseña</h2>
-          <p>Actualiza tu clave para mantener protegido el acceso a la cuenta.</p>
+          <span class="profile-section-kicker" data-i18n="profile.securityKicker">Seguridad</span>
+          <h2 data-i18n="profile.changePassword">Cambiar contraseña</h2>
+          <p data-i18n="profile.securityDesc">Actualiza tu clave para mantener protegido el acceso a la cuenta.</p>
         </div>
 
         <form method="POST" action="perfil.php" class="profile-form">
           <input type="hidden" name="action" value="change_password">
 
           <label for="current_password">
-            Contraseña actual <span class="required">*</span>
+            <span data-i18n="profile.currentPassword">Contraseña actual</span> <span class="required">*</span>
             <div class="password-field">
               <input type="password" id="current_password" name="current_password" required minlength="6" placeholder="Introduce tu contraseña actual">
-              <button type="button" class="password-toggle" data-password-toggle="current_password" aria-label="Mostrar contraseña" aria-pressed="false">
+              <button type="button" class="password-toggle" data-password-toggle="current_password" data-i18n-aria="common.showPassword" aria-label="Mostrar contraseña" aria-pressed="false">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
                   <circle cx="12" cy="12" r="3"></circle>
@@ -268,10 +269,10 @@ if ($initials === '') {
 
           <div class="profile-form-split">
             <label for="new_password">
-              Nueva contraseña <span class="required">*</span>
+              <span data-i18n="profile.newPassword">Nueva contraseña</span> <span class="required">*</span>
               <div class="password-field">
                 <input type="password" id="new_password" name="new_password" required minlength="8" placeholder="Mínimo 8 caracteres">
-                <button type="button" class="password-toggle" data-password-toggle="new_password" aria-label="Mostrar contraseña" aria-pressed="false">
+                <button type="button" class="password-toggle" data-password-toggle="new_password" data-i18n-aria="common.showPassword" aria-label="Mostrar contraseña" aria-pressed="false">
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
                     <circle cx="12" cy="12" r="3"></circle>
@@ -281,10 +282,10 @@ if ($initials === '') {
             </label>
 
             <label for="confirm_password">
-              Confirmar nueva contraseña <span class="required">*</span>
+              <span data-i18n="profile.confirmNewPwd">Confirmar nueva contraseña</span> <span class="required">*</span>
               <div class="password-field">
                 <input type="password" id="confirm_password" name="confirm_password" required minlength="8" placeholder="Repite la nueva contraseña">
-                <button type="button" class="password-toggle" data-password-toggle="confirm_password" aria-label="Mostrar contraseña" aria-pressed="false">
+                <button type="button" class="password-toggle" data-password-toggle="confirm_password" data-i18n-aria="common.showPassword" aria-label="Mostrar contraseña" aria-pressed="false">
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
                     <circle cx="12" cy="12" r="3"></circle>
@@ -294,9 +295,9 @@ if ($initials === '') {
             </label>
           </div>
 
-          <p class="profile-field-note">Combina letras, números y símbolos para conseguir una clave más fuerte.</p>
+          <p class="profile-field-note" data-i18n="profile.passwordNote">Combina letras, números y símbolos para conseguir una clave más fuerte.</p>
 
-          <button type="submit">Actualizar contraseña</button>
+          <button type="submit" data-i18n="profile.updatePassword">Actualizar contraseña</button>
         </form>
       </section>
     </div>
@@ -319,6 +320,7 @@ if (profileBtn && dropdownMenu) {
 }
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/lang.js?v=1"></script>
 <script>
 document.querySelectorAll('[data-password-toggle]').forEach((button) => {
   button.addEventListener('click', () => {
@@ -335,11 +337,11 @@ document.querySelectorAll('[data-password-toggle]').forEach((button) => {
 <footer>
   <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php">Política de Cookies</a>
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php">Aviso Legal</a>
+    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
   </p>
 </footer>
 </body>

@@ -118,9 +118,9 @@ $unread_count = (int)$stmt->fetchColumn();
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-          <a href="perfil.php">Mi perfil</a>
-          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-          <a href="logout.php">Cerrar Sesión</a>
+          <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
+          <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
+          <a href="logout.php" data-i18n="nav.logout">Cerrar Sesión</a>
         </div>
     </div>
 
@@ -131,10 +131,10 @@ $unread_count = (int)$stmt->fetchColumn();
         <div class="quick-menu-section">
         <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
         <div class="dropdown quick-dropdown" id="quickDropdown">
-          <a href="usuario.php">Inicio</a>
-          <a href="carta.php">Ver carta</a>
-          <a href="valoraciones.php">Valoraciones</a>
-          <a href="tickets.php">Tickets</a>
+          <a href="usuario.php" data-i18n="nav.home">Inicio</a>
+          <a href="carta.php" data-i18n="nav.viewMenu">Ver carta</a>
+          <a href="valoraciones.php" data-i18n="nav.reviews">Valoraciones</a>
+          <a href="tickets.php" data-i18n="nav.tickets">Tickets</a>
         </div>
       </div>
     <div class="cart-section">
@@ -147,21 +147,21 @@ $unread_count = (int)$stmt->fetchColumn();
 </header>
 
 <main class="main-content">
-  <h1 class="welcome">Notificaciones</h1>
-  <p class="muted">Aquí verás los avisos sobre tus pedidos y actualizaciones.</p>
+  <h1 class="welcome" data-i18n="notif.title">Notificaciones</h1>
+  <p class="muted" data-i18n="notif.subtitle">Aquí verás los avisos sobre tus pedidos y actualizaciones.</p>
 
   <?= $alert ?>
 
   <div class="row-between mt-2">
-    <span class="muted">No leídas: <strong><?= $unread_count ?></strong></span>
+    <span class="muted"><span data-i18n="notif.unread">No leídas:</span> <strong><?= $unread_count ?></strong></span>
     <?php if ($unread_count > 0): ?>
-      <a href="?read_all=1" class="btn-seguir-comprando">Marcar todas como leídas</a>
+      <a href="?read_all=1" class="btn-seguir-comprando" data-i18n="notif.markAllRead">Marcar todas como leídas</a>
     <?php endif; ?>
   </div>
 
   <div class="section mt-3">
     <?php if (count($notificaciones) === 0): ?>
-      <div class="empty-state">No tienes notificaciones todavía.</div>
+      <div class="empty-state" data-i18n="notif.empty">No tienes notificaciones todavía.</div>
     <?php else: ?>
       <?php foreach ($notificaciones as $n): ?>
         <div class="notif-item <?= $n['leida'] ? '' : 'notif-unread' ?>">
@@ -170,9 +170,9 @@ $unread_count = (int)$stmt->fetchColumn();
             <p class="muted notif-date"><?= htmlspecialchars($n['fecha']) ?></p>
           </div>
           <?php if ((int)$n['leida'] === 0): ?>
-            <a class="btn-seguir-comprando" href="?read=<?= (int)$n['notif_id'] ?>">Marcar como leída</a>
+            <a class="btn-seguir-comprando" href="?read=<?= (int)$n['notif_id'] ?>" data-i18n="notif.markRead">Marcar como leída</a>
           <?php else: ?>
-            <span class="badge-status badge-estado-listo">Leída</span>
+            <span class="badge-status badge-estado-listo" data-i18n="notif.read">Leída</span>
           <?php endif; ?>
         </div>
       <?php endforeach; ?>
@@ -183,11 +183,11 @@ $unread_count = (int)$stmt->fetchColumn();
 <footer>
   <p>© 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php">Política de Cookies</a>
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php">Aviso Legal</a>
+    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
   </p>
 </footer>
 
@@ -216,6 +216,7 @@ setInterval(() => {
 }, AUTO_REFRESH_MS);
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/lang.js?v=1"></script>
 </body>
 </html>
 
