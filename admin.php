@@ -363,6 +363,96 @@ if ($display_name === '') {
 <div class="container">
     <?= $msg ?>
 
+    <div class="section-card">
+        <div class="row-between section-head">
+            <div>
+                <h2>Panel administrativo</h2>
+                <p class="lead">Resumen de pedidos, inventario y usuarios. Accede rápidamente a las secciones principales.</p>
+            </div>
+            <a href="gestionar_pedidos.php" class="landing-link">Ir a Pedidos en tiempo real</a>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Pedidos del día</h3>
+                <p class="stat-number"><?= $hasFechaHora ? $todayOrders : 'N/D' ?></p>
+                <span><?= $hasFechaHora ? 'Pedidos registrados hoy' : 'Fecha no disponible' ?></span>
+            </div>
+            <div class="stat-card">
+                <h3>Ingresos del día</h3>
+                <p class="stat-number">€<?= number_format($todayRevenue, 2, ',', '.') ?></p>
+                <span><?= $hasFechaHora ? 'Ventas de hoy' : 'Fecha no disponible' ?></span>
+            </div>
+            <div class="stat-card">
+                <h3>Pedidos pendientes</h3>
+                <p class="stat-number"><?= $pendingOrders ?></p>
+                <span>Espera de cocina</span>
+            </div>
+            <div class="stat-card">
+                <h3>Pedidos en preparación</h3>
+                <p class="stat-number"><?= $preparingOrders ?></p>
+                <span>En proceso ahora</span>l
+            </div>
+            <div class="stat-card">
+                <h3>Ingredientes bajos</h3>
+                <p class="stat-number"><?= $ingredientsTable ? $lowStockIngredients : 'N/D' ?></p>
+                <span><?= $ingredientsTable ? 'Alertas de inventario' : 'Inventario no detectado' ?></span>
+            </div>
+            <div class="stat-card">
+                <h3>Producto más vendido</h3>
+                <p class="stat-number"><?= htmlspecialchars($topSellingProduct) ?></p>
+                <span><?= $productCount > 0 ? 'Resumen de ventas' : 'Sin productos' ?></span>
+            </div>
+            <div class="stat-card">
+                <h3>Notificaciones internas</h3>
+                <p class="stat-number"><?= $notificationsTable ? $unreadNotifications : 'N/D' ?></p>
+                <span><?= $notificationsTable ? 'No leídas' : 'Notificaciones no detectadas' ?></span>
+            </div>
+            <div class="stat-card">
+                <h3>Usuarios registrados</h3>
+                <p class="stat-number"><?= count($usuarios) ?></p>
+                <span>Clientes, empleados y administradores</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-card">
+        <div class="row-between section-head">
+            <h2>Pedidos en tiempo real</h2>
+            <span class="badge-status badge-estado-pendiente">Actualizado</span>
+        </div>
+        <?php if (!empty($activeOrders)): ?>
+            <div class="admin-table-wrap">
+                <table class="admin-users-table table-compact">
+                    <thead>
+                        <tr>
+                            <th>ID Pedido</th>
+                            <th>Estado</th>
+                            <th>Total</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($activeOrders as $order): ?>
+                        <tr>
+                            <td><?= (int)$order['id_pedido'] ?></td>
+                            <td>
+                                <span class="badge-status badge-estado-<?= htmlspecialchars($order['estado'] ?? 'pendiente') ?>">
+                                    <?= htmlspecialchars(ucfirst($order['estado'] ?? 'pendiente')) ?>
+                                </span>
+                            </td>
+                            <td>€<?= number_format((float)$order['total'], 2, ',', '.') ?></td>
+                            <td><?= htmlspecialchars($order['fecha_hora'] ?? '-') ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php else: ?>
+            <p class="empty-state">No hay pedidos activos disponibles.</p>
+        <?php endif; ?>
+    </div>
+
     <?php if (!$supportsBloqueado): ?>
       <div class="alert alert-error">Bloqueo no disponible. Ejecuta: ALTER TABLE usuarios ADD COLUMN bloqueado TINYINT(1) NOT NULL DEFAULT 0;</div>
     <?php endif; ?>

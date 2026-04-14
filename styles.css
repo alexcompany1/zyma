@@ -2629,6 +2629,26 @@ tr:hover td {
   border: 1px solid var(--light-gray);
 }
 
+.section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.35rem;
+}
+
+.section-head h2 {
+  margin: 0;
+}
+
+.stat-card span,
+.section-head .lead {
+  display: block;
+  color: #615353;
+  margin-top: 0.45rem;
+}
+
 .admin-table-wrap {
   overflow-x: auto;
 }
