@@ -3,11 +3,9 @@ if (!headers_sent()) {
     header('Content-Type: text/html; charset=UTF-8');
 }
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
 require_once 'config.php';
+require_once 'auth.php';
+zymaRequireRole('client');
 
 $pedido_id = $_GET['id'] ?? null;
 if (!$pedido_id) {
@@ -69,9 +67,9 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-          <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
-          <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
-          <a href="logout.php" data-i18n="nav.logout">Cerrar Sesión</a>
+          <a href="perfil.php">Mi perfil</a>
+          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
+          <a href="logout.php">Cerrar Sesión</a>
         </div>
     </div>
 
@@ -82,10 +80,11 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
         <div class="quick-menu-section">
       <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="usuario.php" data-i18n="nav.home">Inicio</a>
-        <a href="carta.php" data-i18n="nav.viewMenu">Ver carta</a>
-        <a href="valoraciones.php" data-i18n="nav.reviews">Valoraciones</a>
-        <a href="tickets.php" data-i18n="nav.tickets">Tickets</a>
+        <a href="usuario.php">Inicio</a>
+        <a href="carta.php">Ver carta</a>
+        <a href="valoraciones.php">Valoraciones</a>
+        <a href="incidencias.php">Incidencias</a>
+        <a href="tickets.php">Tickets de compra</a>
       </div>
     </div>
     <div class="cart-section">
@@ -102,7 +101,7 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
         <div class="ticket-box">
             <div class="ticket-header">
                 <div>
-                    <h3 data-i18n="ticket.title">Ticket de compra</h3>
+                    <h3>Ticket de compra</h3>
                     <p class="muted">Pedido #<?= htmlspecialchars($pedido_num) ?></p>
                 </div>
                 <div class="muted">
@@ -115,13 +114,13 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
                 <table>
                     <thead>
                         <tr>
-                            <th data-i18n="ticket.product">Producto</th>
-                            <th class="center" data-i18n="ticket.quantity">Cantidad</th>
-                            <th class="text-right" data-i18n="ticket.unitPrice">Precio unidad</th>
-                            <th class="text-right" data-i18n="ticket.vatPct">IVA %</th>
-                            <th class="text-right" data-i18n="ticket.vatAmount">IVA importe</th>
-                            <th class="text-right" data-i18n="ticket.subtotalNoVat">Subtotal (sin IVA)</th>
-                            <th class="text-right" data-i18n="ticket.totalCol">Total</th>
+                            <th>Producto</th>
+                            <th class="center">Cantidad</th>
+                            <th class="text-right">Precio unidad</th>
+                            <th class="text-right">IVA %</th>
+                            <th class="text-right">IVA importe</th>
+                            <th class="text-right">Subtotal (sin IVA)</th>
+                            <th class="text-right">Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -141,7 +140,7 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
                             $total_tax += $line_tax;
                         ?>
                             <tr>
-                                <td data-i18n="product.<?= (int)$it['id_producto'] ?>"><?= htmlspecialchars($it['nombre']) ?></td>
+                                <td><?= htmlspecialchars($it['nombre']) ?></td>
                                 <td class="center"><?= $cantidad ?></td>
                                 <td class="text-right">$<?= number_format($precio_unit,2) ?></td>
                                 <td class="text-right"><?= ($tax_rate * 100) ?>%</td>
@@ -160,14 +159,14 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
             ?>
 
             <div style="margin-top:12px;text-align:right;">
-                <p class="muted"><span data-i18n="ticket.subtotal">Subtotal:</span> $<?= number_format($subtotal,2) ?></p>
-                <p class="muted"><span data-i18n="ticket.vat">IVA:</span> $<?= number_format($total_tax,2) ?></p>
-                <p class="summary-total" style="font-weight:700;"><span data-i18n="ticket.totalWithVat">Total (con IVA):</span> $<?= number_format($total_with_tax,2) ?></p>
+                <p class="muted">Subtotal: $<?= number_format($subtotal,2) ?></p>
+                <p class="muted">IVA: $<?= number_format($total_tax,2) ?></p>
+                <p class="summary-total" style="font-weight:700;">Total (con IVA): $<?= number_format($total_with_tax,2) ?></p>
             </div>
 
 
             <div class="ticket-actions">
-                <a class="btn-cart" href="tickets.php" data-i18n="ticket.backToTickets">Volver a Tickets</a>
+                <a class="btn-cart" href="tickets.php">Volver a Tickets</a>
             </div>
         </div>
     </div>
@@ -176,11 +175,11 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
 <footer>
     <p>© 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
+    <a href="politica_cookies.php">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
+    <a href="politica_privacidad.php">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
+    <a href="aviso_legal.php">Aviso Legal</a>
   </p>
 </footer>
 
@@ -199,7 +198,5 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
     });
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
-<script src="assets/lang.js?v=1"></script>
 </body>
 </html>
-
