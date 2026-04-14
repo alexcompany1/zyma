@@ -6,7 +6,7 @@ if (!headers_sent()) {
 <?php
 /**
  * admin.php
- * Panel de administracion de usuarios (solo ADMIN).
+ * Panel de administracion de usuarios (solo ADMIN) con las rutas de navegacion bien hechas.
  */
 
 session_start();
