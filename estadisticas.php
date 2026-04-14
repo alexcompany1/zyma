@@ -11,11 +11,8 @@ if (!headers_sent()) {
 
 session_start();
 require_once 'config.php';
-
-// Validar acceso trabajador
-if (!isset($_SESSION['user_id']) || !$_SESSION['worker_code']) {
-    die("<h2 class='page-error'>Acceso denegado. Solo trabajadores.</h2>");
-}
+require_once 'auth.php';
+zymaRequireRole('worker');
 
 // Cargar ingredientes
 try {
@@ -83,7 +80,8 @@ $pedidosTotales = $stmt->fetchColumn();
         <a href="usuario.php">Inicio</a>
         <a href="carta.php">Ver carta</a>
         <a href="valoraciones.php">Valoraciones</a>
-        <a href="tickets.php">Tickets</a>
+        <a href="incidencias.php">Incidencias</a>
+        <a href="tickets.php">Tickets de compra</a>
       </div>
     </div>
     <div class="cart-section">
@@ -186,5 +184,4 @@ setInterval(() => {
   </p></footer>
 </body>
 </html>
-
 

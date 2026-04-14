@@ -12,10 +12,8 @@ if (!headers_sent()) {
 
 session_start();
 require_once 'config.php';
-
-if (!isset($_SESSION['user_id']) || !$_SESSION['worker_code']) {
-    die("Acceso denegado.");
-}
+require_once 'auth.php';
+zymaRequireRole('worker');
 
 // Cargar productos
 $stmt = $pdo->query("SELECT * FROM productos ORDER BY nombre");
@@ -111,7 +109,8 @@ unset($_SESSION['mensaje']);
         <a href="usuario.php">Inicio</a>
         <a href="carta.php">Ver carta</a>
         <a href="valoraciones.php">Valoraciones</a>
-        <a href="tickets.php">Tickets</a>
+        <a href="incidencias.php">Incidencias</a>
+        <a href="tickets.php">Tickets de compra</a>
       </div>
     </div>
     <div class="cart-section">
@@ -186,4 +185,3 @@ window.addEventListener('click', e => {
   </p></footer>
 </body>
 </html>
-

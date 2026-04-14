@@ -4,12 +4,9 @@ if (!headers_sent()) {
 }
 
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
-
 require_once 'config.php';
+require_once 'auth.php';
+zymaRequireRole('client');
 
 $show_cookie_popup = !empty($_SESSION['show_cookie_popup']);
 $cookie_preferences = $_SESSION['cookie_preferences'] ?? [];
@@ -59,19 +56,15 @@ try {
             p.descripcion,
             p.precio,
             p.imagen,
+            COALESCE(SUM(pi.cantidad), 0) AS cantidad_vendidas,
             ROUND(AVG(v.puntuacion), 1) AS promedio,
             COUNT(v.id) AS total_valoraciones
         FROM productos p
+        LEFT JOIN pedido_items pi ON p.id = pi.id_producto
+        LEFT JOIN pedidos ped ON pi.id_pedido = ped.id_pedido AND ped.estado NOT IN ('cancelado')
         LEFT JOIN valoraciones v ON v.id_producto = p.id
         GROUP BY p.id, p.nombre, p.descripcion, p.precio, p.imagen
-        ORDER BY
-            CASE
-                WHEN p.nombre LIKE '%Hotdog%' OR p.nombre LIKE '%hotdog%' THEN 0
-                ELSE 1
-            END,
-            promedio DESC,
-            total_valoraciones DESC,
-            p.nombre ASC
+        ORDER BY cantidad_vendidas DESC, promedio DESC, total_valoraciones DESC
         LIMIT 3
     ");
     $featuredProducts = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
@@ -122,9 +115,9 @@ try {
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-        <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
-        <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
-        <a href="logout.php" data-i18n="nav.logout">Cerrar sesión</a>
+        <a href="perfil.php">Mi perfil</a>
+        <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
+        <a href="logout.php">Cerrar sesión</a>
       </div>
     </div>
 
@@ -135,10 +128,11 @@ try {
     <div class="quick-menu-section">
       <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="usuario.php" data-i18n="nav.home">Inicio</a>
-        <a href="carta.php" data-i18n="nav.viewMenu">Ver carta</a>
-        <a href="valoraciones.php" data-i18n="nav.reviews">Valoraciones</a>
-        <a href="tickets.php" data-i18n="nav.tickets">Tickets</a>
+        <a href="usuario.php">Inicio</a>
+        <a href="carta.php">Ver carta</a>
+        <a href="valoraciones.php">Valoraciones</a>
+        <a href="incidencias.php">Incidencias</a>
+        <a href="tickets.php">Tickets de compra</a>
       </div>
     </div>
 
@@ -154,55 +148,56 @@ try {
 <main class="container user-home">
   <section class="user-home-hero">
     <div class="user-home-copy">
-      <span class="user-home-kicker" data-i18n="user.welcomeKicker">Bienvenido a Zyma</span>
+      <span class="user-home-kicker">Bienvenido a Zyma</span>
       <div class="user-home-greeting">
-        <span class="user-home-greeting-label" data-i18n="user.personalPanel">Panel personal</span>
+        <span class="user-home-greeting-label">Panel personal</span>
         <h1>
-          <span class="user-home-greeting-text" data-i18n="user.greeting">Hola,</span>
+          <span class="user-home-greeting-text">Hola,</span>
           <span class="user-home-greeting-name"><?= htmlspecialchars($first_name) ?></span>
         </h1>
       </div>
-      <p data-i18n="user.description">Descubre una experiencia más cuidada, con acceso rápido a la carta, valoraciones reales y un panel mucho más limpio para moverte por la web.</p>
+      <p>Descubre una experiencia más cuidada, con acceso rápido a la carta, valoraciones reales y un panel mucho más limpio para moverte por la web.</p>
 
       <div class="user-home-actions">
-        <a href="carta.php" class="btn-cart" data-i18n="user.viewMenu">Ver la carta</a>
+        <a href="carta.php" class="btn-cart">Ver la carta</a>
         <?php if ($starProduct): ?>
-          <a href="carta.php?producto=<?= urlencode((string) $starProduct['id']) ?>" class="user-home-secondary-btn" data-i18n="user.starProduct">Producto estrella</a>
+          <a href="carta.php?producto=<?= urlencode((string) $starProduct['id']) ?>" class="user-home-secondary-btn">Producto estrella</a>
         <?php endif; ?>
-        <a href="mis_pedidos.php" class="user-home-secondary-btn" data-i18n="user.myOrders">Mis pedidos</a>
+        <a href="mis_pedidos.php" class="user-home-secondary-btn">Mis pedidos</a>
       </div>
 
       <div class="user-home-stats">
         <article class="user-stat-card">
           <strong><?= $stats['productos'] ?></strong>
-          <span data-i18n="user.productsLabel">productos disponibles</span>
+          <span>productos disponibles</span>
         </article>
         <article class="user-stat-card">
           <strong><?= $stats['valoraciones'] ?></strong>
-          <span data-i18n="user.reviewsLabel">valoraciones reales</span>
+          <span>valoraciones reales</span>
         </article>
         <article class="user-stat-card">
           <strong><?= $stats['promedio'] > 0 ? number_format($stats['promedio'], 1) : '5.0' ?></strong>
-          <span data-i18n="user.avgSatisfaction">media de satisfacción</span>
+          <span>media de satisfacción</span>
         </article>
       </div>
     </div>
 
     <aside class="user-home-spotlight">
-      <span class="user-home-card-kicker" data-i18n="user.quickAccess">Acceso rápido</span>
-      <h2 data-i18n="user.quickTitle">Todo lo importante en un vistazo</h2>
+      <span class="user-home-card-kicker">Acceso rápido</span>
+      <h2>Todo lo importante en un vistazo</h2>
       <ul class="user-home-shortcuts">
         <?php if ($starProduct): ?>
-          <li><a href="carta.php?producto=<?= urlencode((string) $starProduct['id']) ?>" data-i18n="user.backToStar">Ir al producto estrella</a></li>
+          <li><a href="carta.php?producto=<?= urlencode((string) $starProduct['id']) ?>">Ir al producto estrella</a></li>
         <?php endif; ?>
-        <li><a href="carta.php" data-i18n="user.exploreMenu">Explorar carta completa</a></li>
-        <li><a href="valoraciones.php" data-i18n="user.seeReviews">Ver opiniones de clientes</a></li>
-        <li><a href="tickets.php" data-i18n="user.openTickets">Abrir o revisar tickets</a></li>
-        <li><a href="perfil.php" data-i18n="user.updateProfile">Actualizar perfil</a></li>
+        <li><a href="carta.php">Explorar carta completa</a></li>
+        <li><a href="valoraciones.php">Ver opiniones de clientes</a></li>
+        <li><a href="incidencias.php">Abrir o revisar incidencias</a></li>
+        <li><a href="tickets.php">Ver mis tickets de compra</a></li>
+        <li><a href="perfil.php">Actualizar perfil</a></li>
       </ul>
       <div class="user-home-note">
-        <strong data-i18n="user.tipTitle">Consejo</strong>
-        <p data-i18n="user.tipBody">Empieza por la carta para descubrir los productos mejor valorados y añadirlos al carrito en pocos pasos.</p>
+        <strong>Consejo</strong>
+        <p>Empieza por la carta para descubrir los productos mejor valorados y añadirlos al carrito en pocos pasos.</p>
       </div>
     </aside>
   </section>
@@ -210,25 +205,30 @@ try {
   <section class="user-home-links">
     <?php if ($starProduct): ?>
       <a class="user-link-card user-link-card-star" href="carta.php?producto=<?= urlencode((string) $starProduct['id']) ?>">
-        <span class="user-link-tag" data-i18n="user.starBadge">Producto estrella</span>
+        <span class="user-link-tag">Producto estrella</span>
         <h3><?= htmlspecialchars($starProduct['nombre']) ?></h3>
-        <p data-i18n="user.cardDesc">Accede directamente al hotdog estrella del momento en una vista dedicada solo para ese producto.</p>
+        <p>Accede directamente al hotdog estrella del momento en una vista dedicada solo para ese producto.</p>
       </a>
     <?php endif; ?>
     <a class="user-link-card" href="<?= $starProduct ? 'carta.php?producto=' . urlencode((string) $starProduct['id']) : 'carta.php' ?>">
-      <span class="user-link-tag" data-i18n="user.cardKicker">Carta</span>
-      <h3 data-i18n="user.cardTitle">Descubre el producto estrella</h3>
-      <p data-i18n="user.cardDesc">Entra directamente a la vista del producto destacado y revisalo sin distracciones.</p>
+      <span class="user-link-tag">Carta</span>
+      <h3>Descubre el producto estrella</h3>
+      <p>Entra directamente a la vista del producto destacado y revisalo sin distracciones.</p>
     </a>
     <a class="user-link-card" href="valoraciones.php">
-      <span class="user-link-tag" data-i18n="user.reviewsCardKicker">Opiniones</span>
-      <h3 data-i18n="user.reviewsCardTitle">Revisa lo que opinan otros clientes</h3>
-      <p data-i18n="user.reviewsCardDesc">Conoce las reseñas recientes y valora tus productos favoritos.</p>
+      <span class="user-link-tag">Opiniones</span>
+      <h3>Revisa lo que opinan otros clientes</h3>
+      <p>Conoce las reseñas recientes y valora tus productos favoritos.</p>
+    </a>
+    <a class="user-link-card" href="incidencias.php">
+      <span class="user-link-tag">Soporte</span>
+      <h3>Gestiona dudas o incidencias</h3>
+      <p>Reporta problemas y mantente al día con las respuestas.</p>
     </a>
     <a class="user-link-card" href="tickets.php">
-      <span class="user-link-tag" data-i18n="user.supportCardKicker">Soporte</span>
-      <h3 data-i18n="user.supportCardTitle">Gestiona dudas o incidencias</h3>
-      <p data-i18n="user.supportCardDesc">Accede a tus tickets y mantente al día con las respuestas.</p>
+      <span class="user-link-tag">Compras</span>
+      <h3>Revisa tus comprobantes</h3>
+      <p>Accede a tus tickets de compra y facturas cuando lo necesites.</p>
     </a>
   </section>
 
@@ -236,10 +236,10 @@ try {
     <section class="user-home-section">
       <div class="user-home-section-head">
         <div>
-          <span class="user-home-card-kicker" data-i18n="user.featuredKicker">Destacados</span>
-          <h2 data-i18n="user.featuredTitle">Productos que mejor impresion causan</h2>
+          <span class="user-home-card-kicker">Favoritos del cliente</span>
+          <h2>Los productos que más compran nuestros clientes</h2>
         </div>
-        <a href="carta.php" class="user-home-inline-link" data-i18n="user.viewAllMenu">Ver toda la carta</a>
+        <a href="carta.php" class="user-home-inline-link">Ver toda la carta</a>
       </div>
 
       <div class="user-featured-grid">
@@ -257,10 +257,15 @@ try {
                 <h3><?= htmlspecialchars($product['nombre']) ?></h3>
                 <span class="user-featured-price"><?= number_format((float) $product['precio'], 2, ',', '.') ?> EUR</span>
               </div>
-              <p><?= htmlspecialchars($product['descripcion'] ?: 'Producto destacado de la casa con preparación cuidada y sabor potente.') ?></p>
+              <p><?= htmlspecialchars($product['descripcion'] ?: 'Producto estrella de la casa con preparación cuidada.') ?></p>
               <div class="user-featured-meta">
-                <span><?= number_format((float) ($product['promedio'] ?? 0), 1) ?> / 5</span>
-                <span><?= (int) ($product['total_valoraciones'] ?? 0) ?> valoraciones</span>
+                <span class="user-featured-sales">
+                  <?php 
+                    $vendidas = (int) ($product['cantidad_vendidas'] ?? 0);
+                    echo $vendidas > 0 ? $vendidas . ' vendidas' : 'Nuevo';
+                  ?>
+                </span>
+                <span class="user-featured-rating"><?= number_format((float) ($product['promedio'] ?? 0), 1) ?> / 5</span>
               </div>
             </div>
           </article>
@@ -273,10 +278,10 @@ try {
     <section class="user-home-section user-home-reviews">
       <div class="user-home-section-head">
         <div>
-          <span class="user-home-card-kicker" data-i18n="user.reviewsKicker">Reseñas</span>
-          <h2 data-i18n="user.reviewsTitle">Lo que dicen nuestros clientes</h2>
+          <span class="user-home-card-kicker">Resenas</span>
+          <h2>Lo que dicen nuestros clientes</h2>
         </div>
-        <a href="valoraciones.php" class="user-home-inline-link" data-i18n="user.reviewsViewAll">Ver todas</a>
+        <a href="valoraciones.php" class="user-home-inline-link">Ver todas</a>
       </div>
 
       <div class="user-reviews-grid">
@@ -300,13 +305,13 @@ try {
 </main>
 
 <footer>
-  <p data-i18n="footer.rights">&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
+    <a href="politica_cookies.php">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
+    <a href="politica_privacidad.php">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
+    <a href="aviso_legal.php">Aviso Legal</a>
   </p>
 </footer>
 
@@ -325,7 +330,5 @@ if (profileBtn && dropdownMenu) {
 }
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
-<script src="assets/lang.js?v=1"></script>
 </body>
 </html>
-

@@ -10,11 +10,8 @@ if (!headers_sent()) {
 
 require_once 'config.php';
 session_start();
-
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
+require_once 'auth.php';
+zymaRequireRole('client');
 
 $products = [
     ['id' => 1, 'name' => 'Nachos con Queso', 'price' => 6.00, 'image' => 'assets/nachos.png'],
@@ -135,9 +132,9 @@ if ($display_name === '') {
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-          <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
-          <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
-          <a href="logout.php" data-i18n="nav.logout">Cerrar Sesión</a>
+          <a href="perfil.php">Mi perfil</a>
+          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
+          <a href="logout.php">Cerrar Sesión</a>
       </div>
     </div>
 
@@ -148,10 +145,11 @@ if ($display_name === '') {
         <div class="quick-menu-section">
       <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="usuario.php" data-i18n="nav.home">Inicio</a>
-        <a href="carta.php" data-i18n="nav.viewMenu">Ver carta</a>
-        <a href="valoraciones.php" data-i18n="nav.reviews">Valoraciones</a>
-        <a href="tickets.php" data-i18n="nav.tickets">Tickets</a>
+        <a href="usuario.php">Inicio</a>
+        <a href="carta.php">Ver carta</a>
+        <a href="valoraciones.php">Valoraciones</a>
+        <a href="incidencias.php">Incidencias</a>
+        <a href="tickets.php">Tickets de compra</a>
       </div>
     </div>
     <div class="cart-section">
@@ -166,14 +164,14 @@ if ($display_name === '') {
 <div class="container">
   <div class="cart-container">
     <div class="cart-header">
-      <h1 data-i18n="cart.title">Tu Carrito</h1>
-      <p data-i18n="cart.subtitle">Revisa tus productos antes de finalizar el pedido</p>
+      <h1>Tu Carrito</h1>
+      <p>Revisa tus productos antes de finalizar el pedido</p>
     </div>
 
     <?php if (empty($cartItems)): ?>
       <div class="empty-cart">
-        <p class="empty-state" data-i18n="cart.empty">Tu carrito esta vacio.</p>
-        <a href="carta.php" class="btn-seguir-comprando" data-i18n="cart.continueShopping">Seguir comprando</a>
+        <p class="empty-state">Tu carrito esta vacio.</p>
+        <a href="carta.php" class="btn-seguir-comprando">Seguir comprando</a>
       </div>
     <?php else: ?>
       <?php foreach ($cartItems as $item): ?>
@@ -181,7 +179,7 @@ if ($display_name === '') {
         <img src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="cart-item-img">
 
         <div class="cart-item-info">
-          <div class="cart-item-name" data-i18n="product.<?= (int)$item['id'] ?>"><?= htmlspecialchars($item['name']) ?></div>
+          <div class="cart-item-name"><?= htmlspecialchars($item['name']) ?></div>
           <div class="cart-item-meta" id="desc-<?= $item['id'] ?>">
             EUR <?= number_format($item['price'], 2, ',', '.') ?> x <?= $item['quantity'] ?>
           </div>
@@ -210,13 +208,13 @@ if ($display_name === '') {
             <?php endif; ?>
 
             <div style="text-align:left;margin-bottom:12px;">
-              <strong data-i18n="cart.paymentMethod">Método de pago online</strong>
+              <strong>Método de pago online</strong>
               <div style="margin-top:8px;">
                 <label style="margin-right:16px;">
-                  <input type="radio" name="metodo_pago" value="tarjeta" checked> <span data-i18n="cart.cardOption">Tarjeta</span>
+                  <input type="radio" name="metodo_pago" value="tarjeta" checked> Tarjeta
                 </label>
                 <label>
-                  <input type="radio" name="metodo_pago" value="bizum"> <span data-i18n="cart.bizumOption">Bizum</span>
+                  <input type="radio" name="metodo_pago" value="bizum"> Bizum
                 </label>
               </div>
             </div>
@@ -233,11 +231,11 @@ if ($display_name === '') {
               <input type="text" name="telefono_bizum" placeholder="Teléfono Bizum (+34XXXXXXXXX)" style="width:100%;">
             </div>
 
-            <button type="submit" name="pagar_online" class="btn-realizar-pedido btn-block" data-i18n="cart.payOnline">
+            <button type="submit" name="pagar_online" class="btn-realizar-pedido btn-block">
               Pagar online
             </button>
           </form>
-          <a href="carta.php" class="btn-seguir-comprando" data-i18n="cart.continueShopping">Seguir comprando</a>
+          <a href="carta.php" class="btn-seguir-comprando">Seguir comprando</a>
         </div>
       </div>
     <?php endif; ?>
@@ -313,15 +311,14 @@ methodRadios.forEach((radio) => {
 togglePaymentFields();
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
-<script src="assets/lang.js?v=1"></script>
 <footer>
   <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
+    <a href="politica_cookies.php">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
+    <a href="politica_privacidad.php">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
+    <a href="aviso_legal.php">Aviso Legal</a>
   </p></footer>
 </body>
 </html>

@@ -4,110 +4,11 @@ if (!headers_sent()) {
 }
 
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
-
 require_once 'config.php';
+require_once 'auth.php';
+zymaRequireRole('client');
 
-$mensaje = '';
-$error = '';
-
-try {
-    $pdo->exec("
-        CREATE TABLE IF NOT EXISTS incidencias_clientes (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            id_usuario INT NOT NULL,
-            asunto VARCHAR(120) NOT NULL,
-            categoria VARCHAR(40) NOT NULL DEFAULT 'general',
-            prioridad VARCHAR(20) NOT NULL DEFAULT 'media',
-            descripcion TEXT NOT NULL,
-            estado VARCHAR(20) NOT NULL DEFAULT 'abierta',
-            fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            fecha_actualizacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            INDEX idx_usuario (id_usuario),
-            INDEX idx_estado (estado),
-            CONSTRAINT fk_incidencias_usuario FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-    ");
-} catch (Exception $e) {
-    $error = 'No se pudo preparar el sistema de incidencias.';
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = $_POST['action'] ?? '';
-
-    if ($action === 'create_issue') {
-        $asunto = trim($_POST['asunto'] ?? '');
-        $categoria = trim($_POST['categoria'] ?? 'general');
-        $prioridad = trim($_POST['prioridad'] ?? 'media');
-        $descripcion = trim($_POST['descripcion'] ?? '');
-
-        $categoriasPermitidas = ['pedido', 'pago', 'cuenta', 'producto', 'tecnico', 'general'];
-        $prioridadesPermitidas = ['baja', 'media', 'alta'];
-
-        if ($asunto === '' || $descripcion === '') {
-            $error = 'El asunto y la descripción son obligatorios.';
-        } elseif (strlen($asunto) > 120) {
-            $error = 'El asunto no puede superar 120 caracteres.';
-        } elseif (!in_array($categoria, $categoriasPermitidas, true)) {
-            $error = 'La categoría seleccionada no es válida.';
-        } elseif (!in_array($prioridad, $prioridadesPermitidas, true)) {
-            $error = 'La prioridad seleccionada no es válida.';
-        } else {
-            try {
-                $stmt = $pdo->prepare("
-                    INSERT INTO incidencias_clientes (id_usuario, asunto, categoria, prioridad, descripcion)
-                    VALUES (:id_usuario, :asunto, :categoria, :prioridad, :descripcion)
-                ");
-                $stmt->execute([
-                    ':id_usuario' => $_SESSION['user_id'],
-                    ':asunto' => $asunto,
-                    ':categoria' => $categoria,
-                    ':prioridad' => $prioridad,
-                    ':descripcion' => $descripcion,
-                ]);
-                $mensaje = 'Incidencia creada correctamente.';
-            } catch (Exception $e) {
-                $error = 'No se pudo registrar la incidencia.';
-            }
-        }
-    }
-}
-
-$incidencias = [];
-$resumenIncidencias = [
-    'abiertas' => 0,
-    'proceso' => 0,
-    'cerradas' => 0,
-];
 $pedidos = [];
-
-try {
-    $stmt = $pdo->prepare("
-        SELECT id, asunto, categoria, prioridad, descripcion, estado, fecha_creacion, fecha_actualizacion
-        FROM incidencias_clientes
-        WHERE id_usuario = :id_usuario
-        ORDER BY fecha_actualizacion DESC, fecha_creacion DESC
-    ");
-    $stmt->execute([':id_usuario' => $_SESSION['user_id']]);
-    $incidencias = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-
-    foreach ($incidencias as $incidencia) {
-        if (($incidencia['estado'] ?? '') === 'cerrada') {
-            $resumenIncidencias['cerradas']++;
-        } elseif (($incidencia['estado'] ?? '') === 'en_proceso') {
-            $resumenIncidencias['proceso']++;
-        } else {
-            $resumenIncidencias['abiertas']++;
-        }
-    }
-} catch (Exception $e) {
-    if ($error === '') {
-        $error = 'No se pudieron cargar tus incidencias.';
-    }
-}
 
 try {
     $stmt = $pdo->prepare("
@@ -132,7 +33,7 @@ if ($display_name === '') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soporte e Incidencias - Zyma</title>
+    <title>Tickets de Compra - Zyma</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="styles.css?v=20260320-3">
 </head>
@@ -147,9 +48,9 @@ if ($display_name === '') {
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-        <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
-        <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
-        <a href="logout.php" data-i18n="nav.logout">Cerrar sesión</a>
+        <a href="perfil.php">Mi perfil</a>
+        <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
+        <a href="logout.php">Cerrar sesión</a>
       </div>
     </div>
 
@@ -160,10 +61,11 @@ if ($display_name === '') {
     <div class="quick-menu-section">
       <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="usuario.php" data-i18n="nav.home">Inicio</a>
-        <a href="carta.php" data-i18n="nav.viewMenu">Ver carta</a>
-        <a href="valoraciones.php" data-i18n="nav.reviews">Valoraciones</a>
-        <a href="tickets.php" data-i18n="nav.tickets">Tickets</a>
+        <a href="usuario.php">Inicio</a>
+        <a href="carta.php">Ver carta</a>
+        <a href="valoraciones.php">Valoraciones</a>
+        <a href="incidencias.php">Incidencias</a>
+        <a href="tickets.php">Tickets de compra</a>
       </div>
     </div>
 
@@ -177,150 +79,54 @@ if ($display_name === '') {
 </header>
 
 <main class="container support-page">
-    <?php if ($mensaje): ?>
-        <div class="alert alert-success"><?= htmlspecialchars($mensaje) ?></div>
-    <?php endif; ?>
-    <?php if ($error): ?>
-        <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
-    <?php endif; ?>
-
     <section class="support-hero">
         <div class="support-hero-copy">
-            <span class="support-kicker" data-i18n="tickets.kicker">Atención al cliente</span>
-            <h1 data-i18n="tickets.heroTitle">Gestión de incidencias y tickets</h1>
-            <p data-i18n="tickets.heroDesc">Desde aquí puedes comunicar cualquier problema con tu pedido, tu cuenta o un pago, y al mismo tiempo seguir teniendo a mano tus tickets de compra.</p>
-        </div>
-        <div class="support-summary">
-            <article class="support-summary-card">
-                <strong><?= $resumenIncidencias['abiertas'] ?></strong>
-                <span data-i18n="tickets.openLabel">abiertas</span>
-            </article>
-            <article class="support-summary-card">
-                <strong><?= $resumenIncidencias['proceso'] ?></strong>
-                <span data-i18n="tickets.inProgressLabel">en proceso</span>
-            </article>
-            <article class="support-summary-card">
-                <strong><?= $resumenIncidencias['cerradas'] ?></strong>
-                <span data-i18n="tickets.closedLabel">cerradas</span>
-            </article>
+            <span class="support-kicker">Tus compras</span>
+            <h1>Tickets de compra</h1>
+            <p>Comprobantes de tus pedidos y facturas disponibles para descargar en cualquier momento.</p>
         </div>
     </section>
 
-    <div class="support-grid">
-        <section class="profile-card support-form-card">
-            <div class="profile-card-header">
-                <span class="profile-section-kicker" data-i18n="tickets.newIssueKicker">Nueva incidencia</span>
-                <h2 data-i18n="tickets.newIssueTitle">Cuéntanos qué ha pasado</h2>
-                <p data-i18n="tickets.newIssueDesc">Describe el problema con claridad para que podamos ayudarte más rápido.</p>
-            </div>
-
-            <form method="POST" action="tickets.php" class="support-form">
-                <input type="hidden" name="action" value="create_issue">
-
-                <label for="asunto">
-                    <span data-i18n="tickets.subject">Asunto</span> <span class="required">*</span>
-                    <input type="text" id="asunto" name="asunto" maxlength="120" required data-i18n-placeholder="tickets.subject" placeholder="Ejemplo: Problema con un pedido">
-                </label>
-
-                <div class="support-form-split">
-                    <label for="categoria">
-                        <span data-i18n="tickets.category">Categoría</span>
-                        <select id="categoria" name="categoria">
-                            <option value="pedido" data-i18n="tickets.catOrder">Pedido</option>
-                            <option value="pago" data-i18n="tickets.catPayment">Pago</option>
-                            <option value="cuenta" data-i18n="tickets.catAccount">Cuenta</option>
-                            <option value="producto" data-i18n="tickets.catProduct">Producto</option>
-                            <option value="tecnico" data-i18n="tickets.catTechnical">Técnico</option>
-                            <option value="general" data-i18n="tickets.catGeneral">General</option>
-                        </select>
-                    </label>
-
-                    <label for="prioridad">
-                        <span data-i18n="tickets.priority">Prioridad</span>
-                        <select id="prioridad" name="prioridad">
-                            <option value="media" data-i18n="tickets.priMedium">Media</option>
-                            <option value="alta" data-i18n="tickets.priHigh">Alta</option>
-                            <option value="baja" data-i18n="tickets.priLow">Baja</option>
-                        </select>
-                    </label>
-                </div>
-
-                <label for="descripcion">
-                    <span data-i18n="tickets.description">Descripción</span> <span class="required">*</span>
-                    <textarea id="descripcion" name="descripcion" rows="6" required data-i18n-placeholder="tickets.description" placeholder="Explica la incidencia con el mayor detalle posible"></textarea>
-                </label>
-
-                <button type="submit" data-i18n="tickets.submit">Enviar incidencia</button>
-            </form>
-        </section>
-
-        <section class="profile-card support-list-card">
-            <div class="profile-card-header">
-                <span class="profile-section-kicker" data-i18n="tickets.trackingKicker">Seguimiento</span>
-                <h2 data-i18n="tickets.myIssues">Mis incidencias</h2>
-                <p data-i18n="tickets.myIssuesDesc">Consulta el estado de cada incidencia registrada desde tu cuenta.</p>
-            </div>
-
-            <?php if (empty($incidencias)): ?>
-                <p class="empty-state" data-i18n="tickets.noIssues">Todavía no has creado incidencias.</p>
-            <?php else: ?>
-                <div class="support-issues-list">
-                    <?php foreach ($incidencias as $incidencia): ?>
-                        <article class="support-issue-card support-state-<?= htmlspecialchars($incidencia['estado']) ?>">
-                            <div class="support-issue-head">
-                                <div>
-                                    <h3><?= htmlspecialchars($incidencia['asunto']) ?></h3>
-                                    <p><?= htmlspecialchars(ucfirst($incidencia['categoria'])) ?> · <span data-i18n="tickets.priorityLabel">Prioridad</span> <?= htmlspecialchars($incidencia['prioridad']) ?></p>
-                                </div>
-                                <span class="badge-status <?= ($incidencia['estado'] === 'cerrada') ? 'badge-estado-entregado' : (($incidencia['estado'] === 'en_proceso') ? 'badge-estado-preparando' : 'badge-estado-pendiente') ?>">
-                                    <?= htmlspecialchars(str_replace('_', ' ', ucfirst($incidencia['estado']))) ?>
-                                </span>
-                            </div>
-                            <p class="support-issue-description"><?= nl2br(htmlspecialchars($incidencia['descripcion'])) ?></p>
-                            <div class="support-issue-meta">
-                                <span><span data-i18n="tickets.created">Creada:</span> <?= date('d/m/Y H:i', strtotime($incidencia['fecha_creacion'])) ?></span>
-                                <span><span data-i18n="tickets.updated">Actualizada:</span> <?= date('d/m/Y H:i', strtotime($incidencia['fecha_actualizacion'])) ?></span>
-                            </div>
-                        </article>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-        </section>
-    </div>
-
     <section class="profile-card support-purchases-card">
         <div class="profile-card-header">
-            <span class="profile-section-kicker" data-i18n="tickets.purchasesKicker">Compras</span>
-            <h2 data-i18n="tickets.purchasesTitle">Tickets de compra</h2>
-            <p data-i18n="tickets.purchasesDesc">Aquí sigues teniendo acceso a tus comprobantes de pedido.</p>
+            <span class="profile-section-kicker">Historial</span>
+            <h2>Mis tickets de compra</h2>
+            <p>Accede a los detalles de cada pedido y descarga tus comprobantes.</p>
         </div>
 
         <?php if (empty($pedidos)): ?>
-            <p class="empty-state" data-i18n="tickets.noOrders">Aún no tienes pedidos registrados.</p>
+            <p class="empty-state">Aún no tienes pedidos registrados.</p>
+            <div class="btn-row center">
+                <a href="carta.php" class="btn-cart">Hacer pedido</a>
+            </div>
         <?php else: ?>
             <div class="support-orders-grid">
                 <?php foreach ($pedidos as $p): ?>
                     <article class="support-order-card">
                         <h3>Pedido #<?= htmlspecialchars($p['id_pedido']) ?></h3>
-                        <p><span data-i18n="tickets.date">Fecha:</span> <?= date('d/m/Y H:i', strtotime($p['fecha_hora'])) ?></p>
-                        <p><span data-i18n="tickets.statusLabel">Estado:</span> <?= htmlspecialchars(ucfirst($p['estado'])) ?></p>
-                        <p class="summary-total"><span data-i18n="tickets.totalLabel">Total:</span> <?= number_format((float) $p['total'], 2, ',', '.') ?> EUR</p>
-                        <a class="btn-cart" href="ticket.php?id=<?= urlencode((string) $p['id_pedido']) ?>" data-i18n="tickets.viewTicket">Ver ticket</a>
+                        <p>Fecha: <?= date('d/m/Y H:i', strtotime($p['fecha_hora'])) ?></p>
+                        <p>Estado: <?= htmlspecialchars(ucfirst($p['estado'])) ?></p>
+                        <p class="summary-total">Total: <?= number_format((float) $p['total'], 2, ',', '.') ?> EUR</p>
+                        <a class="btn-cart" href="ticket.php?id=<?= urlencode((string) $p['id_pedido']) ?>">Ver ticket</a>
                     </article>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
     </section>
+
+    <div class="support-bottom-nav">
+        <p>¿Tienes un problema con tu pedido? <a href="incidencias.php">Abrir incidencia</a></p>
+    </div>
 </main>
 
 <footer>
     <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
     <p class="footer-legal-links">
-        <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
+        <a href="politica_cookies.php">Política de Cookies</a>
         <span>|</span>
-        <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
+        <a href="politica_privacidad.php">Política de Privacidad</a>
         <span>|</span>
-        <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
+        <a href="aviso_legal.php">Aviso Legal</a>
     </p>
 </footer>
 
@@ -340,7 +146,5 @@ if (profileBtn && dropdownMenu) {
 }
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
-<script src="assets/lang.js?v=1"></script>
 </body>
 </html>
-

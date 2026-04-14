@@ -106,38 +106,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $error === '') {
 
     <?php if ($error): ?>
       <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
-      <div class="center mt-3"><a href="forgot_password.php" data-i18n="reset.requestNew">Solicitar nuevo enlace</a></div>
+      <div class="center mt-3"><a href="forgot_password.php">Solicitar nuevo enlace</a></div>
     <?php else: ?>
       <form method="POST" action="reset_password.php">
-        <h2 data-i18n="reset.title">Establecer nueva Contraseña</h2>
+        <h2>Establecer nueva Contraseña</h2>
         <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
 
         <label for="password">
-          <span data-i18n="reset.newPassword">Nueva Contraseña</span> <span class="required">*</span>
+          Nueva Contraseña <span class="required">*</span>
           <input type="password" id="password" name="password" required minlength="6">
         </label>
 
         <label for="confirmPassword">
-          <span data-i18n="reset.confirmPwd">Confirmar Contraseña</span> <span class="required">*</span>
+          Confirmar Contraseña <span class="required">*</span>
           <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
         </label>
 
-        <button type="submit" data-i18n="reset.submit">Guardar Contraseña</button>
+        <button type="submit">Guardar Contraseña</button>
       </form>
     <?php endif; ?>
 
-    <div class="center mt-3"><a href="login.php" data-i18n="reset.backLogin">Volver al login</a></div>
+    <div class="center mt-3"><a href="login.php">Volver al login</a></div>
   </div>
 <footer>
   <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
+    <a href="politica_cookies.php">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
+    <a href="politica_privacidad.php">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
+    <a href="aviso_legal.php">Aviso Legal</a>
   </p></footer>
-<script src="assets/lang.js?v=1"></script>
 </body>
 </html>
 

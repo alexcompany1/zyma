@@ -11,6 +11,7 @@ if (!headers_sent()) {
 
 session_start();
 require_once 'config.php';
+require_once 'auth.php';
 
 function crear_notificacion(PDO $pdo, int $pedidoId, string $mensaje): void
 {
@@ -28,9 +29,7 @@ function crear_notificacion(PDO $pdo, int $pedidoId, string $mensaje): void
 }
 
 // Validar acceso trabajador
-if (!isset($_SESSION['user_id']) || !$_SESSION['worker_code']) {
-    die("<h2 class='page-error'>Acceso denegado. Solo trabajadores.</h2>");
-}
+zymaRequireRole('worker');
 
 // Cancelar pedido 
 if (isset($_GET['accion']) && $_GET['accion'] === 'cancelar' && isset($_GET['id'])) {
@@ -263,7 +262,8 @@ try {
                 <a href="usuario.php">Inicio</a>
                 <a href="carta.php">Ver carta</a>
                 <a href="valoraciones.php">Valoraciones</a>
-                <a href="tickets.php">Tickets</a>
+                <a href="incidencias.php">Incidencias</a>
+                <a href="tickets.php">Tickets de compra</a>
             </div>
         </div>
     <div class="cart-section">
@@ -373,4 +373,3 @@ setInterval(() => {
   </p></footer>
 </body>
 </html>
-
