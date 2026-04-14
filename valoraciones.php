@@ -42,6 +42,10 @@ try {
 }
 
 // Determinar si el usuario está logueado
+if (($_SESSION['worker_code'] ?? '') === 'ADMIN') {
+    header('Location: admin.php');
+    exit;
+}
 $is_logged_in = !empty($_SESSION['user_id']);
 $user_id = $_SESSION['user_id'] ?? null;
 $is_worker = !empty($_SESSION['worker_code']);

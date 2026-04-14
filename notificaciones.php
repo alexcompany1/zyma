@@ -14,6 +14,10 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
 }
+if (($_SESSION['worker_code'] ?? '') === 'ADMIN') {
+    header('Location: admin.php');
+    exit;
+}
 
 require_once 'config.php';
 

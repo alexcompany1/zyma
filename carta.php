@@ -20,6 +20,10 @@ if (!isset($_SESSION['user_id'])) {
     }
 } else {
     unset($_SESSION['guest_mode']);
+    if (($_SESSION['worker_code'] ?? '') === 'ADMIN') {
+        header('Location: admin.php');
+        exit;
+    }
 }
 
 $selectedProductId = isset($_GET['producto']) ? (int) $_GET['producto'] : 0;

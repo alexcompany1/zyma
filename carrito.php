@@ -15,6 +15,10 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
 }
+if (($_SESSION['worker_code'] ?? '') === 'ADMIN') {
+    header('Location: admin.php');
+    exit;
+}
 
 $products = [
     ['id' => 1, 'name' => 'Nachos con Queso', 'price' => 6.00, 'image' => 'assets/nachos.png'],

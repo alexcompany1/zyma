@@ -305,6 +305,82 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 $sqlUsuarios = "SELECT id, nombre, email, worker_code" . ($supportsBloqueado ? ", bloqueado" : ", 0 AS bloqueado") . " FROM usuarios ORDER BY id";
 $stmt = $pdo->query($sqlUsuarios);
 $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// ── Dashboard stats ────────────────────────────────────────────────────────
+
+// 1. ¿Tiene la tabla pedidos columna fecha_hora?
+$hasFechaHora = hasTableColumn($pdo, 'pedidos', 'fecha_hora');
+
+// 2. Pedidos del día e ingresos del día
+$todayOrders  = 0;
+$todayRevenue = 0.0;
+if ($hasFechaHora) {
+    $stmtDay = $pdo->query("
+        SELECT COUNT(*) AS cnt, COALESCE(SUM(total), 0) AS rev
+        FROM pedidos
+        WHERE DATE(fecha_hora) = CURDATE()
+    ");
+    $rowDay       = $stmtDay->fetch(PDO::FETCH_ASSOC);
+    $todayOrders  = (int)($rowDay['cnt'] ?? 0);
+    $todayRevenue = (float)($rowDay['rev'] ?? 0);
+}
+
+// 3. Pedidos pendientes y en preparación
+$stmtPend      = $pdo->query("SELECT COUNT(*) FROM pedidos WHERE estado = 'pendiente'");
+$pendingOrders = (int)$stmtPend->fetchColumn();
+
+$stmtPrep        = $pdo->query("SELECT COUNT(*) FROM pedidos WHERE estado = 'preparacion'");
+$preparingOrders = (int)$stmtPrep->fetchColumn();
+
+// 4. Ingredientes con stock bajo
+$stmtIngCheck     = $pdo->query("SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ingredientes'");
+$ingredientsTable = (int)$stmtIngCheck->fetchColumn() > 0;
+$lowStockIngredients = 0;
+if ($ingredientsTable) {
+    $stmtLow = $pdo->query("SELECT COUNT(*) FROM ingredientes WHERE cantidad <= stock_minimo");
+    $lowStockIngredients = (int)$stmtLow->fetchColumn();
+}
+
+// 5. Producto más vendido
+$topSellingProduct = '';
+$productCount      = 0;
+try {
+    $stmtTop = $pdo->query("
+        SELECT pr.nombre, SUM(pi.cantidad) AS total_vendido
+        FROM pedido_items pi
+        JOIN productos pr ON pi.id_producto = pr.id
+        GROUP BY pi.id_producto
+        ORDER BY total_vendido DESC
+        LIMIT 1
+    ");
+    $rowTop = $stmtTop->fetch(PDO::FETCH_ASSOC);
+    if ($rowTop) {
+        $topSellingProduct = (string)$rowTop['nombre'];
+        $productCount      = (int)$rowTop['total_vendido'];
+    }
+} catch (Exception $e) {
+    // tablas no disponibles
+}
+
+// 6. Notificaciones no leídas
+$stmtNotifCheck     = $pdo->query("SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'notificaciones'");
+$notificationsTable = (int)$stmtNotifCheck->fetchColumn() > 0;
+$unreadNotifications = 0;
+if ($notificationsTable) {
+    $stmtUnread = $pdo->query("SELECT COUNT(*) FROM notificaciones WHERE leida = 0");
+    $unreadNotifications = (int)$stmtUnread->fetchColumn();
+}
+
+// 7. Pedidos activos para la tabla del panel
+$activeOrdersCols = $hasFechaHora ? ', fecha_hora' : '';
+$stmtActive = $pdo->query("
+    SELECT id_pedido, estado, total{$activeOrdersCols}
+    FROM pedidos
+    WHERE estado IN ('pendiente', 'preparacion')
+    ORDER BY id_pedido DESC
+    LIMIT 20
+");
+$activeOrders = $stmtActive->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -338,25 +414,19 @@ if ($display_name === '') {
         </div>
     </div>
 
-    <a href="usuario.php" class="landing-logo">
+    <a href="admin.php" class="landing-logo">
       <span class="landing-logo-text">Zyma</span>
     </a>
 
-                <div class="quick-menu-section">
+        <div class="quick-menu-section">
             <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
             <div class="dropdown quick-dropdown" id="quickDropdown">
-                <a href="usuario.php">Inicio</a>
-                <a href="carta.php">Ver carta</a>
-                <a href="valoraciones.php">Valoraciones</a>
-                <a href="tickets.php">Tickets</a>
+                <a href="admin.php">Panel admin</a>
+                <a href="gestionar_pedidos.php">Gestionar pedidos</a>
+                <a href="editar_carta.php">Editar carta</a>
+                <a href="estadisticas.php">Estadísticas</a>
             </div>
         </div>
-    <div class="cart-section">
-      <a href="carrito.php" class="cart-btn">
-        <img src="assets/cart-icon.png" alt="Carrito">
-        <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
-      </a>
-    </div>
   </div>
 </header>
 
@@ -391,7 +461,7 @@ if ($display_name === '') {
             <div class="stat-card">
                 <h3>Pedidos en preparación</h3>
                 <p class="stat-number"><?= $preparingOrders ?></p>
-                <span>En proceso ahora</span>l
+                <span>En proceso ahora</span>
             </div>
             <div class="stat-card">
                 <h3>Ingredientes bajos</h3>

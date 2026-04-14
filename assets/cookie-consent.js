@@ -158,8 +158,8 @@
           if (!result || !result.ok) {
             throw new Error((result && result.message) || "No se pudo guardar");
           }
-          var redirect = result.redirect || "login.php?cookie_rejected=1";
-          window.location.href = redirect;
+          closeModal();
+          showToast(result.message || "Solo se usarán las cookies técnicas necesarias.");
         })
         .catch(function (err) {
           showMessage(err.message || "No se pudo procesar el rechazo de cookies.", true);

@@ -53,5 +53,5 @@ $cookie_policy_version = isset($cookie_preferences['policy_version']) ? (string)
     </nav>
   </section>
 </div>
-<script src="assets/cookie-consent.js?v=20260317-5"></script>
+<script src="assets/cookie-consent.js?v=20260414-1"></script>
 
