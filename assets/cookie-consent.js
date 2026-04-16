@@ -105,7 +105,7 @@
           try {
             data = JSON.parse(text);
           } catch (err) {
-            throw new Error("Respuesta inválida del servidor");
+            throw new Error("Respuesta invÃ¡lida del servidor");
           }
 
           if (!response.ok) {
@@ -159,7 +159,7 @@
             throw new Error((result && result.message) || "No se pudo guardar");
           }
           closeModal();
-          showToast(result.message || "Solo se usarán las cookies técnicas necesarias.");
+          showToast(result.message || "Solo se usaran las cookies tecnicas necesarias.");
         })
         .catch(function (err) {
           showMessage(err.message || "No se pudo procesar el rechazo de cookies.", true);
@@ -185,11 +185,12 @@
             throw new Error((result && result.message) || "No se pudo guardar");
           }
           closeModal();
-          showToast(result.message || "Personalización guardada correctamente");
+          showToast(result.message || "PersonalizaciÃ³n guardada correctamente");
         })
         .catch(function (err) {
-          showMessage(err.message || "No se pudo guardar tu configuración de cookies.", true);
+          showMessage(err.message || "No se pudo guardar tu configuraciÃ³n de cookies.", true);
         });
     });
   }
 })();
+

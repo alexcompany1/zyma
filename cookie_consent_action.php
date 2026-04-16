@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 ob_start();
 
 session_start();
@@ -21,11 +21,11 @@ function jsonResponse(int $status, array $payload): void
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    jsonResponse(405, ['ok' => false, 'message' => 'Método no permitido']);
+    jsonResponse(405, ['ok' => false, 'message' => 'MÃ©todo no permitido']);
 }
 
 if (empty($_SESSION['user_id'])) {
-    jsonResponse(401, ['ok' => false, 'message' => 'Sesión no válida']);
+    jsonResponse(401, ['ok' => false, 'message' => 'SesiÃ³n no vÃ¡lida']);
 }
 
 $action = (string)($_POST['action'] ?? '');
@@ -56,7 +56,7 @@ try {
             'estado' => 'customized',
         ];
         $_SESSION['show_cookie_popup'] = false;
-        jsonResponse(200, ['ok' => true, 'action' => 'save_custom', 'message' => 'Personalización guardada correctamente']);
+        jsonResponse(200, ['ok' => true, 'action' => 'save_custom', 'message' => 'PersonalizaciÃ³n guardada correctamente']);
     }
 
     if ($action === 'reject_all') {
@@ -68,10 +68,16 @@ try {
             'estado' => 'rejected',
         ];
         $_SESSION['show_cookie_popup'] = false;
-        jsonResponse(200, ['ok' => true, 'action' => 'reject_all', 'message' => 'Solo se usarán las cookies técnicas necesarias.']);
+        jsonResponse(200, [
+            'ok' => true,
+            'action' => 'reject_all',
+            'message' => 'Solo se usaran las cookies tecnicas necesarias.'
+        ]);
     }
 
-    jsonResponse(400, ['ok' => false, 'message' => 'Acción no válida']);
+    jsonResponse(400, ['ok' => false, 'message' => 'AcciÃ³n no vÃ¡lida']);
 } catch (Exception $e) {
     jsonResponse(500, ['ok' => false, 'message' => 'No se pudo guardar la preferencia']);
 }
+
+
