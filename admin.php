@@ -302,85 +302,86 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
+// — Dashboard stats —
+$hasFechaHora = hasTableColumn($pdo, 'pedidos', 'fecha_hora');
+$todayOrders = 0;
+$todayRevenue = 0.0;
+$pendingOrders = 0;
+$preparingOrders = 0;
+$activeOrders = [];
+$activeOrderCount = 0;
+$ingredientsTable = hasTableColumn($pdo, 'ingredientes', 'cantidad') && hasTableColumn($pdo, 'ingredientes', 'stock_minimo');
+$redIngredients = 0;
+$topSellingProduct = '-';
+$productCount = 0;
+$notificationsTable = hasTableColumn($pdo, 'notificaciones', 'leida');
+$unreadNotifications = 0;
+
+try {
+    if ($hasFechaHora) {
+        $stmt = $pdo->query("SELECT COUNT(*) FROM pedidos WHERE DATE(fecha_hora) = CURDATE()");
+        $todayOrders = (int)$stmt->fetchColumn();
+
+        $stmt = $pdo->query("SELECT COALESCE(SUM(total), 0) FROM pedidos WHERE DATE(fecha_hora) = CURDATE()");
+        $todayRevenue = (float)$stmt->fetchColumn();
+    }
+
+    $stmt = $pdo->query("SELECT COUNT(*) FROM pedidos WHERE estado = 'pendiente'");
+    $pendingOrders = (int)$stmt->fetchColumn();
+
+    $stmt = $pdo->query("SELECT COUNT(*) FROM pedidos WHERE estado = 'preparando'");
+    $preparingOrders = (int)$stmt->fetchColumn();
+
+    $stmt = $pdo->query("SELECT COUNT(*) FROM pedidos WHERE estado IN ('pendiente', 'preparando', 'listo')");
+    $activeOrderCount = (int)$stmt->fetchColumn();
+
+    $stmt = $pdo->query("SELECT id_pedido, estado, total, fecha_hora FROM pedidos WHERE estado IN ('pendiente', 'preparando') ORDER BY fecha_hora DESC LIMIT 10");
+    $activeOrders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($ingredientsTable) {
+        $stmt = $pdo->query("SELECT COUNT(*) FROM ingredientes WHERE cantidad < stock_minimo");
+        $redIngredients = (int)$stmt->fetchColumn();
+    }
+
+    $stmt = $pdo->query("SELECT COUNT(*) FROM productos");
+    $productCount = (int)$stmt->fetchColumn();
+
+    if ($productCount > 0) {
+        $stmt = $pdo->query(
+            "SELECT p.nombre, SUM(pi.cantidad) AS total_vendido " .
+            "FROM pedido_items pi " .
+            "JOIN pedidos pe ON pe.id_pedido = pi.id_pedido " .
+            "JOIN productos p ON pi.id_producto = p.id " .
+            "WHERE DATE(pe.fecha_hora) = CURDATE() " .
+            "GROUP BY p.id, p.nombre " .
+            "ORDER BY total_vendido DESC LIMIT 1"
+        );
+        $topProduct = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($topProduct) {
+            $topSellingProduct = $topProduct['nombre'];
+        }
+    }
+
+    if ($notificationsTable) {
+        $stmt = $pdo->query("SELECT COUNT(*) FROM notificaciones WHERE leida = 0");
+        $unreadNotifications = (int)$stmt->fetchColumn();
+    }
+} catch (Exception $e) {
+    $todayOrders = 0;
+    $todayRevenue = 0.0;
+    $pendingOrders = 0;
+    $preparingOrders = 0;
+    $activeOrders = [];
+    $activeOrderCount = 0;
+    $redIngredients = 0;
+    $topSellingProduct = '-';
+    $productCount = 0;
+    $unreadNotifications = 0;
+}
+
 $sqlUsuarios = "SELECT id, nombre, email, worker_code" . ($supportsBloqueado ? ", bloqueado" : ", 0 AS bloqueado") . " FROM usuarios ORDER BY id";
 $stmt = $pdo->query($sqlUsuarios);
 $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// ── Dashboard stats ────────────────────────────────────────────────────────
-
-// 1. ¿Tiene la tabla pedidos columna fecha_hora?
-$hasFechaHora = hasTableColumn($pdo, 'pedidos', 'fecha_hora');
-
-// 2. Pedidos del día e ingresos del día
-$todayOrders  = 0;
-$todayRevenue = 0.0;
-if ($hasFechaHora) {
-    $stmtDay = $pdo->query("
-        SELECT COUNT(*) AS cnt, COALESCE(SUM(total), 0) AS rev
-        FROM pedidos
-        WHERE DATE(fecha_hora) = CURDATE()
-    ");
-    $rowDay       = $stmtDay->fetch(PDO::FETCH_ASSOC);
-    $todayOrders  = (int)($rowDay['cnt'] ?? 0);
-    $todayRevenue = (float)($rowDay['rev'] ?? 0);
-}
-
-// 3. Pedidos pendientes y en preparación
-$stmtPend      = $pdo->query("SELECT COUNT(*) FROM pedidos WHERE estado = 'pendiente'");
-$pendingOrders = (int)$stmtPend->fetchColumn();
-
-$stmtPrep        = $pdo->query("SELECT COUNT(*) FROM pedidos WHERE estado = 'preparacion'");
-$preparingOrders = (int)$stmtPrep->fetchColumn();
-
-// 4. Ingredientes con stock bajo
-$stmtIngCheck     = $pdo->query("SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'ingredientes'");
-$ingredientsTable = (int)$stmtIngCheck->fetchColumn() > 0;
-$lowStockIngredients = 0;
-if ($ingredientsTable) {
-    $stmtLow = $pdo->query("SELECT COUNT(*) FROM ingredientes WHERE cantidad <= stock_minimo");
-    $lowStockIngredients = (int)$stmtLow->fetchColumn();
-}
-
-// 5. Producto más vendido
-$topSellingProduct = '';
-$productCount      = 0;
-try {
-    $stmtTop = $pdo->query("
-        SELECT pr.nombre, SUM(pi.cantidad) AS total_vendido
-        FROM pedido_items pi
-        JOIN productos pr ON pi.id_producto = pr.id
-        GROUP BY pi.id_producto
-        ORDER BY total_vendido DESC
-        LIMIT 1
-    ");
-    $rowTop = $stmtTop->fetch(PDO::FETCH_ASSOC);
-    if ($rowTop) {
-        $topSellingProduct = (string)$rowTop['nombre'];
-        $productCount      = (int)$rowTop['total_vendido'];
-    }
-} catch (Exception $e) {
-    // tablas no disponibles
-}
-
-// 6. Notificaciones no leídas
-$stmtNotifCheck     = $pdo->query("SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'notificaciones'");
-$notificationsTable = (int)$stmtNotifCheck->fetchColumn() > 0;
-$unreadNotifications = 0;
-if ($notificationsTable) {
-    $stmtUnread = $pdo->query("SELECT COUNT(*) FROM notificaciones WHERE leida = 0");
-    $unreadNotifications = (int)$stmtUnread->fetchColumn();
-}
-
-// 7. Pedidos activos para la tabla del panel
-$activeOrdersCols = $hasFechaHora ? ', fecha_hora' : '';
-$stmtActive = $pdo->query("
-    SELECT id_pedido, estado, total{$activeOrdersCols}
-    FROM pedidos
-    WHERE estado IN ('pendiente', 'preparacion')
-    ORDER BY id_pedido DESC
-    LIMIT 20
-");
-$activeOrders = $stmtActive->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -414,19 +415,33 @@ if ($display_name === '') {
         </div>
     </div>
 
-    <a href="admin.php" class="landing-logo">
+    <a href="usuario.php" class="landing-logo">
       <span class="landing-logo-text">Zyma</span>
     </a>
 
-        <div class="quick-menu-section">
+                <div class="quick-menu-section">
             <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
             <div class="dropdown quick-dropdown" id="quickDropdown">
-                <a href="admin.php">Panel admin</a>
-                <a href="gestionar_pedidos.php">Gestionar pedidos</a>
-                <a href="editar_carta.php">Editar carta</a>
-                <a href="estadisticas.php">Estadísticas</a>
+                <a href="usuario.php">Inicio</a>
+                <a href="carta.php">Ver carta</a>
+                <a href="valoraciones.php">Valoraciones</a>
+                <a href="tickets.php">Tickets</a>
             </div>
         </div>
+    <div class="notification-section">
+      <a href="admin_notifications.php" class="notification-link">
+        <span class="bell-icon">🔔</span>
+        <?php if ($notificationsTable && $unreadNotifications > 0): ?>
+            <span class="notification-count"><?= $unreadNotifications ?></span>
+        <?php endif; ?>
+      </a>
+    </div>
+    <div class="cart-section">
+      <a href="carrito.php" class="cart-btn">
+        <img src="assets/cart-icon.png" alt="Carrito">
+        <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
+      </a>
+    </div>
   </div>
 </header>
 
@@ -439,24 +454,28 @@ if ($display_name === '') {
                 <h2>Panel administrativo</h2>
                 <p class="lead">Resumen de pedidos, inventario y usuarios. Accede rápidamente a las secciones principales.</p>
             </div>
-            <a href="gestionar_pedidos.php" class="landing-link">Ir a Pedidos en tiempo real</a>
+            <div class="action-links">
+                <a href="admin_orders.php" class="landing-link">Pedidos</a>
+                <a href="admin_inventory.php" class="landing-link">Inventario</a>
+                <a href="admin_products.php" class="landing-link">Productos</a>
+            </div>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card">
                 <h3>Pedidos del día</h3>
-                <p class="stat-number"><?= $hasFechaHora ? $todayOrders : 'N/D' ?></p>
+                <p class="stat-number" id="todayOrdersValue"><?= $hasFechaHora ? $todayOrders : 'N/D' ?></p>
                 <span><?= $hasFechaHora ? 'Pedidos registrados hoy' : 'Fecha no disponible' ?></span>
             </div>
             <div class="stat-card">
                 <h3>Ingresos del día</h3>
-                <p class="stat-number">€<?= number_format($todayRevenue, 2, ',', '.') ?></p>
+                <p class="stat-number" id="todayRevenueValue">€<?= number_format($todayRevenue, 2, ',', '.') ?></p>
                 <span><?= $hasFechaHora ? 'Ventas de hoy' : 'Fecha no disponible' ?></span>
             </div>
             <div class="stat-card">
-                <h3>Pedidos pendientes</h3>
-                <p class="stat-number"><?= $pendingOrders ?></p>
-                <span>Espera de cocina</span>
+                <h3>Pedidos activos</h3>
+                <p class="stat-number" id="activeOrdersValue"><?= $activeOrderCount ?></p>
+                <span>Pedidos en curso</span>
             </div>
             <div class="stat-card">
                 <h3>Pedidos en preparación</h3>
@@ -464,18 +483,18 @@ if ($display_name === '') {
                 <span>En proceso ahora</span>
             </div>
             <div class="stat-card">
-                <h3>Ingredientes bajos</h3>
-                <p class="stat-number"><?= $ingredientsTable ? $lowStockIngredients : 'N/D' ?></p>
-                <span><?= $ingredientsTable ? 'Alertas de inventario' : 'Inventario no detectado' ?></span>
+                <h3>Ingredientes en rojo</h3>
+                <p class="stat-number" id="redIngredientsValue"><?= $ingredientsTable ? $redIngredients : 'N/D' ?></p>
+                <span><?= $ingredientsTable ? 'Inventario crítico' : 'Inventario no detectado' ?></span>
             </div>
             <div class="stat-card">
                 <h3>Producto más vendido</h3>
-                <p class="stat-number"><?= htmlspecialchars($topSellingProduct) ?></p>
+                <p class="stat-number" id="topProductValue"><?= htmlspecialchars($topSellingProduct) ?></p>
                 <span><?= $productCount > 0 ? 'Resumen de ventas' : 'Sin productos' ?></span>
             </div>
             <div class="stat-card">
                 <h3>Notificaciones internas</h3>
-                <p class="stat-number"><?= $notificationsTable ? $unreadNotifications : 'N/D' ?></p>
+                <p class="stat-number" id="notificationsValue"><?= $notificationsTable ? $unreadNotifications : 'N/D' ?></p>
                 <span><?= $notificationsTable ? 'No leídas' : 'Notificaciones no detectadas' ?></span>
             </div>
             <div class="stat-card">
@@ -648,6 +667,27 @@ if (profileBtn && dropdownMenu) {
   });
 }
 
+async function refreshDashboardStats() {
+  try {
+    const response = await fetch('admin_dashboard_stats.php');
+    if (!response.ok) {
+      return;
+    }
+    const data = await response.json();
+    if (data.success && data.data) {
+      const stats = data.data;
+      document.getElementById('todayOrdersValue')?.textContent = stats.today_orders;
+      document.getElementById('todayRevenueValue')?.textContent = '€' + parseFloat(stats.today_sales).toFixed(2).replace('.', ',');
+      document.getElementById('activeOrdersValue')?.textContent = stats.active_orders;
+      document.getElementById('redIngredientsValue')?.textContent = stats.red_ingredients;
+      document.getElementById('topProductValue')?.textContent = stats.top_product_of_day || '-';
+    }
+  } catch (error) {
+    console.error('Error al actualizar estadísticas:', error);
+  }
+}
+
+setInterval(refreshDashboardStats, 30000);
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
