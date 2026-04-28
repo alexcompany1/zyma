@@ -167,8 +167,8 @@ $secondaryLinks = [
 <main class="container worker-dashboard-page">
   <section class="worker-hero">
     <div class="worker-hero-copy">
-      <span class="worker-eyebrow">Área profesional del trabajador</span>
-      <h1><?= htmlspecialchars($greeting) ?>, <?= htmlspecialchars($display_name) ?></h1>
+      <span class="worker-eyebrow" data-i18n="worker.operationsCenter">Área profesional del trabajador</span>
+      <h1><span data-i18n="worker.welcome">Bienvenido al centro de operaciones</span>, <?= htmlspecialchars($display_name) ?></h1>
       <p>Tu panel centraliza la operativa del turno, la supervisión de pedidos y los accesos clave para trabajar con rapidez, criterio y buena presencia.</p>
 
       <div class="worker-hero-actions">
@@ -330,19 +330,30 @@ $secondaryLinks = [
 </main>
 
 <footer>
-  <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p data-i18n="footer.rights">&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php">Política de Cookies</a>
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php">Aviso Legal</a>
+    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
   </p>
 </footer>
 
 <?php include 'cookie_popup.php'; ?>
 
+<script src="assets/lang.js?v=20260428-1"></script>
 <script>
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    applyTranslations();
+    injectButton();
+  });
+} else {
+  applyTranslations();
+  injectButton();
+}
+
 const profileBtn = document.getElementById('profileBtn');
 const dropdownMenu = document.getElementById('dropdownMenu');
 if (profileBtn && dropdownMenu) {
