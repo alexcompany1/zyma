@@ -7,54 +7,47 @@
 session_start();
 header('Content-Type: application/json');
 
+require_once 'config.php';
+
 $input = json_decode(file_get_contents('php://input'), true);
 
 if (isset($input['productId']) && isset($input['quantity'])) {
-    $productId = intval($input['productId']);
-    $quantity = intval($input['quantity']);
-    
+    $productId = (int) $input['productId'];
+    $quantity = (int) $input['quantity'];
+
     if ($quantity < 1) {
-        echo json_encode(['success' => false, 'message' => 'Cantidad inválida']);
+        echo json_encode(['success' => false, 'message' => 'Cantidad invalida']);
         exit;
     }
-    
-    // Lista de precios
-    $products = [
-        1 => ['price' => 6.00],
-        2 => ['price' => 3.50],
-        3 => ['price' => 7.50],
-        4 => ['price' => 5.99],
-        5 => ['price' => 6.50],
-        6 => ['price' => 2.00],
-        7 => ['price' => 1.50]
-    ];
-    
-    if (!isset($products[$productId])) {
+
+    $stmt = $pdo->prepare("SELECT precio FROM productos WHERE id = ?");
+    $stmt->execute([$productId]);
+    $precio = $stmt->fetchColumn();
+
+    if ($precio === false) {
         echo json_encode(['success' => false, 'message' => 'Producto no encontrado']);
         exit;
     }
-    
-    // Guardar en Sesión
+
     $_SESSION['cart'][$productId] = $quantity;
-    
-    // Calcular subtotal
-    $subtotal = $products[$productId]['price'] * $quantity;
-    
-    // Calcular total
-    $total = 0;
+
+    $subtotal = (float) $precio * $quantity;
+
+    $total = 0.0;
     foreach ($_SESSION['cart'] as $id => $qty) {
-        if (isset($products[$id])) {
-            $total += $products[$id]['price'] * $qty;
+        $stmt->execute([(int) $id]);
+        $precioProducto = $stmt->fetchColumn();
+        if ($precioProducto !== false) {
+            $total += (float) $precioProducto * (int) $qty;
         }
     }
-    
+
     echo json_encode([
         'success' => true,
         'subtotal' => number_format($subtotal, 2, ',', '.'),
         'total' => number_format($total, 2, ',', '.')
     ]);
-} else {
-    echo json_encode(['success' => false, 'message' => 'Datos inválidos']);
+    exit;
 }
-?>
 
+echo json_encode(['success' => false, 'message' => 'Datos invalidos']);
