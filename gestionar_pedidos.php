@@ -280,7 +280,7 @@ try {
         <h2 class="welcome">Gestionar Pedidos</h2>
         
         <!-- Boton volver -->
-        <a href="trabajador.php" class="btn-volver-panel">Volver al Panel de Control</a>
+        <a href="admin.php" class="btn-volver-panel">Volver al Panel de Control</a>
         
         <?php if (empty($pedidos)): ?>
             <p class="empty-state">No hay pedidos.</p>

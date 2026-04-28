@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!headers_sent()) {
     header('Content-Type: text/html; charset=UTF-8');
 }
@@ -6,15 +6,8 @@ if (!headers_sent()) {
 require_once 'config.php';
 require_once 'payment_helpers.php';
 session_start();
-
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
-if (($_SESSION['worker_code'] ?? '') === 'ADMIN') {
-    header('Location: admin.php');
-    exit;
-}
+require_once 'auth.php';
+zymaRequireRole('client');
 
 $products = [];
 try {

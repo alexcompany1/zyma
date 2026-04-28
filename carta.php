@@ -21,7 +21,6 @@ if (!isset($_SESSION['user_id'])) {
     }
 } else {
     unset($_SESSION['guest_mode']);
-
     if (zymaCurrentRole() !== 'client') {
         zymaRedirectToHomeForCurrentRole();
     }

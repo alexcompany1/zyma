@@ -6,7 +6,7 @@ if (!headers_sent()) {
 <?php
 /**
  * admin.php
- * Panel de administracion de usuarios (solo ADMIN).
+ * Panel de administracion de usuarios (solo ADMIN) con las rutas de navegacion bien hechas.
  */
 
 session_start();
@@ -300,6 +300,83 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
+// — Dashboard stats —
+$hasFechaHora = hasTableColumn($pdo, 'pedidos', 'fecha_hora');
+$todayOrders = 0;
+$todayRevenue = 0.0;
+$pendingOrders = 0;
+$preparingOrders = 0;
+$activeOrders = [];
+$activeOrderCount = 0;
+$ingredientsTable = hasTableColumn($pdo, 'ingredientes', 'cantidad') && hasTableColumn($pdo, 'ingredientes', 'stock_minimo');
+$redIngredients = 0;
+$topSellingProduct = '-';
+$productCount = 0;
+$notificationsTable = hasTableColumn($pdo, 'notificaciones', 'leida');
+$unreadNotifications = 0;
+
+try {
+    if ($hasFechaHora) {
+        $stmt = $pdo->query("SELECT COUNT(*) FROM pedidos WHERE DATE(fecha_hora) = CURDATE()");
+        $todayOrders = (int)$stmt->fetchColumn();
+
+        $stmt = $pdo->query("SELECT COALESCE(SUM(total), 0) FROM pedidos WHERE DATE(fecha_hora) = CURDATE()");
+        $todayRevenue = (float)$stmt->fetchColumn();
+    }
+
+    $stmt = $pdo->query("SELECT COUNT(*) FROM pedidos WHERE estado = 'pendiente'");
+    $pendingOrders = (int)$stmt->fetchColumn();
+
+    $stmt = $pdo->query("SELECT COUNT(*) FROM pedidos WHERE estado = 'preparando'");
+    $preparingOrders = (int)$stmt->fetchColumn();
+
+    $stmt = $pdo->query("SELECT COUNT(*) FROM pedidos WHERE estado IN ('pendiente', 'preparando', 'listo')");
+    $activeOrderCount = (int)$stmt->fetchColumn();
+
+    $stmt = $pdo->query("SELECT id_pedido, estado, total, fecha_hora FROM pedidos WHERE estado IN ('pendiente', 'preparando') ORDER BY fecha_hora DESC LIMIT 10");
+    $activeOrders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($ingredientsTable) {
+        $stmt = $pdo->query("SELECT COUNT(*) FROM ingredientes WHERE cantidad < stock_minimo");
+        $redIngredients = (int)$stmt->fetchColumn();
+    }
+
+    $stmt = $pdo->query("SELECT COUNT(*) FROM productos");
+    $productCount = (int)$stmt->fetchColumn();
+
+    if ($productCount > 0) {
+        $stmt = $pdo->query(
+            "SELECT p.nombre, SUM(pi.cantidad) AS total_vendido " .
+            "FROM pedido_items pi " .
+            "JOIN pedidos pe ON pe.id_pedido = pi.id_pedido " .
+            "JOIN productos p ON pi.id_producto = p.id " .
+            "WHERE DATE(pe.fecha_hora) = CURDATE() " .
+            "GROUP BY p.id, p.nombre " .
+            "ORDER BY total_vendido DESC LIMIT 1"
+        );
+        $topProduct = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($topProduct) {
+            $topSellingProduct = $topProduct['nombre'];
+        }
+    }
+
+    if ($notificationsTable) {
+        $stmt = $pdo->query("SELECT COUNT(*) FROM notificaciones WHERE leida = 0");
+        $unreadNotifications = (int)$stmt->fetchColumn();
+    }
+} catch (Exception $e) {
+    $todayOrders = 0;
+    $todayRevenue = 0.0;
+    $pendingOrders = 0;
+    $preparingOrders = 0;
+    $activeOrders = [];
+    $activeOrderCount = 0;
+    $redIngredients = 0;
+    $topSellingProduct = '-';
+    $productCount = 0;
+    $unreadNotifications = 0;
+}
+
 $sqlUsuarios = "SELECT id, nombre, email, worker_code" . ($supportsBloqueado ? ", bloqueado" : ", 0 AS bloqueado") . " FROM usuarios ORDER BY id";
 $stmt = $pdo->query($sqlUsuarios);
 $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -350,6 +427,14 @@ if ($display_name === '') {
                 <a href="tickets.php">Tickets de compra</a>
             </div>
         </div>
+    <div class="notification-section">
+      <a href="admin_notifications.php" class="notification-link">
+        <span class="bell-icon">🔔</span>
+        <?php if ($notificationsTable && $unreadNotifications > 0): ?>
+            <span class="notification-count"><?= $unreadNotifications ?></span>
+        <?php endif; ?>
+      </a>
+    </div>
     <div class="cart-section">
       <a href="carrito.php" class="cart-btn">
         <img src="assets/cart-icon.png" alt="Carrito">
@@ -362,6 +447,99 @@ if ($display_name === '') {
 <div class="container">
     <?= $msg ?>
 
+    <div class="section-card">
+        <div class="row-between section-head">
+            <div>
+                <h2>Panel administrativo</h2>
+                <p class="lead">Resumen de pedidos, inventario y usuarios. Accede rápidamente a las secciones principales.</p>
+            </div>
+            <div class="action-links">
+                <a href="admin_orders.php" class="landing-link">Pedidos</a>
+                <a href="admin_inventory.php" class="landing-link">Inventario</a>
+                <a href="admin_products.php" class="landing-link">Productos</a>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Pedidos del día</h3>
+                <p class="stat-number" id="todayOrdersValue"><?= $hasFechaHora ? $todayOrders : 'N/D' ?></p>
+                <span><?= $hasFechaHora ? 'Pedidos registrados hoy' : 'Fecha no disponible' ?></span>
+            </div>
+            <div class="stat-card">
+                <h3>Ingresos del día</h3>
+                <p class="stat-number" id="todayRevenueValue">€<?= number_format($todayRevenue, 2, ',', '.') ?></p>
+                <span><?= $hasFechaHora ? 'Ventas de hoy' : 'Fecha no disponible' ?></span>
+            </div>
+            <div class="stat-card">
+                <h3>Pedidos activos</h3>
+                <p class="stat-number" id="activeOrdersValue"><?= $activeOrderCount ?></p>
+                <span>Pedidos en curso</span>
+            </div>
+            <div class="stat-card">
+                <h3>Pedidos en preparación</h3>
+                <p class="stat-number"><?= $preparingOrders ?></p>
+                <span>En proceso ahora</span>
+            </div>
+            <div class="stat-card">
+                <h3>Ingredientes en rojo</h3>
+                <p class="stat-number" id="redIngredientsValue"><?= $ingredientsTable ? $redIngredients : 'N/D' ?></p>
+                <span><?= $ingredientsTable ? 'Inventario crítico' : 'Inventario no detectado' ?></span>
+            </div>
+            <div class="stat-card">
+                <h3>Producto más vendido</h3>
+                <p class="stat-number" id="topProductValue"><?= htmlspecialchars($topSellingProduct) ?></p>
+                <span><?= $productCount > 0 ? 'Resumen de ventas' : 'Sin productos' ?></span>
+            </div>
+            <div class="stat-card">
+                <h3>Notificaciones internas</h3>
+                <p class="stat-number" id="notificationsValue"><?= $notificationsTable ? $unreadNotifications : 'N/D' ?></p>
+                <span><?= $notificationsTable ? 'No leídas' : 'Notificaciones no detectadas' ?></span>
+            </div>
+            <div class="stat-card">
+                <h3>Usuarios registrados</h3>
+                <p class="stat-number"><?= count($usuarios) ?></p>
+                <span>Clientes, empleados y administradores</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-card">
+        <div class="row-between section-head">
+            <h2>Pedidos en tiempo real</h2>
+            <span class="badge-status badge-estado-pendiente">Actualizado</span>
+        </div>
+        <?php if (!empty($activeOrders)): ?>
+            <div class="admin-table-wrap">
+                <table class="admin-users-table table-compact">
+                    <thead>
+                        <tr>
+                            <th>ID Pedido</th>
+                            <th>Estado</th>
+                            <th>Total</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($activeOrders as $order): ?>
+                        <tr>
+                            <td><?= (int)$order['id_pedido'] ?></td>
+                            <td>
+                                <span class="badge-status badge-estado-<?= htmlspecialchars($order['estado'] ?? 'pendiente') ?>">
+                                    <?= htmlspecialchars(ucfirst($order['estado'] ?? 'pendiente')) ?>
+                                </span>
+                            </td>
+                            <td>€<?= number_format((float)$order['total'], 2, ',', '.') ?></td>
+                            <td><?= htmlspecialchars($order['fecha_hora'] ?? '-') ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php else: ?>
+            <p class="empty-state">No hay pedidos activos disponibles.</p>
+        <?php endif; ?>
+    </div>
     <?php if (!$supportsBloqueado): ?>
       <div class="alert alert-error">Bloqueo no disponible. Ejecuta: ALTER TABLE usuarios ADD COLUMN bloqueado TINYINT(1) NOT NULL DEFAULT 0;</div>
     <?php endif; ?>
@@ -487,6 +665,27 @@ if (profileBtn && dropdownMenu) {
   });
 }
 
+async function refreshDashboardStats() {
+  try {
+    const response = await fetch('admin_dashboard_stats.php');
+    if (!response.ok) {
+      return;
+    }
+    const data = await response.json();
+    if (data.success && data.data) {
+      const stats = data.data;
+      document.getElementById('todayOrdersValue')?.textContent = stats.today_orders;
+      document.getElementById('todayRevenueValue')?.textContent = '€' + parseFloat(stats.today_sales).toFixed(2).replace('.', ',');
+      document.getElementById('activeOrdersValue')?.textContent = stats.active_orders;
+      document.getElementById('redIngredientsValue')?.textContent = stats.red_ingredients;
+      document.getElementById('topProductValue')?.textContent = stats.top_product_of_day || '-';
+    }
+  } catch (error) {
+    console.error('Error al actualizar estadísticas:', error);
+  }
+}
+
+setInterval(refreshDashboardStats, 30000);
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
