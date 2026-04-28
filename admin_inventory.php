@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
 try {
     $stmt = $pdo->query(
-        "SELECT id, nombre, cantidad, unidad AS unit, stock_minimo, COALESCE(unit, 'unidades') AS safe_unit, COALESCE(stock_minimo, 1) AS safe_min
+        "SELECT id, nombre, cantidad, unidad AS unit, stock_minimo, COALESCE(unidad, 'unidades') AS safe_unit, COALESCE(stock_minimo, 1) AS safe_min
          FROM ingredientes
          ORDER BY nombre ASC"
     );
