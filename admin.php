@@ -360,8 +360,9 @@ try {
         }
     }
 
-    if ($notificationsTable) {
-        $stmt = $pdo->query("SELECT COUNT(*) FROM notificaciones WHERE leida = 0");
+    if ($notificationsTable && isset($_SESSION['user_id'])) {
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM notificaciones WHERE id_usuario = :id_usuario AND leida = 0");
+        $stmt->execute([':id_usuario' => $_SESSION['user_id']]);
         $unreadNotifications = (int)$stmt->fetchColumn();
     }
 } catch (Exception $e) {
@@ -413,32 +414,29 @@ if ($display_name === '') {
         </div>
     </div>
 
-    <a href="usuario.php" class="landing-logo">
+    <a href="admin.php" class="landing-logo">
       <span class="landing-logo-text">Zyma</span>
     </a>
 
-                <div class="quick-menu-section">
-            <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
-            <div class="dropdown quick-dropdown" id="quickDropdown">
-                <a href="usuario.php">Inicio</a>
-                <a href="carta.php">Ver carta</a>
-                <a href="valoraciones.php">Valoraciones</a>
-                <a href="incidencias.php">Incidencias</a>
-                <a href="tickets.php">Tickets de compra</a>
-            </div>
-        </div>
+    <div class="quick-menu-section">
+      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido">
+        <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 7h14M5 12h14M5 17h14" />
+        </svg>
+      </button>
+      <div class="dropdown quick-dropdown" id="quickDropdown">
+        <a href="admin.php">Panel admin</a>
+        <a href="admin_orders.php">Pedidos</a>
+        <a href="admin_inventory.php">Inventario</a>
+        <a href="admin_products.php">Productos</a>
+      </div>
+    </div>
     <div class="notification-section">
       <a href="admin_notifications.php" class="notification-link">
         <span class="bell-icon">🔔</span>
         <?php if ($notificationsTable && $unreadNotifications > 0): ?>
             <span class="notification-count"><?= $unreadNotifications ?></span>
         <?php endif; ?>
-      </a>
-    </div>
-    <div class="cart-section">
-      <a href="carrito.php" class="cart-btn">
-        <img src="assets/cart-icon.png" alt="Carrito">
-        <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
       </a>
     </div>
   </div>
@@ -652,18 +650,28 @@ if ($display_name === '') {
 <script>
 const profileBtn = document.getElementById('profileBtn');
 const dropdownMenu = document.getElementById('dropdownMenu');
+const quickBtn = document.getElementById('quickMenuBtn');
 const quickDropdown = document.getElementById('quickDropdown');
 if (profileBtn && dropdownMenu) {
-  profileBtn.addEventListener('click', () => {
+  profileBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
     dropdownMenu.classList.toggle('show');
   });
-
-  window.addEventListener('click', (e) => {
-    if (!profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-      dropdownMenu.classList.remove('show');
-    }
+}
+if (quickBtn && quickDropdown) {
+  quickBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    quickDropdown.classList.toggle('show');
   });
 }
+window.addEventListener('click', (e) => {
+  if (profileBtn && dropdownMenu && !profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+    dropdownMenu.classList.remove('show');
+  }
+  if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
+    quickDropdown.classList.remove('show');
+  }
+});
 
 async function refreshDashboardStats() {
   try {

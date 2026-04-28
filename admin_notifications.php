@@ -71,7 +71,11 @@ $unreadCount = getUnreadNotificationsCount($pdo, (int)$_SESSION['user_id']);
     </div>
     <a href="admin.php" class="landing-logo"><span class="landing-logo-text">Zyma</span></a>
         <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
+      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido">
+        <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 7h14M5 12h14M5 17h14" />
+        </svg>
+      </button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
         <a href="admin.php">Panel Admin</a>
         <a href="admin_orders.php">Pedidos</a>
@@ -128,14 +132,28 @@ $unreadCount = getUnreadNotificationsCount($pdo, (int)$_SESSION['user_id']);
 <script>
 const profileBtn = document.getElementById('profileBtn');
 const dropdownMenu = document.getElementById('dropdownMenu');
+const quickBtn = document.getElementById('quickMenuBtn');
+const quickDropdown = document.getElementById('quickDropdown');
 if (profileBtn && dropdownMenu) {
-    profileBtn.addEventListener('click', () => dropdownMenu.classList.toggle('show'));
-    window.addEventListener('click', e => {
-        if (!profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-            dropdownMenu.classList.remove('show');
-        }
+    profileBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdownMenu.classList.toggle('show');
     });
 }
+if (quickBtn && quickDropdown) {
+    quickBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        quickDropdown.classList.toggle('show');
+    });
+}
+window.addEventListener('click', e => {
+    if (profileBtn && dropdownMenu && !profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+        dropdownMenu.classList.remove('show');
+    }
+    if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
+        quickDropdown.classList.remove('show');
+    }
+});
 </script>
 </body>
 </html>
