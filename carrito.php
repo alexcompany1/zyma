@@ -6,38 +6,38 @@ if (!headers_sent()) {
 require_once 'config.php';
 require_once 'payment_helpers.php';
 session_start();
+require_once 'auth.php';
+zymaRequireRole('client');
 
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
+$products = [];
+try {
+    $stmt = $pdo->query("SELECT id, nombre, precio, imagen FROM productos ORDER BY nombre");
+    foreach ($stmt->fetchAll() as $product) {
+        $products[(int) $product['id']] = [
+            'id' => (int) $product['id'],
+            'name' => $product['nombre'],
+            'price' => (float) $product['precio'],
+            'image' => $product['imagen'],
+        ];
+    }
+} catch (Throwable $e) {
+    $products = [];
 }
-if (($_SESSION['worker_code'] ?? '') === 'ADMIN') {
-    header('Location: admin.php');
-    exit;
-}
-
-$products = [
-    ['id' => 1, 'name' => 'Nachos con Queso', 'price' => 6.00, 'image' => 'assets/nachos.png'],
-    ['id' => 2, 'name' => 'Patatas Fritas', 'price' => 3.50, 'image' => 'assets/fries.png'],
-    ['id' => 3, 'name' => 'Hotdog BBQ', 'price' => 7.50, 'image' => 'assets/bbq_hotdog.png'],
-    ['id' => 4, 'name' => 'Hotdog Clasico', 'price' => 5.99, 'image' => 'assets/hotdog.png'],
-    ['id' => 5, 'name' => 'Hotdog Vegano', 'price' => 6.50, 'image' => 'assets/vegan-hotdog.png'],
-    ['id' => 6, 'name' => 'Refresco Cola', 'price' => 2.00, 'image' => 'assets/soda.png'],
-    ['id' => 7, 'name' => 'Agua Mineral', 'price' => 1.50, 'image' => 'assets/water.png'],
-];
 
 $cartItems = [];
 $total = 0.0;
 
 foreach ($_SESSION['cart'] ?? [] as $id => $qty) {
-    foreach ($products as $product) {
-        if ((int) $product['id'] === (int) $id) {
-            $product['quantity'] = (int) $qty;
-            $product['subtotal'] = (float) $product['price'] * (int) $qty;
-            $cartItems[] = $product;
-            $total += $product['subtotal'];
-        }
+    $id = (int) $id;
+    if (!isset($products[$id])) {
+        continue;
     }
+
+    $product = $products[$id];
+    $product['quantity'] = (int) $qty;
+    $product['subtotal'] = (float) $product['price'] * (int) $qty;
+    $cartItems[] = $product;
+    $total += $product['subtotal'];
 }
 
 $error = null;
@@ -105,6 +105,11 @@ $displayName = trim($_SESSION['nombre'] ?? '');
 if ($displayName === '') {
     $displayName = strstr($_SESSION['email'] ?? '', '@', true) ?: ($_SESSION['email'] ?? '');
 }
+
+$cartPrices = [];
+foreach ($cartItems as $item) {
+    $cartPrices[(int) $item['id']] = (float) $item['price'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -113,7 +118,7 @@ if ($displayName === '') {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zyma - Tu Carrito</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
-<link rel="stylesheet" href="styles.css?v=20260211-5">
+<link rel="stylesheet" href="styles.css?v=20260428-1">
 <style>
 .payment-methods{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:14px 0 18px}
 .payment-option{position:relative;display:block;cursor:pointer}
@@ -282,6 +287,7 @@ if ($displayName === '') {
 <script>
 const profileBtn = document.getElementById('profileBtn');
 const dropdownMenu = document.getElementById('dropdownMenu');
+const cartPrices = <?= json_encode($cartPrices, JSON_UNESCAPED_UNICODE) ?>;
 
 profileBtn.addEventListener('click', () => {
   dropdownMenu.classList.toggle('show');
@@ -311,10 +317,10 @@ function changeQuantity(productId, delta) {
   currentQty += delta;
   qtyElement.textContent = currentQty;
 
-  const prices = [0, 6.00, 3.50, 7.50, 5.99, 6.50, 2.00, 1.50];
+  const price = Number(cartPrices[productId] || 0);
+  descElement.innerHTML = 'EUR ' + price.toFixed(2).replace('.', ',') + ' x ' + currentQty;
 
-  descElement.innerHTML = 'EUR ' + prices[productId].toFixed(2).replace('.', ',') + ' x ' + currentQty;
-  const subtotal = prices[productId] * currentQty;
+  const subtotal = price * currentQty;
   subtotalElement.innerHTML = 'EUR ' + subtotal.toFixed(2).replace('.', ',');
 
   let total = 0;

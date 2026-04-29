@@ -10,10 +10,8 @@ if (!headers_sent()) {
  */
 
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
+require_once 'auth.php';
+zymaRequireRole('client');
 
 require_once 'config.php'; // Conexión PDO
 
@@ -96,7 +94,8 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
         <a href="usuario.php">Inicio</a>
         <a href="carta.php">Ver carta</a>
         <a href="valoraciones.php">Valoraciones</a>
-                <a href="tickets.php">Tickets</a>
+        <a href="incidencias.php">Incidencias</a>
+                <a href="tickets.php">Tickets de compra</a>
       </div>
     </div>
     <div class="cart-section">
@@ -181,5 +180,4 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
 <script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
 </html>
-
 

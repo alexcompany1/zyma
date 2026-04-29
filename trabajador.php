@@ -37,7 +37,7 @@ try {
     $stmt = $pdo->query("SELECT COUNT(*) FROM pedidos WHERE estado IN ('preparando', 'entregando')");
     $dashboardStats['in_progress_orders'] = (int) $stmt->fetchColumn();
 
-    $stmt = $pdo->query("SELECT COUNT(*) FROM pedidos WHERE estado = 'entregado' AND DATE(fecha_pedido) = CURDATE()");
+    $stmt = $pdo->query("SELECT COUNT(*) FROM pedidos WHERE estado = 'entregado' AND DATE(fecha_hora) = CURDATE()");
     $dashboardStats['delivered_today'] = (int) $stmt->fetchColumn();
 
     $stmt = $pdo->query("SELECT COUNT(*) FROM ingredientes WHERE cantidad <= 10");
@@ -86,8 +86,8 @@ $priorityActions = [
         'accent' => 'gold',
     ],
     [
-        'title' => 'Editar carta',
-        'description' => 'Ajusta productos, disponibilidad y detalles de la carta para evitar errores de servicio.',
+        'title' => 'Cambiar precios',
+        'description' => 'Actualiza el precio de los productos y deja la carta lista al instante para el cliente.',
         'href' => 'editar_carta.php',
         'eyebrow' => 'Configuración',
         'accent' => 'red',
@@ -110,7 +110,7 @@ $serviceChecklist = [
 
 $secondaryLinks = [
     ['label' => 'Gestionar pedidos', 'href' => 'gestionar_pedidos.php'],
-    ['label' => 'Editar carta', 'href' => 'editar_carta.php'],
+    ['label' => 'Cambiar precios', 'href' => 'editar_carta.php'],
     ['label' => 'Estadísticas', 'href' => 'estadisticas.php'],
     ['label' => 'Mi perfil', 'href' => 'perfil.php'],
 ];
@@ -173,7 +173,7 @@ $secondaryLinks = [
 
       <div class="worker-hero-actions">
         <a href="gestionar_pedidos.php" class="landing-cta">Abrir operativa</a>
-        <a href="editar_carta.php" class="worker-secondary-action">Actualizar carta</a>
+        <a href="editar_carta.php" class="worker-secondary-action">Cambiar precios de productos</a>
       </div>
     </div>
 

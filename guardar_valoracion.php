@@ -10,15 +10,22 @@ if (!headers_sent()) {
  */
 
 session_start();
+require_once 'auth.php';
 
 // Validar sesión
-if (!isset($_SESSION['user_id'])) {
+if (!zymaIsLoggedIn()) {
     http_response_code(401);
     echo json_encode(['error' => 'Debes iniciar sesión para valorar.']);
     exit;
 }
 
 // Validar método HTTP
+if (zymaCurrentRole() !== 'client') {
+    http_response_code(403);
+    echo json_encode(['error' => 'Solo los clientes pueden valorar productos.']);
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['error' => 'Método no permitido.']);

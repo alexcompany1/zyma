@@ -5,12 +5,8 @@
  */
 
 session_start();
-
-// Verificar si es trabajador
-if (!isset($_SESSION['user_id']) || !$_SESSION['worker_code']) {
-    die("Acceso denegado. Solo trabajadores pueden ejecutar esto.");
-}
-
+require_once 'auth.php';
+zymaRequireRole('worker');
 require_once 'config.php';
 
 ?>
@@ -144,4 +140,3 @@ document.getElementById('testForm')?.addEventListener('submit', async function(e
 
 </body>
 </html>
-

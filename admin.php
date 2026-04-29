@@ -11,6 +11,8 @@ if (!headers_sent()) {
 
 session_start();
 require_once 'config.php';
+require_once 'auth.php';
+zymaRequireRole('admin');
 
 function hasTableColumn(PDO $pdo, string $table, string $column): bool
 {
@@ -160,10 +162,6 @@ function deleteUserCascade(PDO $pdo, int $userId): bool
         }
         throw $e;
     }
-}
-
-if (!isset($_SESSION['user_id']) || ($_SESSION['worker_code'] ?? '') !== 'ADMIN') {
-    die("<h2 class='page-error'>Acceso denegado. Solo administradores.</h2>");
 }
 
 $show_cookie_popup = !empty($_SESSION['show_cookie_popup']);
@@ -425,7 +423,8 @@ if ($display_name === '') {
                 <a href="usuario.php">Inicio</a>
                 <a href="carta.php">Ver carta</a>
                 <a href="valoraciones.php">Valoraciones</a>
-                <a href="tickets.php">Tickets</a>
+                <a href="incidencias.php">Incidencias</a>
+                <a href="tickets.php">Tickets de compra</a>
             </div>
         </div>
     <div class="notification-section">
@@ -541,7 +540,6 @@ if ($display_name === '') {
             <p class="empty-state">No hay pedidos activos disponibles.</p>
         <?php endif; ?>
     </div>
-
     <?php if (!$supportsBloqueado): ?>
       <div class="alert alert-error">Bloqueo no disponible. Ejecuta: ALTER TABLE usuarios ADD COLUMN bloqueado TINYINT(1) NOT NULL DEFAULT 0;</div>
     <?php endif; ?>
@@ -692,4 +690,3 @@ setInterval(refreshDashboardStats, 30000);
 <script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
 </html>
-

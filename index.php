@@ -46,33 +46,33 @@ if ($basePath === '.' || $basePath === '/') {
           <span class="landing-logo-text">Zyma</span>
         </a>
         <div class="landing-actions">
-          <a href="<?= $basePath ?>/login.php" class="landing-link" data-i18n="nav.enter">Entrar</a>
-          <a href="<?= $basePath ?>/registro.php" class="landing-cta" data-i18n="nav.createAccount">Crear cuenta</a>
+          <a href="<?= $basePath ?>/login.php" class="landing-link">Entrar</a>
+          <a href="<?= $basePath ?>/registro.php" class="landing-cta">Crear cuenta</a>
         </div>
       </div>
     </header>
 
     <div class="landing-hero">
-      <h2 class="landing-title" data-i18n="index.heroTitle">Zyma. Hotdogs con alma.</h2>
-
+      <h2 class="landing-title">Zyma. Hotdogs con alma.</h2>
+      
       <!-- Bienvenida -->
-      <p class="welcome-text" data-i18n="index.heroParagraph">
-        Recetas de la casa, ingredientes frescos y un sabor que no se olvida.
+      <p class="welcome-text">
+        Recetas de la casa, ingredientes frescos y un sabor que no se olvida. 
         Crea tu cuenta o inicia sesión y descubre la carta.
       </p>
-
+      
       <!-- Botones principales -->
       <div class="btn-row center">
-        <a href="<?= $basePath ?>/registro.php" class="register-btn" data-i18n="nav.createAccount">Crear cuenta</a>
-        <a href="<?= $basePath ?>/login.php" class="login-btn" data-i18n="index.alreadyAccount">Ya tengo cuenta</a>
-        <a href="<?= $basePath ?>/acceso_invitado.php" class="login-btn" data-i18n="index.guestView">Ver carta sin cuenta</a>
+        <a href="<?= $basePath ?>/registro.php" class="register-btn">Crear cuenta</a>
+        <a href="<?= $basePath ?>/login.php" class="login-btn">Ya tengo cuenta</a>
+        <a href="<?= $basePath ?>/acceso_invitado.php" class="login-btn">Ver carta sin cuenta</a>
       </div>
     </div>
 
     <!-- Carrusel de reseñas -->
     <?php if (!empty($resenas)): ?>
     <section class="reviews-section">
-      <h3 class="reviews-title" data-i18n="index.reviewsTitle">Lo que dicen nuestros clientes</h3>
+      <h3 class="reviews-title">Lo que dicen nuestros clientes</h3>
       <div class="reviews-carousel-container">
         <button class="carousel-arrow carousel-prev" id="carouselPrev">&#10094;</button>
         <div class="reviews-carousel" id="reviewsCarousel">
@@ -104,16 +104,15 @@ if ($basePath === '.' || $basePath === '/') {
         <a href="#">Twitter</a>
       </p>
       <p class="footer-legal-links">
-        <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
+        <a href="politica_cookies.php">Política de Cookies</a>
         <span>|</span>
-        <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
+        <a href="politica_privacidad.php">Política de Privacidad</a>
         <span>|</span>
-        <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
+        <a href="aviso_legal.php">Aviso Legal</a>
       </p>
     </footer>
   </div>
 <script src="<?= $basePath ?>/assets/mobile-header.js?v=20260211-6"></script>
-<script src="<?= $basePath ?>/assets/lang.js?v=1"></script>
 <script>
 // Carrusel de reseñas
 const carousel = document.getElementById('reviewsCarousel');

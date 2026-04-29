@@ -10,6 +10,8 @@ if (!headers_sent()) {
  */
 
 session_start();
+require_once 'auth.php';
+zymaRequireRole('client');
 
 if (!isset($_SESSION['mensaje_pedido'])) {
     header('Location: carrito.php');
@@ -60,7 +62,8 @@ unset($_SESSION['mensaje_pedido']);
           <a href="usuario.php">Inicio</a>
           <a href="carta.php">Ver carta</a>
           <a href="valoraciones.php">Valoraciones</a>
-          <a href="tickets.php">Tickets</a>
+          <a href="incidencias.php">Incidencias</a>
+          <a href="tickets.php">Tickets de compra</a>
         </div>
       </div>
     <div class="cart-section">
@@ -112,4 +115,3 @@ window.addEventListener('click', e => {
   </p></footer>
 </body>
 </html>
-

@@ -103,28 +103,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="POST" action="forgot_password.php">
-      <h2 data-i18n="forgot.title">Recuperar Contraseña</h2>
+      <h2>Recuperar Contraseña</h2>
       <label for="email">
-        <span data-i18n="common.email">Email</span> <span class="required">*</span>
+        Email <span class="required">*</span>
         <input type="email" id="email" name="email" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
       </label>
-      <button type="submit" data-i18n="forgot.submit">Enviar enlace</button>
+      <button type="submit">Enviar enlace</button>
     </form>
 
     <div class="center mt-3">
-      <a href="login.php" data-i18n="forgot.backLogin">Volver al login</a>
+      <a href="login.php">Volver al login</a>
     </div>
   </div>
 <footer>
   <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
+    <a href="politica_cookies.php">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
+    <a href="politica_privacidad.php">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
+    <a href="aviso_legal.php">Aviso Legal</a>
   </p></footer>
-<script src="assets/lang.js?v=1"></script>
 </body>
 </html>
 

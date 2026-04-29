@@ -10,7 +10,12 @@ if (!headers_sent()) {
 
 session_start();
 require_once 'config.php';
+require_once 'auth.php';
 require_once 'cookie_consent_helper.php';
+
+if (zymaIsLoggedIn()) {
+    zymaRedirectToHomeForCurrentRole();
+}
 
 function usuariosTieneBloqueado(PDO $pdo): bool
 {
@@ -60,29 +65,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($credencialesOk && (int) ($user['bloqueado'] ?? 0) === 1) {
                 $error = 'Tu cuenta está bloqueada. Contacta con administración.';
             } elseif ($credencialesOk) {
-                if (!empty($workerCode)) {
-                    if (!empty($user['worker_code']) && hash_equals($user['worker_code'], $workerCode)) {
-                        $_SESSION['user_id'] = $user['id'];
-                        $_SESSION['nombre'] = $user['nombre'] ?? '';
-                        $_SESSION['email'] = $user['email'];
-                        $_SESSION['worker_code'] = $user['worker_code'];
+                $accountRole = zymaRoleFromWorkerCode($user['worker_code'] ?? null);
+
+                if ($accountRole === 'admin') {
+                    if (empty($workerCode) || !hash_equals((string) $user['worker_code'], $workerCode)) {
+                        $error = 'Introduce el código de administrador correcto para acceder a este panel.';
+                    } else {
+                        zymaSetAuthenticatedUser($user, 'admin');
                         prepararConsentimientoCookiesSesion($pdo, (int)$user['id']);
-                        if ($user['worker_code'] === 'ADMIN') {
-                            header('Location: admin.php');
-                            exit;
-                        }
-                        header('Location: trabajador.php');
-                        exit;
+                        zymaRedirect(zymaHomeForRole('admin'));
                     }
-                    $error = 'Código de trabajador incorrecto.';
+                } elseif ($accountRole === 'worker') {
+                    if (empty($workerCode)) {
+                        $error = 'Introduce tu código de trabajador para acceder a tu panel.';
+                    } elseif (!hash_equals((string) $user['worker_code'], $workerCode)) {
+                        $error = 'Código de trabajador incorrecto.';
+                    } else {
+                        zymaSetAuthenticatedUser($user, 'worker');
+                        prepararConsentimientoCookiesSesion($pdo, (int)$user['id']);
+                        zymaRedirect(zymaHomeForRole('worker'));
+                    }
                 } else {
-                    $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['nombre'] = $user['nombre'] ?? '';
-                    $_SESSION['email'] = $user['email'];
-                    $_SESSION['worker_code'] = $user['worker_code'];
-                    prepararConsentimientoCookiesSesion($pdo, (int)$user['id']);
-                    header('Location: usuario.php');
-                    exit;
+                    if (!empty($workerCode)) {
+                        $error = 'Esta cuenta no tiene acceso de trabajador.';
+                    } else {
+                        zymaSetAuthenticatedUser($user, 'client');
+                        prepararConsentimientoCookiesSesion($pdo, (int)$user['id']);
+                        zymaRedirect(zymaHomeForRole('client'));
+                    }
                 }
             } else {
                 $error = 'Credenciales incorrectas.';
@@ -110,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <span class="landing-logo-text">Zyma</span>
         </a>
         <div class="landing-actions">
-          <a href="registro.php" class="landing-cta" data-i18n="nav.createAccount">Crear cuenta</a>
+          <a href="registro.php" class="landing-cta">Crear cuenta</a>
         </div>
       </div>
     </header>
@@ -123,18 +133,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="POST" action="login.php">
-      <h2 data-i18n="login.title">Iniciar Sesión</h2>
+      <h2>Iniciar Sesión</h2>
 
       <label for="email">
-        <span data-i18n="common.email">Email</span> <span class="required">*</span>
+        Email <span class="required">*</span>
         <input type="email" id="email" name="email" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
       </label>
 
       <label for="password">
-        <span data-i18n="common.password">Contraseña</span> <span class="required">*</span>
+        Contraseña <span class="required">*</span>
         <div class="password-field">
           <input type="password" id="password" name="password" required>
-          <button type="button" class="password-toggle" data-password-toggle="password" data-i18n-aria="common.showPassword" aria-label="Mostrar contraseña" aria-pressed="false">
+          <button type="button" class="password-toggle" data-password-toggle="password" aria-label="Mostrar contraseña" aria-pressed="false">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
               <circle cx="12" cy="12" r="3"></circle>
@@ -144,30 +154,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </label>
 
       <label for="workerCode">
-        <span data-i18n="common.workerCode">Código de trabajador (opcional)</span>
+        Código de trabajador (opcional)
         <input type="text" id="workerCode" name="workerCode" value="<?= htmlspecialchars($_POST['workerCode'] ?? '') ?>">
-        <span class="optional-label" data-i18n-html="login.workerHint">Trabajador: ej. TRAB001<br>Administrador: ADMIN</span>
+        <span class="optional-label">Trabajador: ej. TRAB001<br>Administrador: ADMIN</span>
       </label>
 
-      <button type="submit" data-i18n="login.submit">Iniciar Sesión</button>
+      <button type="submit">Iniciar Sesión</button>
     </form>
 
     <div class="center mt-3">
-      <a href="registro.php" data-i18n="login.noAccount">No tienes cuenta? Registrate</a>
+      <a href="registro.php">No tienes cuenta? Registrate</a>
     </div>
     <div class="center mt-2">
-      <a href="forgot_password.php" data-i18n="login.forgot">He olvidado la Contraseña</a>
+      <a href="forgot_password.php">He olvidado la Contraseña</a>
     </div>
     <div class="center mt-3 footer-legal-links">
-      <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
+      <a href="politica_cookies.php">Política de Cookies</a>
       <span>|</span>
-      <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
+      <a href="politica_privacidad.php">Política de Privacidad</a>
       <span>|</span>
-      <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
+      <a href="aviso_legal.php">Aviso Legal</a>
     </div>
   </div>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
-<script src="assets/lang.js?v=1"></script>
 <script>
 document.querySelectorAll('[data-password-toggle]').forEach((button) => {
   button.addEventListener('click', () => {
