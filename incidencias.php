@@ -130,9 +130,9 @@ if ($display_name === '') {
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-        <a href="perfil.php">Mi perfil</a>
-        <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-        <a href="logout.php">Cerrar sesión</a>
+        <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
+        <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
+        <a href="logout.php" data-i18n="nav.logout">Cerrar sesión</a>
       </div>
     </div>
 
@@ -141,18 +141,18 @@ if ($display_name === '') {
     </a>
 
     <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
+      <button class="quick-menu-btn" id="quickMenuBtn" data-i18n-aria="nav.quickMenu" aria-label="Menú rápido"></button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="usuario.php">Inicio</a>
-        <a href="carta.php">Ver carta</a>
-        <a href="valoraciones.php">Valoraciones</a>
-        <a href="incidencias.php">Incidencias</a>
-        <a href="tickets.php">Tickets de compra</a>
+        <a href="usuario.php" data-i18n="nav.home">Inicio</a>
+        <a href="carta.php" data-i18n="nav.viewMenu">Ver carta</a>
+        <a href="valoraciones.php" data-i18n="nav.reviews">Valoraciones</a>
+        <a href="incidencias.php" data-i18n="nav.incidents">Incidencias</a>
+        <a href="tickets.php" data-i18n="nav.tickets">Tickets de compra</a>
       </div>
     </div>
 
     <div class="cart-section">
-      <a href="carrito.php" class="cart-btn">
+      <a href="carrito.php" class="cart-btn" data-i18n-aria="nav.cart" aria-label="Carrito">
         <img src="assets/cart-icon.png" alt="Carrito">
         <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
       </a>
@@ -170,22 +170,22 @@ if ($display_name === '') {
 
     <section class="support-hero">
         <div class="support-hero-copy">
-            <span class="support-kicker">Soporte y atención</span>
-            <h1>Gestión de incidencias</h1>
-            <p>Reporta cualquier problema con tu pedido, tu cuenta, un pago o cualquier otro tema. Te ayudaremos lo antes posible.</p>
+            <span class="support-kicker" data-i18n="tickets.supportKicker">Soporte y atención</span>
+            <h1 data-i18n="tickets.incidenciasTitle">Gestión de incidencias</h1>
+            <p data-i18n="tickets.incidenciasDesc">Reporta cualquier problema con tu pedido, tu cuenta, un pago o cualquier otro tema. Te ayudaremos lo antes posible.</p>
         </div>
         <div class="support-summary">
             <article class="support-summary-card">
                 <strong><?= $resumenIncidencias['abiertas'] ?></strong>
-                <span>abiertas</span>
+                <span data-i18n="tickets.openLabel">abiertas</span>
             </article>
             <article class="support-summary-card">
                 <strong><?= $resumenIncidencias['proceso'] ?></strong>
-                <span>en proceso</span>
+                <span data-i18n="tickets.inProgressLabel">en proceso</span>
             </article>
             <article class="support-summary-card">
                 <strong><?= $resumenIncidencias['cerradas'] ?></strong>
-                <span>cerradas</span>
+                <span data-i18n="tickets.closedLabel">cerradas</span>
             </article>
         </div>
     </section>
@@ -193,60 +193,60 @@ if ($display_name === '') {
     <div class="support-grid">
         <section class="profile-card support-form-card">
             <div class="profile-card-header">
-                <span class="profile-section-kicker">Nueva incidencia</span>
-                <h2>Cuéntanos qué ha pasado</h2>
-                <p>Describe el problema con claridad para que podamos ayudarte más rápido.</p>
+                <span class="profile-section-kicker" data-i18n="tickets.newIssueKicker">Nueva incidencia</span>
+                <h2 data-i18n="tickets.newIssueTitle">Cuéntanos qué ha pasado</h2>
+                <p data-i18n="tickets.newIssueDesc">Describe el problema con claridad para que podamos ayudarte más rápido.</p>
             </div>
 
             <form method="POST" action="incidencias.php" class="support-form">
                 <input type="hidden" name="action" value="create_issue">
 
                 <label for="asunto">
-                    Asunto <span class="required">*</span>
+                    <span data-i18n="tickets.subject">Asunto</span> <span class="required">*</span>
                     <input type="text" id="asunto" name="asunto" maxlength="120" required placeholder="Ejemplo: Problema con un pedido">
                 </label>
 
                 <div class="support-form-split">
                     <label for="categoria">
-                        Categoría
+                        <span data-i18n="tickets.category">Categoría</span>
                         <select id="categoria" name="categoria">
-                            <option value="pedido">Pedido</option>
-                            <option value="pago">Pago</option>
-                            <option value="cuenta">Cuenta</option>
-                            <option value="producto">Producto</option>
-                            <option value="tecnico">Técnico</option>
-                            <option value="general">General</option>
+                            <option value="pedido" data-i18n="tickets.catOrder">Pedido</option>
+                            <option value="pago" data-i18n="tickets.catPayment">Pago</option>
+                            <option value="cuenta" data-i18n="tickets.catAccount">Cuenta</option>
+                            <option value="producto" data-i18n="tickets.catProduct">Producto</option>
+                            <option value="tecnico" data-i18n="tickets.catTechnical">Técnico</option>
+                            <option value="general" data-i18n="tickets.catGeneral">General</option>
                         </select>
                     </label>
 
                     <label for="prioridad">
-                        Prioridad
+                        <span data-i18n="tickets.priority">Prioridad</span>
                         <select id="prioridad" name="prioridad">
-                            <option value="media">Media</option>
-                            <option value="alta">Alta</option>
-                            <option value="baja">Baja</option>
+                            <option value="media" data-i18n="tickets.priMedium">Media</option>
+                            <option value="alta" data-i18n="tickets.priHigh">Alta</option>
+                            <option value="baja" data-i18n="tickets.priLow">Baja</option>
                         </select>
                     </label>
                 </div>
 
                 <label for="descripcion">
-                    Descripción <span class="required">*</span>
+                    <span data-i18n="tickets.description">Descripción</span> <span class="required">*</span>
                     <textarea id="descripcion" name="descripcion" rows="6" required placeholder="Explica la incidencia con el mayor detalle posible"></textarea>
                 </label>
 
-                <button type="submit">Enviar incidencia</button>
+                <button type="submit" data-i18n="tickets.submit">Enviar incidencia</button>
             </form>
         </section>
 
         <section class="profile-card support-list-card">
             <div class="profile-card-header">
-                <span class="profile-section-kicker">Seguimiento</span>
-                <h2>Mis incidencias</h2>
-                <p>Consulta el estado de cada incidencia registrada desde tu cuenta.</p>
+                <span class="profile-section-kicker" data-i18n="tickets.trackingKicker">Seguimiento</span>
+                <h2 data-i18n="tickets.myIssues">Mis incidencias</h2>
+                <p data-i18n="tickets.myIssuesDesc">Consulta el estado de cada incidencia registrada desde tu cuenta.</p>
             </div>
 
             <?php if (empty($incidencias)): ?>
-                <p class="empty-state">Todavía no has creado incidencias.</p>
+                <p class="empty-state" data-i18n="tickets.noIssues">Todavía no has creado incidencias.</p>
             <?php else: ?>
                 <div class="support-issues-list">
                     <?php foreach ($incidencias as $incidencia): ?>
@@ -254,7 +254,7 @@ if ($display_name === '') {
                             <div class="support-issue-head">
                                 <div>
                                     <h3><?= htmlspecialchars($incidencia['asunto']) ?></h3>
-                                    <p><?= htmlspecialchars(ucfirst($incidencia['categoria'])) ?> · Prioridad <?= htmlspecialchars($incidencia['prioridad']) ?></p>
+                                    <p><?= htmlspecialchars(ucfirst($incidencia['categoria'])) ?> · <span data-i18n="tickets.priorityLabel">Prioridad</span> <?= htmlspecialchars($incidencia['prioridad']) ?></p>
                                 </div>
                                 <span class="badge-status <?= ($incidencia['estado'] === 'cerrada') ? 'badge-estado-entregado' : (($incidencia['estado'] === 'en_proceso') ? 'badge-estado-preparando' : 'badge-estado-pendiente') ?>">
                                     <?= htmlspecialchars(str_replace('_', ' ', ucfirst($incidencia['estado']))) ?>
@@ -262,8 +262,8 @@ if ($display_name === '') {
                             </div>
                             <p class="support-issue-description"><?= nl2br(htmlspecialchars($incidencia['descripcion'])) ?></p>
                             <div class="support-issue-meta">
-                                <span>Creada: <?= date('d/m/Y H:i', strtotime($incidencia['fecha_creacion'])) ?></span>
-                                <span>Actualizada: <?= date('d/m/Y H:i', strtotime($incidencia['fecha_actualizacion'])) ?></span>
+                                <span><span data-i18n="tickets.created">Creada:</span> <?= date('d/m/Y H:i', strtotime($incidencia['fecha_creacion'])) ?></span>
+                                <span><span data-i18n="tickets.updated">Actualizada:</span> <?= date('d/m/Y H:i', strtotime($incidencia['fecha_actualizacion'])) ?></span>
                             </div>
                         </article>
                     <?php endforeach; ?>
@@ -273,24 +273,28 @@ if ($display_name === '') {
     </div>
 
     <div class="support-bottom-nav">
-        <p>¿Necesitas tu comprobante de compra? <a href="tickets.php">Ver tickets de compra</a></p>
+        <p>
+            <span data-i18n="tickets.needPurchaseProof">¿Necesitas tu comprobante de compra?</span>
+            <a href="tickets.php" data-i18n="tickets.viewPurchaseTickets">Ver tickets de compra</a>
+        </p>
     </div>
 </main>
 
 <footer>
-    <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+    <p data-i18n="footer.rights">&copy; 2025 Zyma. Todos los derechos reservados.</p>
     <p class="footer-legal-links">
-        <a href="politica_cookies.php">Política de Cookies</a>
+        <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
         <span>|</span>
-        <a href="politica_privacidad.php">Política de Privacidad</a>
+        <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
         <span>|</span>
-        <a href="aviso_legal.php">Aviso Legal</a>
+        <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
     </p>
 </footer>
 
 <script>
 const profileBtn = document.getElementById('profileBtn');
 const dropdownMenu = document.getElementById('dropdownMenu');
+const quickDropdown = document.getElementById('quickDropdown');
 if (profileBtn && dropdownMenu) {
   profileBtn.addEventListener('click', () => {
     dropdownMenu.classList.toggle('show');
@@ -304,5 +308,6 @@ if (profileBtn && dropdownMenu) {
 }
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/lang.js?v=20260428-1"></script>
 </body>
 </html>

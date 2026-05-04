@@ -171,8 +171,8 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
         <span class="landing-logo-text">Zyma</span>
       </a>
       <div class="landing-actions">
-        <a href="login.php" class="landing-link">Entrar</a>
-        <a href="registro.php" class="landing-cta">Crear cuenta</a>
+        <a href="login.php" class="landing-link" data-i18n="nav.enter">Entrar</a>
+        <a href="registro.php" class="landing-cta" data-i18n="nav.createAccount">Crear cuenta</a>
       </div>
     <?php else: ?>
       <div class="profile-section">
@@ -183,9 +183,9 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
         </button>
         <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
         <div class="dropdown" id="dropdownMenu">
-          <a href="perfil.php">Mi perfil</a>
-          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-          <a href="logout.php">Cerrar Sesión</a>
+          <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
+          <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
+          <a href="logout.php" data-i18n="nav.logout">Cerrar Sesión</a>
         </div>
       </div>
 
@@ -193,18 +193,18 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
         <span class="landing-logo-text">Zyma</span>
       </a>
 
-          <div class="quick-menu-section">
-        <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
+      <div class="quick-menu-section">
+        <button class="quick-menu-btn" id="quickMenuBtn" data-i18n-aria="nav.quickMenu" aria-label="Menú rápido"></button>
         <div class="dropdown quick-dropdown" id="quickDropdown">
-          <a href="usuario.php">Inicio</a>
-          <a href="carta.php">Ver carta</a>
-          <a href="valoraciones.php">Valoraciones</a>
-          <a href="incidencias.php">Incidencias</a>
-          <a href="tickets.php">Tickets de compra</a>
+          <a href="usuario.php" data-i18n="nav.home">Inicio</a>
+          <a href="carta.php" data-i18n="nav.viewMenu">Ver carta</a>
+          <a href="valoraciones.php" data-i18n="nav.reviews">Valoraciones</a>
+          <a href="incidencias.php" data-i18n="nav.incidents">Incidencias</a>
+          <a href="tickets.php" data-i18n="nav.tickets">Tickets de compra</a>
         </div>
       </div>
-    <div class="cart-section">
-        <a href="notificaciones.php" class="cart-btn" aria-label="Notificaciones">
+      <div class="cart-section">
+        <a href="notificaciones.php" class="cart-btn" data-i18n-aria="nav.notifications" aria-label="Notificaciones">
           <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white">
             <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6V11c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 1 0-3 0v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
           </svg>
@@ -212,7 +212,7 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
             <span class="cart-count"><?= $unread_count ?></span>
           <?php endif; ?>
         </a>
-        <a href="carrito.php" class="cart-btn" aria-label="Carrito">
+        <a href="carrito.php" class="cart-btn" data-i18n-aria="nav.cart" aria-label="Carrito">
           <img src="assets/cart-icon.png" alt="Carrito">
           <span class="cart-count"><?= $cart_count ?></span>
         </a>
@@ -223,16 +223,16 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
 
 <div class="container">
   <div class="hero">
-    <h1 class="hero-title">Carta de Zyma</h1>
-    <p class="hero-sub"><?= $selectedProductId > 0 ? 'Vista destacada de nuestro producto estrella.' : 'Disfruta de nuestros deliciosos platos artesanales.' ?></p>
+    <h1 class="hero-title" data-i18n="menu.title">Carta de Zyma</h1>
+    <p class="hero-sub" <?= $selectedProductId > 0 ? 'data-i18n="menu.subtitleFeatured"' : 'data-i18n="menu.subtitle"' ?>><?= $selectedProductId > 0 ? 'Vista destacada de nuestro producto estrella.' : 'Disfruta de nuestros deliciosos platos artesanales.' ?></p>
     <?php if ($starProductId > 0): ?>
-      <p class="menu-star-callout">Producto estrella: <a href="#producto-<?= $starProductId ?>"><?= htmlspecialchars($starProductName) ?></a></p>
+      <p class="menu-star-callout"><span data-i18n="menu.starCallout">Producto estrella:</span> <a href="#producto-<?= $starProductId ?>"><?= htmlspecialchars($starProductName) ?></a></p>
     <?php endif; ?>
     <?php if ($selectedProductId > 0): ?>
-      <p class="menu-star-callout"><a href="carta.php">Volver a toda la carta</a></p>
+      <p class="menu-star-callout"><a href="carta.php" data-i18n="menu.backToAll">Volver a toda la carta</a></p>
     <?php endif; ?>
     <?php if ($guestMode): ?>
-      <p class="muted mt-1">Modo invitado: puedes ver la carta, para pedir necesitas iniciar Sesión.</p>
+      <p class="muted mt-1" data-i18n="menu.guestMode">Modo invitado: puedes ver la carta, para pedir necesitas iniciar Sesión.</p>
     <?php endif; ?>
   </div>
 
@@ -244,48 +244,48 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
            onerror="this.src='assets/default-product.png';">
       <div class="card-content">
         <?php if ((int)$product['id'] === $starProductId): ?>
-          <span class="product-star-badge">Producto estrella</span>
+          <span class="product-star-badge" data-i18n="menu.starBadge">Producto estrella</span>
         <?php endif; ?>
         <h2 class="card-title"><?= htmlspecialchars($product['name']) ?></h2>
-        
+
         <!-- Estrellas de valoración -->
         <div class="product-rating">
-          <?php 
+          <?php
           $promedio = $product['promedio'] ?? 0;
           $total = $product['total_valoraciones'] ?? 0;
-          for ($i = 1; $i <= 5; $i++): 
+          for ($i = 1; $i <= 5; $i++):
             $starClass = $i <= round($promedio) ? 'star-filled' : 'star-empty';
           ?>
-            <img src="assets/<?= $i <= round($promedio) ? 'estrellaSelecionada.png' : 'estrellaNegra.png' ?>" 
+            <img src="assets/<?= $i <= round($promedio) ? 'estrellaSelecionada.png' : 'estrellaNegra.png' ?>"
                  alt="Estrella" class="rating-star <?= $starClass ?>" style="width:11px;height:11px;">
           <?php endfor; ?>
           <span class="rating-text"><?= number_format($promedio, 1) ?> (<?= $total ?>)</span>
         </div>
-        
+
         <p class="card-description"><?= htmlspecialchars($product['description']) ?></p>
         <p class="card-price">EUR <?= number_format($product['price'], 2, ',', '.') ?></p>
 
         <div class="allergen-tags">
           <?php if (in_array('gluten', $product['allergens'], true)): ?>
-            <span class="allergen-tag tag-gluten">Gluten</span>
+            <span class="allergen-tag tag-gluten" data-i18n="menu.allergenGluten">Gluten</span>
           <?php endif; ?>
           <?php if (in_array('lacteos', $product['allergens'], true)): ?>
-            <span class="allergen-tag tag-lacteos">Lacteos</span>
+            <span class="allergen-tag tag-lacteos" data-i18n="menu.allergenDairy">Lacteos</span>
           <?php endif; ?>
           <?php if (in_array('soja', $product['allergens'], true)): ?>
-            <span class="allergen-tag tag-soja">Soja</span>
+            <span class="allergen-tag tag-soja" data-i18n="menu.allergenSoy">Soja</span>
           <?php endif; ?>
         </div>
 
         <?php if ($guestMode): ?>
-          <a href="login.php" class="btn-add-cart">Inicia Sesión para pedir</a>
-          <a href="login.php" class="btn-valorar">Valorar producto</a>
+          <a href="login.php" class="btn-add-cart" data-i18n="menu.loginToOrder">Inicia Sesión para pedir</a>
+          <a href="login.php" class="btn-valorar" data-i18n="menu.rateProduct">Valorar producto</a>
         <?php else: ?>
           <form method="POST">
             <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
-            <button type="submit" name="add_to_cart" class="btn-add-cart">Añadir al carrito</button>
+            <button type="submit" name="add_to_cart" class="btn-add-cart" data-i18n="menu.addToCart">Añadir al carrito</button>
           </form>
-          <a href="valoraciones.php?producto=<?= (int)$product['id'] ?>" class="btn-valorar">Valorar producto</a>
+          <a href="valoraciones.php?producto=<?= (int)$product['id'] ?>" class="btn-valorar" data-i18n="menu.rateProduct">Valorar producto</a>
         <?php endif; ?>
       </div>
     </div>
@@ -330,14 +330,16 @@ if (toast) {
 }
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/lang.js?v=20260428-1"></script>
 <footer>
-  <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p data-i18n="footer.rights">&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php">Política de Cookies</a>
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php">Aviso Legal</a>
-  </p></footer>
+    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
+  </p>
+</footer>
 </body>
 </html>

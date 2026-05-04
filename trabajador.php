@@ -136,9 +136,9 @@ $secondaryLinks = [
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-        <a href="perfil.php">Mi perfil</a>
-        <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-        <a href="logout.php">Cerrar sesión</a>
+        <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
+        <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
+        <a href="logout.php" data-i18n="nav.logout">Cerrar sesión</a>
       </div>
     </div>
 
@@ -147,19 +147,19 @@ $secondaryLinks = [
     </a>
 
     <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
+      <button class="quick-menu-btn" id="quickMenuBtn" data-i18n-aria="nav.quickMenu" aria-label="Menú rápido"></button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="trabajador.php">Panel</a>
-        <a href="gestionar_pedidos.php">Pedidos</a>
-        <a href="editar_carta.php">Carta</a>
-        <a href="estadisticas.php">Estadísticas</a>
-        <a href="incidencias.php">Incidencias</a>
+        <a href="trabajador.php" data-i18n="nav.workerPanel">Panel</a>
+        <a href="gestionar_pedidos.php" data-i18n="nav.workerOrders">Pedidos</a>
+        <a href="editar_carta.php" data-i18n="nav.workerEditMenu">Carta</a>
+        <a href="estadisticas.php" data-i18n="nav.workerStats">Estadísticas</a>
+        <a href="incidencias.php" data-i18n="nav.workerIncidents">Incidencias</a>
       </div>
     </div>
 
     <div class="landing-actions">
-      <a href="gestionar_pedidos.php" class="landing-link">Pedidos</a>
-      <a href="estadisticas.php" class="landing-cta">Estadísticas</a>
+      <a href="gestionar_pedidos.php" class="landing-link" data-i18n="nav.workerOrders">Pedidos</a>
+      <a href="estadisticas.php" class="landing-cta" data-i18n="nav.workerStats">Estadísticas</a>
     </div>
   </div>
 </header>
@@ -167,8 +167,8 @@ $secondaryLinks = [
 <main class="container worker-dashboard-page">
   <section class="worker-hero">
     <div class="worker-hero-copy">
-      <span class="worker-eyebrow">Área profesional del trabajador</span>
-      <h1><?= htmlspecialchars($greeting) ?>, <?= htmlspecialchars($display_name) ?></h1>
+      <span class="worker-eyebrow" data-i18n="worker.operationsCenter">Área profesional del trabajador</span>
+      <h1><span data-i18n="worker.welcome">Bienvenido al centro de operaciones</span>, <?= htmlspecialchars($display_name) ?></h1>
       <p>Tu panel centraliza la operativa del turno, la supervisión de pedidos y los accesos clave para trabajar con rapidez, criterio y buena presencia.</p>
 
       <div class="worker-hero-actions">
@@ -205,24 +205,20 @@ $secondaryLinks = [
 
   <section class="worker-stats-grid" aria-label="Resumen operativo">
     <article class="worker-stat-card">
-      <span class="worker-stat-label">Pedidos pendientes</span>
+      <span class="worker-stat-label" data-i18n="worker.pendingOrders">Pedidos pendientes</span>
       <strong><?= $dashboardStats['pending_orders'] ?></strong>
-      <p>Pedidos esperando atención inmediata.</p>
     </article>
     <article class="worker-stat-card">
-      <span class="worker-stat-label">Pedidos en curso</span>
+      <span class="worker-stat-label" data-i18n="worker.inProgress">Pedidos en curso</span>
       <strong><?= $dashboardStats['in_progress_orders'] ?></strong>
-      <p>Servicios en preparación o entrega.</p>
     </article>
     <article class="worker-stat-card">
-      <span class="worker-stat-label">Entregados hoy</span>
+      <span class="worker-stat-label" data-i18n="worker.deliveredToday">Entregados hoy</span>
       <strong><?= $dashboardStats['delivered_today'] ?></strong>
-      <p>Pedidos cerrados durante la jornada.</p>
     </article>
     <article class="worker-stat-card">
-      <span class="worker-stat-label">Ingredientes críticos</span>
+      <span class="worker-stat-label" data-i18n="worker.lowStockItems">Ingredientes críticos</span>
       <strong><?= $dashboardStats['low_stock_items'] ?></strong>
-      <p>Ingredientes con stock bajo para revisar.</p>
     </article>
   </section>
 
@@ -330,19 +326,30 @@ $secondaryLinks = [
 </main>
 
 <footer>
-  <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p data-i18n="footer.rights">&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php">Política de Cookies</a>
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php">Aviso Legal</a>
+    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
   </p>
 </footer>
 
 <?php include 'cookie_popup.php'; ?>
 
+<script src="assets/lang.js?v=20260428-1"></script>
 <script>
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    applyTranslations();
+    injectButton();
+  });
+} else {
+  applyTranslations();
+  injectButton();
+}
+
 const profileBtn = document.getElementById('profileBtn');
 const dropdownMenu = document.getElementById('dropdownMenu');
 if (profileBtn && dropdownMenu) {

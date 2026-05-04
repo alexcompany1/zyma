@@ -61,7 +61,7 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="styles.css?v=20260211-5">
 </head>
 <body>
-    
+
 <?php
   $display_name = trim($_SESSION['nombre'] ?? '');
   if ($display_name === '') {
@@ -78,28 +78,28 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-          <a href="perfil.php">Mi perfil</a>
-          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-          <a href="logout.php">Cerrar Sesión</a>
-        </div>
+        <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
+        <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
+        <a href="logout.php" data-i18n="nav.logout">Cerrar Sesión</a>
+      </div>
     </div>
 
     <a href="usuario.php" class="landing-logo">
       <span class="landing-logo-text">Zyma</span>
     </a>
 
-        <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
+    <div class="quick-menu-section">
+      <button class="quick-menu-btn" id="quickMenuBtn" data-i18n-aria="nav.quickMenu" aria-label="Menú rápido"></button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="usuario.php">Inicio</a>
-        <a href="carta.php">Ver carta</a>
-        <a href="valoraciones.php">Valoraciones</a>
-        <a href="incidencias.php">Incidencias</a>
-                <a href="tickets.php">Tickets de compra</a>
+        <a href="usuario.php" data-i18n="nav.home">Inicio</a>
+        <a href="carta.php" data-i18n="nav.viewMenu">Ver carta</a>
+        <a href="valoraciones.php" data-i18n="nav.reviews">Valoraciones</a>
+        <a href="incidencias.php" data-i18n="nav.incidents">Incidencias</a>
+        <a href="tickets.php" data-i18n="nav.tickets">Tickets de compra</a>
       </div>
     </div>
     <div class="cart-section">
-      <a href="carrito.php" class="cart-btn">
+      <a href="carrito.php" class="cart-btn" data-i18n-aria="nav.cart" aria-label="Carrito">
         <img src="assets/cart-icon.png" alt="Carrito">
         <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
       </a>
@@ -109,22 +109,24 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
 
 <div class="container">
     <div class="main-content">
-        <h2 class="welcome">¡Pedido confirmado!</h2>
+        <h2 class="welcome" data-i18n="confirmation.title">¡Pedido confirmado!</h2>
         <p class="muted mb-3">
             Gracias, <?= htmlspecialchars($pedido['email']) ?>. Tu pedido ha sido registrado exitosamente.
         </p>
 
         <div class="summary-box">
-            <h3 class="summary-title">Resumen del Pedido #<?= $pedido['id_pedido'] ?></h3>
-            <p>Fecha: <?= date('d/m/Y H:i', strtotime($pedido['fecha_hora'])) ?></p>
+            <h3 class="summary-title">
+                <span data-i18n="confirmation.orderSummary">Resumen del Pedido</span> #<?= $pedido['id_pedido'] ?>
+            </h3>
+            <p><strong data-i18n="confirmation.date">Fecha:</strong> <?= date('d/m/Y H:i', strtotime($pedido['fecha_hora'])) ?></p>
 
             <table class="table-compact mt-2">
                 <thead>
                     <tr class="table-head-dark">
-                        <th>Producto</th>
-                        <th class="center">Cantidad</th>
-                        <th class="text-right">Precio Unitario</th>
-                        <th class="text-right">Subtotal</th>
+                        <th data-i18n="confirmation.product">Producto</th>
+                        <th class="center" data-i18n="confirmation.quantity">Cantidad</th>
+                        <th class="text-right" data-i18n="confirmation.unitPrice">Precio Unitario</th>
+                        <th class="text-right" data-i18n="confirmation.subtotal">Subtotal</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -132,40 +134,41 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
                         <tr>
                             <td><?= htmlspecialchars($item['nombre']) ?></td>
                             <td class="center"><?= $item['cantidad'] ?></td>
-                            <td class="text-right">$<?= number_format($item['precio_unitario'],2) ?></td>
-                            <td class="text-right">$<?= number_format($item['cantidad'] * $item['precio_unitario'],2) ?></td>
+                            <td class="text-right">€<?= number_format($item['precio_unitario'], 2, ',', '.') ?></td>
+                            <td class="text-right">€<?= number_format($item['cantidad'] * $item['precio_unitario'], 2, ',', '.') ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
 
             <p class="summary-total">
-                Total: $<?= number_format($pedido['total'],2) ?>
+                <strong data-i18n="orders.total">Total:</strong> €<?= number_format($pedido['total'], 2, ',', '.') ?>
             </p>
         </div>
 
         <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;">
-            <a href="ticket.php?id=<?= $pedido['id_pedido'] ?>" class="btn-cart">Ver Ticket</a>
-            <a href="tickets.php" class="btn-cart">Todos mis Tickets</a>
-            <a href="usuario.php" class="btn-cart">Volver al Inicio</a>
+            <a href="ticket.php?id=<?= $pedido['id_pedido'] ?>" class="btn-cart" data-i18n="confirmation.viewTicket">Ver Ticket</a>
+            <a href="tickets.php" class="btn-cart" data-i18n="confirmation.allTickets">Todos mis Tickets</a>
+            <a href="usuario.php" class="btn-cart" data-i18n="confirmation.backHome">Volver al Inicio</a>
         </div>
     </div>
 </div>
 
 <footer>
-    <p>© 2025 Zyma. Todos los derechos reservados.</p>
+    <p data-i18n="footer.rights">© 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php">Política de Cookies</a>
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php">Aviso Legal</a>
+    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
   </p>
 </footer>
 
 <script>
     const profileBtn = document.getElementById('profileBtn');
     const dropdownMenu = document.getElementById('dropdownMenu');
+    const quickDropdown = document.getElementById('quickDropdown');
 
     profileBtn.addEventListener('click', () => {
         dropdownMenu.classList.toggle('show');
@@ -178,6 +181,6 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
     });
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/lang.js?v=20260428-1"></script>
 </body>
 </html>
-

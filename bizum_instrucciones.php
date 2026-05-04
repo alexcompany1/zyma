@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if (!headers_sent()) {
     header('Content-Type: text/html; charset=UTF-8');
 }
@@ -58,14 +58,14 @@ $bizumConcept = BIZUM_CONCEPT_PREFIX . ' #' . $orderId;
       </button>
       <span class="user-name"><?= htmlspecialchars($displayName) ?></span>
       <div class="dropdown" id="dropdownMenu">
-        <a href="perfil.php">Mi perfil</a>
-        <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-        <a href="logout.php">Cerrar Sesion</a>
+        <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
+        <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
+        <a href="logout.php" data-i18n="nav.logout">Cerrar Sesión</a>
       </div>
     </div>
     <a href="usuario.php" class="landing-logo"><span class="landing-logo-text">Zyma</span></a>
     <div class="cart-section">
-      <a href="carrito.php" class="cart-btn">
+      <a href="carrito.php" class="cart-btn" data-i18n-aria="nav.cart" aria-label="Carrito">
         <img src="assets/cart-icon.png" alt="Carrito">
         <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
       </a>
@@ -75,31 +75,34 @@ $bizumConcept = BIZUM_CONCEPT_PREFIX . ' #' . $orderId;
 
 <div class="container">
   <div class="bizum-box">
-    <h1 class="welcome">Completa tu pago por Bizum</h1>
-    <p class="muted lead mt-2">Tu pedido #<?= (int) $orderId ?> ya se ha creado y esta pendiente de confirmacion.</p>
+    <h1 class="welcome" data-i18n="bizum.title">Completa tu pago por Bizum</h1>
+    <p class="muted lead mt-2">
+      <span data-i18n="bizum.orderPrefix">Tu pedido</span> #<?= (int) $orderId ?>
+      <span data-i18n="bizum.orderSuffix">ya se ha creado y está pendiente de confirmación.</span>
+    </p>
 
     <div class="bizum-callout">
-      <p><strong>Importe:</strong> EUR <?= number_format((float) $order['total'], 2, ',', '.') ?></p>
-      <p><strong>Enviar a:</strong> <?= htmlspecialchars(BIZUM_BENEFICIARY) ?> - <?= htmlspecialchars($bizumPhone) ?></p>
-      <p><strong>Concepto:</strong> <?= htmlspecialchars($bizumConcept) ?></p>
-      <p><strong>Estado actual:</strong> <?= htmlspecialchars((string) ($order['pago_estado'] ?? 'pendiente')) ?></p>
+      <p><strong data-i18n="bizum.amount">Importe:</strong> EUR <?= number_format((float) $order['total'], 2, ',', '.') ?></p>
+      <p><strong data-i18n="bizum.sendTo">Enviar a:</strong> <?= htmlspecialchars(BIZUM_BENEFICIARY) ?> - <?= htmlspecialchars($bizumPhone) ?></p>
+      <p><strong data-i18n="bizum.concept">Concepto:</strong> <?= htmlspecialchars($bizumConcept) ?></p>
+      <p><strong data-i18n="bizum.currentStatus">Estado actual:</strong> <?= htmlspecialchars((string) ($order['pago_estado'] ?? 'pendiente')) ?></p>
     </div>
 
     <ol class="bizum-steps">
-      <li>Abre tu app bancaria y entra en la opcion de Bizum.</li>
-      <li>Envianos el importe exacto del pedido al telefono indicado arriba.</li>
-      <li>Escribe el concepto exactamente como aparece para poder localizar tu pago.</li>
-      <li>Cuando lo completes, tu pedido seguira apareciendo en "Mis pedidos" mientras lo revisamos.</li>
+      <li data-i18n="bizum.step1">Abre tu app bancaria y entra en la opción de Bizum.</li>
+      <li data-i18n="bizum.step2">Envíanos el importe exacto del pedido al teléfono indicado arriba.</li>
+      <li data-i18n="bizum.step3">Escribe el concepto exactamente como aparece para poder localizar tu pago.</li>
+      <li data-i18n="bizum.step4">Cuando lo completes, tu pedido seguirá apareciendo en "Mis pedidos" mientras lo revisamos.</li>
     </ol>
 
     <?php if (BIZUM_PHONE === ''): ?>
-      <p class="empty-state">Todavia no has configurado el telefono receptor de Bizum. Anade la variable BIZUM_PHONE en el servidor para mostrar el numero real.</p>
+      <p class="empty-state" data-i18n="bizum.noPhone">Todavía no has configurado el teléfono receptor de Bizum. Añade la variable BIZUM_PHONE en el servidor para mostrar el número real.</p>
     <?php endif; ?>
 
     <div class="btn-row center mt-3">
-      <a href="ticket.php?id=<?= (int) $orderId ?>" class="btn-cart">Ver ticket</a>
-      <a href="mis_pedidos.php" class="btn-cart">Ver mis pedidos</a>
-      <a href="usuario.php" class="btn-seguir-comprando">Volver al inicio</a>
+      <a href="ticket.php?id=<?= (int) $orderId ?>" class="btn-cart" data-i18n="bizum.viewTicket">Ver ticket</a>
+      <a href="mis_pedidos.php" class="btn-cart" data-i18n="bizum.viewOrders">Ver mis pedidos</a>
+      <a href="usuario.php" class="btn-seguir-comprando" data-i18n="bizum.backHome">Volver al inicio</a>
     </div>
   </div>
 </div>
@@ -117,14 +120,15 @@ if (profileBtn && dropdownMenu) {
 }
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/lang.js?v=20260428-1"></script>
 <footer>
-  <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p data-i18n="footer.rights">&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php">Politica de Cookies</a>
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php">Politica de Privacidad</a>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php">Aviso Legal</a>
+    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
   </p>
 </footer>
 </body>
