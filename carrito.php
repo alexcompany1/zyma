@@ -216,7 +216,7 @@ foreach ($cartItems as $item) {
 
       <div class="center mt-3">
         <div class="cart-total-line" id="total-amount">
-          Total: EUR <?= number_format($total, 2, ',', '.') ?>
+          <span data-i18n="cart.total">Total:</span> EUR <?= number_format($total, 2, ',', '.') ?>
         </div>
 
         <div class="btn-row center">
@@ -253,9 +253,9 @@ foreach ($cartItems as $item) {
                     <path d="M3 10h18"></path>
                   </svg>
                 </span>
-                <strong>Pago con tarjeta</strong>
+                <strong data-i18n="cart.cardTitle">Pago con tarjeta</strong>
               </div>
-              <p class="payment-note">Seras redirigido a la pagina segura de Stripe para completar el pago.</p>
+              <p class="payment-note" data-i18n="cart.cardDesc">Seras redirigido a la pagina segura de Stripe para completar el pago.</p>
             </div>
 
             <div id="bizum-fields" class="payment-panel is-bizum" style="display:none;">
@@ -266,10 +266,10 @@ foreach ($cartItems as $item) {
                     <path d="M8 7.5c0-1.7 1.8-3 4-3s4 1.3 4 3-1.8 3-4 3-4 1.3-4 3 1.8 3 4 3 4-1.3 4-3"></path>
                   </svg>
                 </span>
-                <strong>Pago con Bizum</strong>
+                <strong data-i18n="cart.bizumTitle">Pago con Bizum</strong>
               </div>
-              <p class="payment-note">Te mostraremos las instrucciones en pantalla para enviar el importe exacto y confirmar tu pedido.</p>
-              <label for="telefono_bizum" style="display:block;margin-top:12px;">Tu telefono de Bizum (opcional)</label>
+              <p class="payment-note" data-i18n="cart.bizumDesc">Te mostraremos las instrucciones en pantalla para enviar el importe exacto y confirmar tu pedido.</p>
+              <label for="telefono_bizum" style="display:block;margin-top:12px;" data-i18n="cart.bizumPhone">Tu telefono de Bizum (opcional)</label>
               <input type="text" id="telefono_bizum" name="telefono_bizum" placeholder="+34XXXXXXXXX" style="width:100%;margin-top:6px;">
             </div>
 
@@ -332,7 +332,8 @@ function changeQuantity(productId, delta) {
   }
   <?php endforeach; ?>
 
-  totalElement.innerHTML = 'Total: EUR ' + total.toFixed(2).replace('.', ',');
+  const totalLabel = document.querySelector('[data-i18n="cart.total"]');
+  totalElement.innerHTML = '<span data-i18n="cart.total">' + (totalLabel ? totalLabel.textContent : 'Total:') + '</span> EUR ' + total.toFixed(2).replace('.', ',');
 }
 
 const methodRadios = document.querySelectorAll('input[name="metodo_pago"]');
@@ -354,15 +355,16 @@ methodRadios.forEach((radio) => {
 togglePaymentFields();
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
-<script src="assets/lang.js?v=1"></script>
+<script src="assets/lang.js?v=20260428-1"></script>
 <footer>
-  <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p data-i18n="footer.rights">&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Politica de Cookies</a>
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php" data-i18n="footer.privacy">Politica de Privacidad</a>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
     <span>|</span>
     <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
-  </p></footer>
+  </p>
+</footer>
 </body>
 </html>

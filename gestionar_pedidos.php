@@ -248,42 +248,36 @@ try {
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-          <a href="perfil.php">Mi perfil</a>
-          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-          <a href="logout.php">Cerrar Sesión</a>
-        </div>
+        <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
+        <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
+        <a href="logout.php" data-i18n="nav.logout">Cerrar Sesión</a>
+      </div>
     </div>
-    <a href="usuario.php" class="landing-logo">
+    <a href="trabajador.php" class="landing-logo">
       <span class="landing-logo-text">Zyma</span>
     </a>
-                <div class="quick-menu-section">
-            <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
-            <div class="dropdown quick-dropdown" id="quickDropdown">
-                <a href="usuario.php">Inicio</a>
-                <a href="carta.php">Ver carta</a>
-                <a href="valoraciones.php">Valoraciones</a>
-                <a href="incidencias.php">Incidencias</a>
-                <a href="tickets.php">Tickets de compra</a>
-            </div>
-        </div>
-    <div class="cart-section">
-      <a href="carrito.php" class="cart-btn">
-        <img src="assets/cart-icon.png" alt="Carrito">
-        <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
-      </a>
+    <div class="quick-menu-section">
+      <button class="quick-menu-btn" id="quickMenuBtn" data-i18n-aria="nav.quickMenu" aria-label="Menú rápido"></button>
+      <div class="dropdown quick-dropdown" id="quickDropdown">
+        <a href="trabajador.php" data-i18n="nav.workerPanel">Panel</a>
+        <a href="gestionar_pedidos.php" data-i18n="nav.workerOrders">Pedidos</a>
+        <a href="editar_carta.php" data-i18n="nav.workerEditMenu">Editar carta</a>
+        <a href="estadisticas.php" data-i18n="nav.workerStats">Estadísticas</a>
+        <a href="incidencias.php" data-i18n="nav.workerIncidents">Incidencias</a>
+      </div>
     </div>
   </div>
 </header>
 
 <div class="container">
     <div class="main-content">
-        <h2 class="welcome">Gestionar Pedidos</h2>
-        
+        <h2 class="welcome" data-i18n="manageOrders.title">Gestionar Pedidos</h2>
+
         <!-- Boton volver -->
-        <a href="admin.php" class="btn-volver-panel">Volver al Panel de Control</a>
-        
+        <a href="trabajador.php" class="btn-volver-panel" data-i18n="manageOrders.backToPanel">Volver al Panel de Control</a>
+
         <?php if (empty($pedidos)): ?>
-            <p class="empty-state">No hay pedidos.</p>
+            <p class="empty-state" data-i18n="manageOrders.noOrders">No hay pedidos.</p>
         <?php else: ?>
             <?php foreach ($pedidos as $pedido): ?>
             <div class="pedido-card estado-<?= $pedido['estado'] ?>">
@@ -291,8 +285,8 @@ try {
                     <div>
                         <h3>Pedido #<?= $pedido['id_pedido'] ?></h3>
                         <p><strong>Cliente:</strong> <?= htmlspecialchars($emails[$pedido['id_usuario']] ?? 'Usuario desconocido') ?></p>
-                        <p><strong>Total:</strong> ?<?= number_format($pedido['total'], 2, ',', '.') ?></p>
-                        <p><strong>Fecha:</strong> <?= date('d/m/Y H:i', strtotime($pedido['fecha_hora'])) ?></p>
+                        <p><strong data-i18n="orders.total">Total:</strong> €<?= number_format($pedido['total'], 2, ',', '.') ?></p>
+                        <p><strong data-i18n="orders.date">Fecha:</strong> <?= date('d/m/Y H:i', strtotime($pedido['fecha_hora'])) ?></p>
                     </div>
                     <div class="text-right">
                         <span class="badge-status badge-estado-<?= $pedido['estado'] ?>">
@@ -300,24 +294,23 @@ try {
                         </span>
                     </div>
                 </div>
-                
+
                 <?php if ($pedido['estado'] === 'pendiente'): ?>
                     <div class="btn-row">
-                        <!-- Acciones por estado -->
-                        <a href="?accion=preparando&id=<?= $pedido['id_pedido'] ?>" class="btn-estado btn-preparando">Preparando</a>
-                        <a href="?accion=cancelar&id=<?= $pedido['id_pedido'] ?>" class="btn-estado btn-cancelar">Cancelar</a>
+                        <a href="?accion=preparando&id=<?= $pedido['id_pedido'] ?>" class="btn-estado btn-preparando" data-i18n="manageOrders.preparing">Preparando</a>
+                        <a href="?accion=cancelar&id=<?= $pedido['id_pedido'] ?>" class="btn-estado btn-cancelar" data-i18n="manageOrders.cancel">Cancelar</a>
                     </div>
                 <?php elseif ($pedido['estado'] === 'preparando'): ?>
                     <div class="btn-row">
-                        <a href="?accion=entregando&id=<?= $pedido['id_pedido'] ?>" class="btn-estado btn-entregando">Entregando</a>
+                        <a href="?accion=entregando&id=<?= $pedido['id_pedido'] ?>" class="btn-estado btn-entregando" data-i18n="manageOrders.delivering">Entregando</a>
                     </div>
                 <?php elseif ($pedido['estado'] === 'entregando'): ?>
                     <div class="btn-row">
-                        <a href="?accion=listo&id=<?= $pedido['id_pedido'] ?>" class="btn-estado btn-listo">Listo</a>
+                        <a href="?accion=listo&id=<?= $pedido['id_pedido'] ?>" class="btn-estado btn-listo" data-i18n="manageOrders.ready">Listo</a>
                     </div>
                 <?php elseif ($pedido['estado'] === 'listo'): ?>
                     <div class="btn-row">
-                        <a href="?accion=entregado&id=<?= $pedido['id_pedido'] ?>" class="btn-estado btn-entregado">Entregado</a>
+                        <a href="?accion=entregado&id=<?= $pedido['id_pedido'] ?>" class="btn-estado btn-entregado" data-i18n="manageOrders.delivered">Entregado</a>
                     </div>
                 <?php endif; ?>
             </div>
@@ -362,14 +355,16 @@ setInterval(() => {
 }, AUTO_REFRESH_MS);
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/lang.js?v=20260428-1"></script>
 <footer>
-  <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p data-i18n="footer.rights">&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php">Política de Cookies</a>
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php">Aviso Legal</a>
-  </p></footer>
+    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
+  </p>
+</footer>
 </body>
 </html>

@@ -48,26 +48,26 @@ unset($_SESSION['mensaje_pedido']);
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-          <a href="perfil.php">Mi perfil</a>
-          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-          <a href="logout.php">Cerrar Sesión</a>
-        </div>
+        <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
+        <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
+        <a href="logout.php" data-i18n="nav.logout">Cerrar Sesión</a>
+      </div>
     </div>
     <a href="usuario.php" class="landing-logo">
       <span class="landing-logo-text">Zyma</span>
     </a>
-        <div class="quick-menu-section">
-        <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
-        <div class="dropdown quick-dropdown" id="quickDropdown">
-          <a href="usuario.php">Inicio</a>
-          <a href="carta.php">Ver carta</a>
-          <a href="valoraciones.php">Valoraciones</a>
-          <a href="incidencias.php">Incidencias</a>
-          <a href="tickets.php">Tickets de compra</a>
-        </div>
+    <div class="quick-menu-section">
+      <button class="quick-menu-btn" id="quickMenuBtn" data-i18n-aria="nav.quickMenu" aria-label="Menú rápido"></button>
+      <div class="dropdown quick-dropdown" id="quickDropdown">
+        <a href="usuario.php" data-i18n="nav.home">Inicio</a>
+        <a href="carta.php" data-i18n="nav.viewMenu">Ver carta</a>
+        <a href="valoraciones.php" data-i18n="nav.reviews">Valoraciones</a>
+        <a href="incidencias.php" data-i18n="nav.incidents">Incidencias</a>
+        <a href="tickets.php" data-i18n="nav.tickets">Tickets de compra</a>
       </div>
+    </div>
     <div class="cart-section">
-      <a href="carrito.php" class="cart-btn">
+      <a href="carrito.php" class="cart-btn" data-i18n-aria="nav.cart" aria-label="Carrito">
         <img src="assets/cart-icon.png" alt="Carrito">
         <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
       </a>
@@ -78,16 +78,16 @@ unset($_SESSION['mensaje_pedido']);
 <div class="container">
     <div class="main-content">
         <div class="center">
-            <h1 class="welcome">¡Pedido Confirmado!</h1>
+            <h1 class="welcome" data-i18n="confirmed.title">¡Pedido Confirmado!</h1>
             <p class="muted lead mt-2 mb-3">
                 <?= htmlspecialchars($mensaje) ?>
             </p>
-            <p class="mb-3">
+            <p class="mb-3" data-i18n="confirmed.preparing">
                 Nuestro equipo está preparando tu pedido. ¡Gracias por confiar en Zyma!
             </p>
             <div class="btn-row center">
-                <a href="mis_pedidos.php" class="btn-cart">Ver Mis Pedidos</a>
-                <a href="carta.php" class="btn-seguir-comprando">Seguir Comprando</a>
+                <a href="mis_pedidos.php" class="btn-cart" data-i18n="confirmed.myOrders">Ver Mis Pedidos</a>
+                <a href="carta.php" class="btn-seguir-comprando" data-i18n="confirmed.keepShopping">Seguir Comprando</a>
             </div>
         </div>
     </div>
@@ -96,6 +96,7 @@ unset($_SESSION['mensaje_pedido']);
 <script>
 const profileBtn = document.getElementById('profileBtn');
 const dropdownMenu = document.getElementById('dropdownMenu');
+const quickDropdown = document.getElementById('quickDropdown');
 profileBtn.addEventListener('click', () => dropdownMenu.classList.toggle('show'));
 window.addEventListener('click', e => {
     if (!profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
@@ -104,14 +105,16 @@ window.addEventListener('click', e => {
 });
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/lang.js?v=20260428-1"></script>
 <footer>
-  <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p data-i18n="footer.rights">&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php">Política de Cookies</a>
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php">Aviso Legal</a>
-  </p></footer>
+    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
+  </p>
+</footer>
 </body>
 </html>

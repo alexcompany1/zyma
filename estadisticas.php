@@ -17,12 +17,12 @@ zymaRequireRole('worker');
 // Cargar ingredientes
 try {
     $stmt = $pdo->query("
-        SELECT 
+        SELECT
             nombre,
             cantidad,
             unidad,
             stock_minimo
-        FROM ingredientes 
+        FROM ingredientes
         GROUP BY nombre
         ORDER BY nombre ASC
     ");
@@ -66,65 +66,59 @@ $pedidosTotales = $stmt->fetchColumn();
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-          <a href="perfil.php">Mi perfil</a>
-          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-          <a href="logout.php">Cerrar Sesión</a>
-        </div>
-    </div>
-    <a href="usuario.php" class="landing-logo">
-      <span class="landing-logo-text">Zyma</span>
-    </a>
-        <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
-      <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="usuario.php">Inicio</a>
-        <a href="carta.php">Ver carta</a>
-        <a href="valoraciones.php">Valoraciones</a>
-        <a href="incidencias.php">Incidencias</a>
-        <a href="tickets.php">Tickets de compra</a>
+        <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
+        <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
+        <a href="logout.php" data-i18n="nav.logout">Cerrar Sesión</a>
       </div>
     </div>
-    <div class="cart-section">
-      <a href="carrito.php" class="cart-btn">
-        <img src="assets/cart-icon.png" alt="Carrito">
-        <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
-      </a>
+    <a href="trabajador.php" class="landing-logo">
+      <span class="landing-logo-text">Zyma</span>
+    </a>
+    <div class="quick-menu-section">
+      <button class="quick-menu-btn" id="quickMenuBtn" data-i18n-aria="nav.quickMenu" aria-label="Menú rápido"></button>
+      <div class="dropdown quick-dropdown" id="quickDropdown">
+        <a href="trabajador.php" data-i18n="nav.workerPanel">Panel</a>
+        <a href="gestionar_pedidos.php" data-i18n="nav.workerOrders">Pedidos</a>
+        <a href="editar_carta.php" data-i18n="nav.workerEditMenu">Editar carta</a>
+        <a href="estadisticas.php" data-i18n="nav.workerStats">Estadísticas</a>
+        <a href="incidencias.php" data-i18n="nav.workerIncidents">Incidencias</a>
+      </div>
     </div>
   </div>
 </header>
 
 <div class="container">
     <div class="main-content">
-        <h2 class="welcome">Estadísticas - Trabajador</h2>
-        
+        <h2 class="welcome" data-i18n="stats.title">Estadísticas - Trabajador</h2>
+
         <!-- Boton volver -->
-        <a href="trabajador.php" class="btn-volver-panel">Volver al Panel de Control</a>
-        
+        <a href="trabajador.php" class="btn-volver-panel" data-i18n="stats.backToPanel">Volver al Panel de Control</a>
+
         <!-- Resumen -->
         <div class="stats-grid">
             <div class="stat-card">
-                <h3>Pedidos Pendientes</h3>
+                <h3 data-i18n="stats.pendingOrders">Pedidos Pendientes</h3>
                 <p class="stat-number"><?= $pedidosPendientes ?></p>
             </div>
             <div class="stat-card">
-                <h3>Pedidos Totales</h3>
+                <h3 data-i18n="stats.totalOrders">Pedidos Totales</h3>
                 <p class="stat-number"><?= $pedidosTotales ?></p>
             </div>
         </div>
 
         <!-- Ingredientes -->
         <div class="summary-box">
-            <h3 class="summary-title">Inventario de Ingredientes (únicos)</h3>
-            
+            <h3 class="summary-title" data-i18n="stats.inventoryTitle">Inventario de Ingredientes (únicos)</h3>
+
             <?php if (!empty($ingredientes)): ?>
             <table class="ingredient-table">
                 <thead>
                     <tr>
-                        <th>Ingrediente</th>
-                        <th>Cantidad</th>
-                        <th>Unidad</th>
-                        <th>Stock Mínimo</th>
-                        <th>Estado</th>
+                        <th data-i18n="stats.ingredient">Ingrediente</th>
+                        <th data-i18n="stats.quantity">Cantidad</th>
+                        <th data-i18n="stats.unit">Unidad</th>
+                        <th data-i18n="stats.minStock">Stock Mínimo</th>
+                        <th data-i18n="stats.statusCol">Estado</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -132,7 +126,9 @@ $pedidosTotales = $stmt->fetchColumn();
                     <?php
                     $lowStock = $ingrediente['cantidad'] <= $ingrediente['stock_minimo'];
                     $class = $lowStock ? 'low-stock' : '';
-                    $estado = $lowStock ? 'Bajo stock' : 'Normal';
+                    $estado = $lowStock
+                        ? '<span data-i18n="stats.lowStock">Bajo stock</span>'
+                        : '<span data-i18n="stats.normal">Normal</span>';
                     ?>
                     <tr class="<?= $class ?>">
                         <td><?= htmlspecialchars($ingrediente['nombre']) ?></td>
@@ -145,7 +141,7 @@ $pedidosTotales = $stmt->fetchColumn();
                 </tbody>
             </table>
             <?php else: ?>
-                <p class="empty-state">
+                <p class="empty-state" data-i18n="stats.noIngredients">
                     No hay ingredientes registrados en la base de datos.
                 </p>
             <?php endif; ?>
@@ -173,15 +169,16 @@ setInterval(() => {
 }, AUTO_REFRESH_MS);
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/lang.js?v=20260428-1"></script>
 <footer>
-  <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p data-i18n="footer.rights">&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php">Política de Cookies</a>
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php">Aviso Legal</a>
-  </p></footer>
+    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
+  </p>
+</footer>
 </body>
 </html>
-

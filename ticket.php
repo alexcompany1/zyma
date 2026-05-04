@@ -67,28 +67,28 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-          <a href="perfil.php">Mi perfil</a>
-          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-          <a href="logout.php">Cerrar Sesión</a>
-        </div>
+        <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
+        <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
+        <a href="logout.php" data-i18n="nav.logout">Cerrar Sesión</a>
+      </div>
     </div>
 
     <a href="usuario.php" class="landing-logo">
       <span class="landing-logo-text">Zyma</span>
     </a>
 
-        <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
+    <div class="quick-menu-section">
+      <button class="quick-menu-btn" id="quickMenuBtn" data-i18n-aria="nav.quickMenu" aria-label="Menú rápido"></button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="usuario.php">Inicio</a>
-        <a href="carta.php">Ver carta</a>
-        <a href="valoraciones.php">Valoraciones</a>
-        <a href="incidencias.php">Incidencias</a>
-        <a href="tickets.php">Tickets de compra</a>
+        <a href="usuario.php" data-i18n="nav.home">Inicio</a>
+        <a href="carta.php" data-i18n="nav.viewMenu">Ver carta</a>
+        <a href="valoraciones.php" data-i18n="nav.reviews">Valoraciones</a>
+        <a href="incidencias.php" data-i18n="nav.incidents">Incidencias</a>
+        <a href="tickets.php" data-i18n="nav.tickets">Tickets de compra</a>
       </div>
     </div>
     <div class="cart-section">
-      <a href="carrito.php" class="cart-btn">
+      <a href="carrito.php" class="cart-btn" data-i18n-aria="nav.cart" aria-label="Carrito">
         <img src="assets/cart-icon.png" alt="Carrito">
         <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
       </a>
@@ -101,7 +101,7 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
         <div class="ticket-box">
             <div class="ticket-header">
                 <div>
-                    <h3>Ticket de compra</h3>
+                    <h3 data-i18n="ticket.title">Ticket de compra</h3>
                     <p class="muted">Pedido #<?= htmlspecialchars($pedido_num) ?></p>
                 </div>
                 <div class="muted">
@@ -114,23 +114,22 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
                 <table>
                     <thead>
                         <tr>
-                            <th>Producto</th>
-                            <th class="center">Cantidad</th>
-                            <th class="text-right">Precio unidad</th>
-                            <th class="text-right">IVA %</th>
-                            <th class="text-right">IVA importe</th>
-                            <th class="text-right">Subtotal (sin IVA)</th>
-                            <th class="text-right">Total</th>
+                            <th data-i18n="ticket.product">Producto</th>
+                            <th class="center" data-i18n="ticket.quantity">Cantidad</th>
+                            <th class="text-right" data-i18n="ticket.unitPrice">Precio unidad</th>
+                            <th class="text-right" data-i18n="ticket.vatPct">IVA %</th>
+                            <th class="text-right" data-i18n="ticket.vatAmount">IVA importe</th>
+                            <th class="text-right" data-i18n="ticket.subtotalNoVat">Subtotal (sin IVA)</th>
+                            <th class="text-right" data-i18n="ticket.totalCol">Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                            // Definir tasa de IVA (20% por defecto). Cambia si necesitas otro valor.
                             $tax_rate = defined('TAX_RATE') ? TAX_RATE : 0.20;
                             $subtotal = 0.0;
                             $total_tax = 0.0;
                         ?>
-                        <?php foreach ($items as $it): 
+                        <?php foreach ($items as $it):
                             $cantidad = (int)$it['cantidad'];
                             $precio_unit = (float)$it['precio_unitario'];
                             $line_sub = $precio_unit * $cantidad;
@@ -142,50 +141,47 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
                             <tr>
                                 <td><?= htmlspecialchars($it['nombre']) ?></td>
                                 <td class="center"><?= $cantidad ?></td>
-                                <td class="text-right">$<?= number_format($precio_unit,2) ?></td>
+                                <td class="text-right">€<?= number_format($precio_unit, 2, ',', '.') ?></td>
                                 <td class="text-right"><?= ($tax_rate * 100) ?>%</td>
-                                <td class="text-right">$<?= number_format($line_tax,2) ?></td>
-                                <td class="text-right">$<?= number_format($line_sub,2) ?></td>
-                                <td class="text-right">$<?= number_format($line_total,2) ?></td>
+                                <td class="text-right">€<?= number_format($line_tax, 2, ',', '.') ?></td>
+                                <td class="text-right">€<?= number_format($line_sub, 2, ',', '.') ?></td>
+                                <td class="text-right">€<?= number_format($line_total, 2, ',', '.') ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
 
-            <?php
-                // Totales calculados (nota: en la BD `p.total` se guardó sin IVA)
-                $total_with_tax = $subtotal + $total_tax;
-            ?>
+            <?php $total_with_tax = $subtotal + $total_tax; ?>
 
             <div style="margin-top:12px;text-align:right;">
-                <p class="muted">Subtotal: $<?= number_format($subtotal,2) ?></p>
-                <p class="muted">IVA: $<?= number_format($total_tax,2) ?></p>
-                <p class="summary-total" style="font-weight:700;">Total (con IVA): $<?= number_format($total_with_tax,2) ?></p>
+                <p class="muted"><span data-i18n="ticket.subtotal">Subtotal:</span> €<?= number_format($subtotal, 2, ',', '.') ?></p>
+                <p class="muted"><span data-i18n="ticket.vat">IVA:</span> €<?= number_format($total_tax, 2, ',', '.') ?></p>
+                <p class="summary-total" style="font-weight:700;"><span data-i18n="ticket.totalWithVat">Total (con IVA):</span> €<?= number_format($total_with_tax, 2, ',', '.') ?></p>
             </div>
 
-
             <div class="ticket-actions">
-                <a class="btn-cart" href="tickets.php">Volver a Tickets</a>
+                <a class="btn-cart" href="tickets.php" data-i18n="ticket.backToTickets">Volver a Tickets</a>
             </div>
         </div>
     </div>
 </div>
 
 <footer>
-    <p>© 2025 Zyma. Todos los derechos reservados.</p>
+    <p data-i18n="footer.rights">© 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php">Política de Cookies</a>
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php">Aviso Legal</a>
+    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
   </p>
 </footer>
 
 <script>
     const profileBtn = document.getElementById('profileBtn');
     const dropdownMenu = document.getElementById('dropdownMenu');
+    const quickDropdown = document.getElementById('quickDropdown');
 
     profileBtn.addEventListener('click', () => {
         dropdownMenu.classList.toggle('show');
@@ -198,5 +194,6 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
     });
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/lang.js?v=20260428-1"></script>
 </body>
 </html>

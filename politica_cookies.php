@@ -29,7 +29,7 @@ $is_logged_in = !empty($_SESSION['user_id']);
           <?php if (!$is_logged_in): ?>
             <a href="login.php" class="landing-link" data-i18n="nav.enter">Entrar</a>
             <a href="registro.php" class="landing-cta" data-i18n="nav.createAccount">Crear cuenta</a>
-          <?php else: ?>
+          <?php else: ?>i
             <a href="usuario.php" class="landing-link" data-i18n="nav.home">Inicio</a>
             <a href="logout.php" class="landing-cta" data-i18n="nav.logout">Cerrar Sesión</a>
           <?php endif; ?>

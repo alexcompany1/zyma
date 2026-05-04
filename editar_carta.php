@@ -79,16 +79,16 @@ if ($display_name === '') {
 <header class="landing-header">
   <div class="landing-bar">
     <div class="profile-section">
-      <button class="profile-btn" id="profileBtn" aria-label="Perfil">
+      <button class="profile-btn" id="profileBtn" data-i18n-aria="nav.myProfile" aria-label="Perfil">
         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="white">
           <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c1.52 0 5.1 1.34 5.1 5v1H6.9v-1c0-3.66 3.58-5 5.1-5z"/>
         </svg>
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-        <a href="perfil.php">Mi perfil</a>
-        <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-        <a href="logout.php">Cerrar sesión</a>
+        <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
+        <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
+        <a href="logout.php" data-i18n="nav.logout">Cerrar sesión</a>
       </div>
     </div>
 
@@ -97,70 +97,83 @@ if ($display_name === '') {
     </a>
 
     <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
+      <button class="quick-menu-btn" id="quickMenuBtn" data-i18n-aria="nav.quickMenu" aria-label="Menú rápido"></button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="trabajador.php">Panel</a>
-        <a href="gestionar_pedidos.php">Pedidos</a>
-        <a href="editar_carta.php">Cambiar precios</a>
-        <a href="estadisticas.php">Estadísticas</a>
+        <a href="trabajador.php" data-i18n="nav.workerPanel">Panel</a>
+        <a href="gestionar_pedidos.php" data-i18n="nav.workerOrders">Pedidos</a>
+        <a href="editar_carta.php" data-i18n="nav.workerEditMenu">Editar carta</a>
+        <a href="estadisticas.php" data-i18n="nav.workerStats">Estadísticas</a>
+        <a href="incidencias.php" data-i18n="nav.workerIncidents">Incidencias</a>
       </div>
     </div>
 
     <div class="landing-actions">
-      <a href="trabajador.php" class="landing-link">Panel</a>
-      <a href="gestionar_pedidos.php" class="landing-cta">Pedidos</a>
+      <a href="trabajador.php" class="landing-link" data-i18n="nav.workerPanel">Panel</a>
+      <a href="gestionar_pedidos.php" class="landing-cta" data-i18n="nav.workerOrders">Pedidos</a>
     </div>
   </div>
 </header>
 
 <div class="container">
   <div class="main-content">
-    <h2 class="welcome">Cambiar precios y productos</h2>
-    <a href="trabajador.php" class="btn-volver-panel">Volver al panel de trabajador</a>
+    <h2 class="welcome" data-i18n="editMenu.title">Cambiar precios y productos</h2>
+    <a href="trabajador.php" class="btn-volver-panel" data-i18n="editMenu.backToWorker">Volver al panel de trabajador</a>
 
     <?php if ($mensaje !== ''): ?>
       <div class="alert alert-success alert-spaced"><?= htmlspecialchars($mensaje) ?></div>
     <?php endif; ?>
 
     <div class="form-container">
-      <h3>Cambiar precios de productos</h3>
-      <p>Cambia el precio, pulsa guardar y ese importe será el que se use en la carta y en la compra.</p>
+      <h3 data-i18n="editMenu.changeSection">Cambiar precios de productos</h3>
+      <p data-i18n="editMenu.changeSectionDesc">Cambia el precio, pulsa guardar y ese importe será el que se use en la carta y en la compra.</p>
     </div>
 
     <div class="form-container">
-      <h3>Añadir nuevo producto</h3>
+      <h3 data-i18n="editMenu.newProduct">Añadir nuevo producto</h3>
       <form method="POST" class="product-form">
-        <label for="nuevo-nombre">Nombre del producto</label>
-        <input id="nuevo-nombre" type="text" name="nombre" placeholder="Nombre del producto" required>
+        <label for="nuevo-nombre">
+          <span data-i18n="editMenu.productName">Nombre del producto</span>
+        </label>
+        <input id="nuevo-nombre" type="text" name="nombre" data-i18n-placeholder="editMenu.productName" placeholder="Nombre del producto" required>
 
-        <label for="nuevo-precio">Precio en EUR</label>
+        <label for="nuevo-precio">
+          <span data-i18n="editMenu.priceEUR">Precio en EUR</span>
+        </label>
         <input id="nuevo-precio" type="number" name="precio" step="0.01" min="0" placeholder="Precio" required>
 
-        <label for="nueva-imagen">Ruta de la imagen</label>
+        <label for="nueva-imagen">
+          <span data-i18n="editMenu.imagePath">Ruta de la imagen</span>
+        </label>
         <input id="nueva-imagen" type="text" name="imagen" placeholder="Ruta de la imagen (ej: assets/nachos.png)" required>
 
-        <button type="submit" name="nuevo" class="btn-add-cart">Crear producto</button>
+        <button type="submit" name="nuevo" class="btn-add-cart" data-i18n="editMenu.createProduct">Crear producto</button>
       </form>
     </div>
 
     <div class="form-container">
-      <h3>Productos existentes</h3>
+      <h3 data-i18n="editMenu.existingProducts">Productos existentes</h3>
       <?php foreach ($productos as $producto): ?>
         <form method="POST" class="product-form form-divider">
           <input type="hidden" name="id" value="<?= (int) $producto['id'] ?>">
 
-          <label for="nombre-<?= (int) $producto['id'] ?>">Nombre del producto</label>
+          <label for="nombre-<?= (int) $producto['id'] ?>">
+            <span data-i18n="editMenu.productName">Nombre del producto</span>
+          </label>
           <input id="nombre-<?= (int) $producto['id'] ?>" type="text" name="nombre" value="<?= htmlspecialchars($producto['nombre']) ?>" required>
 
-          <label for="precio-<?= (int) $producto['id'] ?>">Precio actual en EUR</label>
+          <label for="precio-<?= (int) $producto['id'] ?>">
+            <span data-i18n="editMenu.currentPrice">Precio actual en EUR</span>
+          </label>
           <input id="precio-<?= (int) $producto['id'] ?>" type="number" name="precio" step="0.01" min="0" value="<?= htmlspecialchars((string) $producto['precio']) ?>" required>
 
-          <label for="imagen-<?= (int) $producto['id'] ?>">Ruta de la imagen</label>
+          <label for="imagen-<?= (int) $producto['id'] ?>">
+            <span data-i18n="editMenu.imagePath">Ruta de la imagen</span>
+          </label>
           <input id="imagen-<?= (int) $producto['id'] ?>" type="text" name="imagen" value="<?= htmlspecialchars($producto['imagen']) ?>" required>
 
           <div class="form-actions">
-            <button type="submit" name="editar" class="btn-add-cart flex-1">Guardar precio y cambios</button>
-            <button type="submit" name="eliminar" class="remove-item-btn flex-1">Eliminar</button>
+            <button type="submit" name="editar" class="btn-add-cart flex-1" data-i18n="editMenu.saveChanges">Guardar precio y cambios</button>
+            <button type="submit" name="eliminar" class="remove-item-btn flex-1" data-i18n="editMenu.delete">Eliminar</button>
           </div>
         </form>
       <?php endforeach; ?>
@@ -182,14 +195,15 @@ if (profileBtn && dropdownMenu) {
 }
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/lang.js?v=20260428-1"></script>
 <footer>
-  <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p data-i18n="footer.rights">&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php">Política de Cookies</a>
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php">Política de Privacidad</a>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php">Aviso Legal</a>
+    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
   </p>
 </footer>
 </body>
