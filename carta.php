@@ -91,31 +91,31 @@ try {
     $allergens_stmt = $pdo->query("
         SELECT pa.id_producto, a.id as allergeno_id, a.nombre as allergeno_nombre, a.icono
         FROM producto_allergens pa
-        JOIN product_allergens a ON pa.id_allergen = a.id
+        JOIN product_allergens a ON pa.id_allergeno = a.id
     ");
     $allergens_db = $allergens_stmt->fetchAll();
 
     $products_extras = [];
     foreach ($extras_db as $extra) {
         $products_extras[$extra['id_producto']][] = [
-            'id' => $extra['extra_id'],
-            'nombre' => $extra['extra_nombre'],
-            'precio' => (float)$extra['precio_adicional']
+            'id' => (int)$extra['extra_id'],
+            'name' => $extra['extra_nombre'],
+            'price' => (float)$extra['precio_adicional']
         ];
     }
 
     $products_allergens = [];
     foreach ($allergens_db as $allergen) {
         $products_allergens[$allergen['id_producto']][] = [
-            'id' => $allergen['allergeno_id'],
-            'nombre' => $allergen['allergeno_nombre'],
-            'icono' => $allergen['icono']
+            'id' => (int)$allergen['allergeno_id'],
+            'name' => $allergen['allergeno_nombre'],
+            'icon' => $allergen['icono']
         ];
     }
 
     $products = [];
     foreach ($products_db as $product) {
-        $pid = $product['id'];
+        $pid = (int)$product['id'];
         $products[] = [
             'id' => $pid,
             'name' => $product['nombre'],
@@ -130,13 +130,13 @@ try {
     }
 } catch (Exception $e) {
     $products = [
-        ['id' => 1, 'name' => 'Nachos con Queso', 'description' => '', 'price' => 6.00, 'image' => 'assets/nachos.png', 'allergens' => ['gluten', 'lacteos']],
-        ['id' => 2, 'name' => 'Patatas Fritas', 'description' => '', 'price' => 3.50, 'image' => 'assets/fries.png', 'allergens' => []],
-        ['id' => 3, 'name' => 'Hotdog BBQ', 'description' => '', 'price' => 7.50, 'image' => 'assets/bbq_hotdog.png', 'allergens' => ['gluten', 'lacteos', 'soja']],
-        ['id' => 4, 'name' => 'Hotdog Clásico', 'description' => '', 'price' => 5.99, 'image' => 'assets/hotdog.png', 'allergens' => ['gluten', 'soja']],
-        ['id' => 5, 'name' => 'Hotdog Vegano', 'description' => '', 'price' => 6.50, 'image' => 'assets/vegan-hotdog.png', 'allergens' => ['gluten', 'soja']],
-        ['id' => 6, 'name' => 'Refresco Cola', 'description' => '', 'price' => 2.00, 'image' => 'assets/soda.png', 'allergens' => []],
-        ['id' => 7, 'name' => 'Agua Mineral', 'description' => '', 'price' => 1.00, 'image' => 'assets/water.png', 'allergens' => []]
+        ['id' => 1, 'name' => 'Nachos con Queso', 'description' => '', 'price' => 6.00, 'image' => 'assets/nachos.png', 'extras' => [], 'allergens' => [['name' => 'gluten'], ['name' => 'lacteos']], 'promedio' => 0, 'total_valoraciones' => 0],
+        ['id' => 2, 'name' => 'Patatas Fritas', 'description' => '', 'price' => 3.50, 'image' => 'assets/fries.png', 'extras' => [], 'allergens' => [], 'promedio' => 0, 'total_valoraciones' => 0],
+        ['id' => 3, 'name' => 'Hotdog BBQ', 'description' => '', 'price' => 7.50, 'image' => 'assets/bbq_hotdog.png', 'extras' => [['id' => 1, 'name' => 'Queso extra', 'price' => 1.00], ['id' => 2, 'name' => 'Bacon', 'price' => 1.50]], 'allergens' => [['name' => 'gluten'], ['name' => 'soja']], 'promedio' => 0, 'total_valoraciones' => 0],
+        ['id' => 4, 'name' => 'Hotdog Clásico', 'description' => '', 'price' => 5.99, 'image' => 'assets/hotdog.png', 'extras' => [['id' => 1, 'name' => 'Queso extra', 'price' => 1.00]], 'allergens' => [['name' => 'gluten'], ['name' => 'soja']], 'promedio' => 0, 'total_valoraciones' => 0],
+        ['id' => 5, 'name' => 'Hotdog Vegano', 'description' => '', 'price' => 6.50, 'image' => 'assets/vegan-hotdog.png', 'extras' => [], 'allergens' => [['name' => 'gluten'], ['name' => 'soja']], 'promedio' => 0, 'total_valoraciones' => 0],
+        ['id' => 6, 'name' => 'Refresco Cola', 'description' => '', 'price' => 2.00, 'image' => 'assets/soda.png', 'extras' => [], 'allergens' => [], 'promedio' => 0, 'total_valoraciones' => 0],
+        ['id' => 7, 'name' => 'Agua Mineral', 'description' => '', 'price' => 1.00, 'image' => 'assets/water.png', 'extras' => [], 'allergens' => [], 'promedio' => 0, 'total_valoraciones' => 0]
     ];
 }
 
@@ -179,9 +179,16 @@ if ($selectedProductId > 0) {
 if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
     $pid = (int)($_POST['product_id'] ?? 0);
     if ($pid > 0) {
-        $_SESSION['cart'][$pid] = ($_SESSION['cart'][$pid] ?? 0) + 1;
+        $_SESSION['cart'][] = [
+            'id' => $pid,
+            'name' => '',
+            'price' => 0,
+            'quantity' => 1,
+            'extras' => [],
+            'final_price' => 0
+        ];
         $_SESSION['toast_message'] = [
-            'text' => 'Producto agregado al carrito',
+            'text' => 'Producto añadido al carrito',
             'icon' => 'OK'
         ];
     }
@@ -214,7 +221,7 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
       <div class="profile-section">
         <button class="profile-btn" id="profileBtn" aria-label="Perfil">
           <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="white">
-            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c1.52 0 5.1 1.34 5.1 5v1H6.9v-1c0-3.66 3.58-5 5.1-5z"/>
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4 1.79 4 4 4zm0 2c1.52 0 5.1 1.34 5.1 5v1H6.9v-1c0-3.66 3.58-5 5.1-5z"/>
           </svg>
         </button>
         <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
@@ -236,7 +243,7 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
           <a href="carta.php" data-i18n="nav.viewMenu">Ver carta</a>
           <a href="valoraciones.php" data-i18n="nav.reviews">Valoraciones</a>
           <a href="incidencias.php" data-i18n="nav.incidents">Incidencias</a>
-          <a href="tickets.php" data-i18n="nav.tickets">Tickets de compra</a>
+          <a href="tickets.php" data-i18n="nav.tickets">Tickets</a>
         </div>
       </div>
       <div class="cart-section">
@@ -278,6 +285,7 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
       <img src="<?= htmlspecialchars($product['image']) ?>"
            alt="<?= htmlspecialchars($product['name']) ?>"
            onerror="this.src='assets/default-product.png';">
+
       <div class="card-content">
         <?php if ((int)$product['id'] === $starProductId): ?>
           <span class="product-star-badge" data-i18n="menu.starBadge">Producto estrella</span>
@@ -302,14 +310,10 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
         <p class="card-price">EUR <?= number_format($product['price'], 2, ',', '.') ?></p>
 
         <div class="allergen-tags">
-          <?php if (in_array('gluten', $product['allergens'], true)): ?>
-            <span class="allergen-tag tag-gluten" data-i18n="menu.allergenGluten">Gluten</span>
-          <?php endif; ?>
-          <?php if (in_array('lacteos', $product['allergens'], true)): ?>
-            <span class="allergen-tag tag-lacteos" data-i18n="menu.allergenDairy">Lacteos</span>
-          <?php endif; ?>
-          <?php if (in_array('soja', $product['allergens'], true)): ?>
-            <span class="allergen-tag tag-soja" data-i18n="menu.allergenSoy">Soja</span>
+          <?php if (!empty($product['allergens'])): ?>
+            <?php foreach ($product['allergens'] as $allergen): ?>
+              <span class="allergen-tag"><?= ($allergen['icon'] ?? '') . ' ' . htmlspecialchars($allergen['name']) ?></span>
+            <?php endforeach; ?>
           <?php endif; ?>
         </div>
 
@@ -317,46 +321,46 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
           <a href="login.php" class="btn-add-cart" data-i18n="menu.loginToOrder">Inicia Sesión para pedir</a>
           <a href="login.php" class="btn-valorar" data-i18n="menu.rateProduct">Valorar producto</a>
         <?php else: ?>
-          <button type="button" class="btn-customize" onclick="openCustomizer(<?= (int)$product['id'] ?>)" data-i18n="customizer.customize">Personalizar</button>
-          <a href="valoraciones.php?producto=<?= (int)$product['id'] ?>" class="btn-valorar" data-i18n="menu.rateProduct">Valorar producto</a>
+          <button type="button" class="btn-customize" onclick="openCustomizer(<?= (int)$product['id'] ?>)">Personalizar</button>
+          <a href="valoraciones.php?producto=<?= (int)$product['id'] ?>" class="btn-valorar">Valorar</a>
         <?php endif; ?>
       </div>
     </div>
     <?php endforeach; ?>
   </div>
+</div>
 
-  <!-- Modal Personalizador -->
-  <div id="customizerModal" class="modal" style="display:none;">
-    <div class="modal-content">
-      <span class="close-modal" onclick="closeCustomizer()">&times;</span>
-      <h2 class="card-title" id="customizerTitle"></h2>
-      <p class="card-desc" id="customizerDesc"></p>
+<!-- Modal Personalizador -->
+<div id="customizerModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-modal" onclick="closeCustomizer()">&times;</span>
+    <h2 class="card-title" id="customizerTitle"></h2>
+    <p class="card-desc" id="customizerDesc"></p>
+    
+    <form method="POST" action="procesar_pedido_personalizado.php" id="customizerForm">
+      <input type="hidden" name="product_id" id="customizerProductId">
       
-      <form method="POST" action="procesar_pedido_personalizado.php" id="customizerForm">
-        <input type="hidden" name="product_id" id="customizerProductId">
-        
-        <div class="customizer-section">
-          <h3 data-i18n="customizer.extras">Extras</h3>
-          <div id="customizerExtras"></div>
-        </div>
+      <div class="customizer-section">
+        <h3>Extras</h3>
+        <div id="customizerExtras"></div>
+      </div>
 
-        <div class="customizer-section">
-          <h3 data-i18n="customizer.allergens">Alérgenos</h3>
-          <div id="customizerAllergens"></div>
-        </div>
+      <div class="customizer-section">
+        <h3>Alérgenos</h3>
+        <div id="customizerAllergens"></div>
+      </div>
 
-        <div class="customizer-section">
-          <h3 data-i18n="customizer.quantity">Cantidad</h3>
-          <input type="number" name="quantity" id="customizerQuantity" value="1" min="1" max="10" style="width:60px;">
-        </div>
+      <div class="customizer-section">
+        <h3>Cantidad</h3>
+        <input type="number" name="quantity" id="customizerQuantity" value="1" min="1" max="10" style="width:60px;">
+      </div>
 
-        <div class="customizer-summary">
-          <strong>Total: €<span id="customizerTotal">0.00</span></strong>
-        </div>
+      <div class="customizer-summary">
+        <strong>Total: €<span id="customizerTotal">0.00</span></strong>
+      </div>
 
-        <button type="submit" class="btn-add-cart" data-i18n="customizer.addToCart">Añadir al carrito</button>
-      </form>
-    </div>
+      <button type="submit" class="btn-add-cart">Añadir al carrito</button>
+    </form>
   </div>
 </div>
 
@@ -386,7 +390,7 @@ if (profileBtn && dropdownMenu) {
 <?php endif; ?>
 
 const productsData = <?= json_encode($products) ?>;
- 
+
 function openCustomizer(productId) {
   const product = productsData.find(p => p.id === productId);
   if (!product) return;
@@ -403,11 +407,11 @@ function openCustomizer(productId) {
     product.extras.forEach(function(extra) {
       const div = document.createElement('div');
       div.className = 'customizer-item';
-      div.innerHTML = '<label><input type="checkbox" name="extras[]" value="' + extra.id + '" data-price="' + extra.precio + '"><span>' + extra.nombre + ' (+€' + extra.precio.toFixed(2) + ')</span></label>';
+      div.innerHTML = '<label><input type="checkbox" name="extras[]" value="' + extra.id + '" data-price="' + extra.price + '"><span>' + extra.name + ' (+€' + extra.price.toFixed(2) + ')</span></label>';
       extrasContainer.appendChild(div);
     });
   } else {
-    extrasContainer.innerHTML = '<p data-i18n="customizer.noExtras">Sin extras disponibles.</p>';
+    extrasContainer.innerHTML = '<p>Sin extras disponibles.</p>';
   }
 
   // Render allergens
@@ -417,7 +421,7 @@ function openCustomizer(productId) {
     product.allergens.forEach(function(allergen) {
       const span = document.createElement('span');
       span.className = 'allergen-tag';
-      span.textContent = (allergen.icono || '') + ' ' + allergen.nombre;
+      span.textContent = (allergen.icon || '') + ' ' + allergen.name;
       allergensContainer.appendChild(span);
     });
   }
