@@ -16,6 +16,18 @@
   var openPreferenceLinks = document.querySelectorAll(".open-cookie-preferences");
   var messageEl = null;
 
+  // Translation helper
+  function t(key) {
+    var lang = localStorage.getItem('zyma_lang') || 'es';
+    if (window.T && window.T[lang] && window.T[lang][key] !== undefined) {
+      return window.T[lang][key];
+    }
+    if (window.T && window.T['es'] && window.T['es'][key] !== undefined) {
+      return window.T['es'][key];
+    }
+    return key;
+  }
+
   function closeModal() {
     modal.hidden = true;
     modal.style.display = "none";
@@ -73,7 +85,7 @@
     toast.className = "toast-notification cookie-toast show";
     toast.innerHTML =
       '<div class="toast-icon">OK</div><span>' +
-      String(text || "Preferencias guardadas") +
+      String(text || t("cookies.preferencesSaved")) +
       "</span>";
 
     document.body.appendChild(toast);
@@ -105,11 +117,11 @@
           try {
             data = JSON.parse(text);
           } catch (err) {
-            throw new Error("Respuesta invÃ¡lida del servidor");
+            throw new Error(t("cookies.invalidResponse"));
           }
 
           if (!response.ok) {
-            throw new Error((data && data.message) || "No se pudo completar la solicitud");
+            throw new Error((data && data.message) || t("cookies.requestFailed"));
           }
 
           return data;
@@ -143,10 +155,10 @@
             throw new Error((result && result.message) || "No se pudo guardar");
           }
           closeModal();
-          showToast(result.message || "Preferencias guardadas correctamente");
+          showToast(result.message || t("cookies.preferencesSavedCorrectly"));
         })
         .catch(function (err) {
-          showMessage(err.message || "No se pudo guardar tu preferencia de cookies.", true);
+          showMessage(err.message || t("cookies.saveError"), true);
         });
     });
   }
@@ -159,10 +171,10 @@
             throw new Error((result && result.message) || "No se pudo guardar");
           }
           closeModal();
-          showToast(result.message || "Solo se usaran las cookies tecnicas necesarias.");
+          showToast(result.message || t("cookies.onlyTechnical"));
         })
         .catch(function (err) {
-          showMessage(err.message || "No se pudo procesar el rechazo de cookies.", true);
+          showMessage(err.message || t("cookies.rejectError"), true);
         });
     });
   }
@@ -185,10 +197,10 @@
             throw new Error((result && result.message) || "No se pudo guardar");
           }
           closeModal();
-          showToast(result.message || "PersonalizaciÃ³n guardada correctamente");
+          showToast(result.message || t("cookies.customizationSaved"));
         })
         .catch(function (err) {
-          showMessage(err.message || "No se pudo guardar tu configuraciÃ³n de cookies.", true);
+          showMessage(err.message || t("cookies.customizeError"), true);
         });
     });
   }

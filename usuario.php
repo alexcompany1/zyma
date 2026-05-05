@@ -257,12 +257,12 @@ try {
                 <h3><?= htmlspecialchars($product['nombre']) ?></h3>
                 <span class="user-featured-price"><?= number_format((float) $product['precio'], 2, ',', '.') ?> EUR</span>
               </div>
-              <p><?= htmlspecialchars($product['descripcion'] ?: 'Producto estrella de la casa con preparación cuidada.') ?></p>
+              <p><?= htmlspecialchars($product['descripcion'] ?: '') ?><span data-i18n="user.userFeaturedDefaultDesc">Producto estrella de la casa con preparación cuidada.</span></p>
               <div class="user-featured-meta">
                 <span class="user-featured-sales">
                   <?php 
                     $vendidas = (int) ($product['cantidad_vendidas'] ?? 0);
-                    echo $vendidas > 0 ? $vendidas . ' vendidas' : 'Nuevo';
+                    echo $vendidas > 0 ? $vendidas . ' <span data-i18n="user.sold">vendidas</span>' : '<span data-i18n="user.new">Nuevo</span>';
                   ?>
                 </span>
                 <span class="user-featured-rating"><?= number_format((float) ($product['promedio'] ?? 0), 1) ?> / 5</span>
