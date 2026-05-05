@@ -34,6 +34,38 @@ foreach ($_SESSION['cart'] ?? [] as $index => $item) {
 
     $product = $products[$item['id']];
     $quantity = (int)($item['quantity'] ?? 1);
+    $basePrice = (float)($item['price'] ?? $product['price']);
+    
+    // Calcular precio de extras
+    $extrasTotal = 0;
+    $extrasNames = [];
+    if (!empty($item['extras'])) {
+        foreach ($item['extras'] as $extra) {
+            $extrasTotal += (float)($extra['price'] ?? 0);
+            $extrasNames[] = $extra['name'] ?? '';
+        }
+    }
+    
+    $itemTotal = ($basePrice + $extrasTotal) * $quantity;
+    
+    $cartItems[] = [
+        'index' => $index,
+        'id' => (int)$item['id'],
+        'name' => $product['name'],
+        'price' => $basePrice,
+        'image' => $product['image'],
+        'quantity' => $quantity,
+        'extras' => $item['extras'] ?? [],
+        'extras_names' => $extrasNames,
+        'extras_total' => $extrasTotal,
+        'subtotal' => $itemTotal
+    ];
+    
+    $total += $itemTotal;
+}
+
+    $product = $products[$item['id']];
+    $quantity = (int)($item['quantity'] ?? 1);
     $basePrice = (float)($item['precio'] ?? $product['price']);
     
     // Calcular precio de extras
@@ -321,7 +353,7 @@ foreach ($cartItems as $item) {
 <script>
 const profileBtn = document.getElementById('profileBtn');
 const dropdownMenu = document.getElementById('dropdownMenu');
-const cartPrices = <?= json_encode($cartPrices, JSON_UNESCAPED_UNICODE) ?>;
+const cartData = <?= json_encode($cartItems, JSON_UNESCAPED_UNICODE) ?>;
 
 profileBtn.addEventListener('click', () => {
   dropdownMenu.classList.toggle('show');
@@ -334,8 +366,11 @@ window.addEventListener('click', (e) => {
 });
 
 function changeQuantity(itemIndex, delta) {
-  const qtyElement = document.getElementById('qty-' + itemIndex);
-  const subtotalElement = document.getElementById('subtotal-' + itemIndex);
+  const row = document.getElementById('cart-item-' + itemIndex);
+  if (!row) return;
+  
+  const qtyElement = row.querySelector('.quantity-value');
+  const subtotalElement = row.querySelector('.cart-item-subtotal');
   const totalElement = document.getElementById('total-amount');
   
   let currentQty = parseInt(qtyElement.textContent, 10);
@@ -350,15 +385,22 @@ function changeQuantity(itemIndex, delta) {
   currentQty += delta;
   qtyElement.textContent = currentQty;
   
-  const price = Number(cartPrices[itemIndex] || 0);
-  const subtotal = price * currentQty;
+  // Obtener datos del item
+  const item = cartData[itemIndex];
+  if (!item) return;
+  
+  const basePrice = Number(item.price || 0);
+  const extrasTotal = Number(item.extras_total || 0);
+  const subtotal = (basePrice + extrasTotal) * currentQty;
+  
   subtotalElement.innerHTML = 'EUR ' + subtotal.toFixed(2).replace('.', ',');
+  
   
   // Recalcular total
   let total = 0;
-  document.querySelectorAll('.cart-item-row').forEach(function(row) {
-    const subtotalText = row.querySelector('.cart-item-subtotal').textContent;
-    const value = parseFloat(subtotalText.replace('EUR ', '').replace(',', '.')) || 0;
+  document.querySelectorAll('.cart-item-row').forEach(function(r) {
+    const text = r.querySelector('.cart-item-subtotal').textContent;
+    const value = parseFloat(text.replace('EUR ', '').replace(',', '.')) || 0;
     total += value;
   });
   

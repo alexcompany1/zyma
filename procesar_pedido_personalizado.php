@@ -66,11 +66,11 @@ if (!isset($_SESSION['cart'])) {
 
 $cartItem = [
     'id' => $productId,
-    'nombre' => $product['nombre'],
-    'precio' => $basePrice,
+    'name' => $product['nombre'],
+    'price' => $basePrice,
     'quantity' => $quantity,
     'extras' => $extrasDetails,
-    'precio_final' => $finalPrice
+    'final_price' => $finalPrice
 ];
 
 $_SESSION['cart'][] = $cartItem;
