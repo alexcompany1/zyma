@@ -437,7 +437,9 @@ function openCustomizer(productId) {
   }
 
   updateCustomizerTotal();
+  console.log('Opening modal...');
   document.getElementById('customizerModal').style.display = 'block';
+  console.log('Modal display set to block');
 }
 
 function closeCustomizer() {
