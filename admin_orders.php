@@ -86,7 +86,7 @@ try {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin - Pedidos</title>
+<title data-i18n="adminOrders.title">Admin - Pedidos</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <link rel="stylesheet" href="styles.css?v=20260211-5">
 <style>
@@ -119,19 +119,19 @@ if ($display_name === '') {
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-          <a href="perfil.php">Mi perfil</a>
-          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-          <a href="logout.php">Cerrar Sesión</a>
+          <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
+          <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
+          <a href="logout.php" data-i18n="nav.logout">Cerrar Sesión</a>
       </div>
     </div>
     <a href="admin.php" class="landing-logo"><span class="landing-logo-text">Zyma</span></a>
-        <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
+    <div class="quick-menu-section">
+      <button class="quick-menu-btn" id="quickMenuBtn" data-i18n-aria="nav.quickMenu" aria-label="Menú rápido"></button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="admin.php">Panel Admin</a>
-        <a href="admin_orders.php">Pedidos</a>
-        <a href="admin_inventory.php">Inventario</a>
-        <a href="admin_products.php">Productos</a>
+        <a href="admin.php" data-i18n="admin.panelLink">Panel Admin</a>
+        <a href="admin_orders.php" data-i18n="admin.ordersLink">Pedidos</a>
+        <a href="admin_inventory.php" data-i18n="admin.inventoryLink">Inventario</a>
+        <a href="admin_products.php" data-i18n="admin.productsLink">Productos</a>
       </div>
     </div>
   </div>
@@ -141,11 +141,11 @@ if ($display_name === '') {
     <div class="section-card">
         <div class="row-between section-head">
             <div>
-                <h2>Pedidos activos</h2>
-                <p class="lead">Gestiona el flujo de pedidos en un solo lugar.</p>
+                <h2 data-i18n="adminOrders.title">Pedidos activos</h2>
+                <p class="lead" data-i18n="adminOrders.desc">Gestiona el flujo de pedidos en un solo lugar.</p>
             </div>
             <div>
-                <a href="usuario.php" class="landing-link">Volver a inicio</a>
+                <a href="admin.php" class="landing-link" data-i18n="admin.backHome">Volver a inicio</a>
             </div>
         </div>
         <?php if ($message): ?>
@@ -153,7 +153,7 @@ if ($display_name === '') {
         <?php endif; ?>
 
         <?php if (empty($orders)): ?>
-            <p class="empty-state">No hay pedidos en este momento.</p>
+            <p class="empty-state" data-i18n="adminOrders.noOrders">No hay pedidos en este momento.</p>
         <?php else: ?>
             <div class="card-grid">
                 <?php foreach ($orders as $order): ?>
@@ -162,31 +162,31 @@ if ($display_name === '') {
                         <div class="order-meta">
                             <span><strong>#<?= (int)$order['id_pedido'] ?></strong></span>
                             <span class="badge-status <?= htmlspecialchars($statusClass) ?> badge-small"><?= Order::statusLabel($order['estado'] ?? Order::STATUS_PENDING) ?></span>
-                            <span>Cliente: <?= htmlspecialchars($order['user_name'] ?: $order['user_email'] ?: 'Anonimo') ?></span>
-                            <span>Total: €<?= number_format((float)$order['total'], 2, ',', '.') ?></span>
-                            <span>Fecha: <?= htmlspecialchars($order['order_date']) ?></span>
+                            <span><span data-i18n="adminOrders.clientLabel">Cliente:</span> <?= htmlspecialchars($order['user_name'] ?: $order['user_email'] ?: 'Anonimo') ?></span>
+                            <span><span data-i18n="orders.total">Total:</span> €<?= number_format((float)$order['total'], 2, ',', '.') ?></span>
+                            <span><span data-i18n="orders.date">Fecha:</span> <?= htmlspecialchars($order['order_date']) ?></span>
                         </div>
-                        <p><strong>Productos:</strong></p>
+                        <p><strong data-i18n="orders.products">Productos:</strong></p>
                         <ul class="order-items">
                             <?php foreach ($itemsByOrder[$order['id_pedido']] ?? [] as $item): ?>
                                 <li><?= htmlspecialchars($item['product_name'] ?: 'Producto desconocido') ?> — <?= (float)$item['cantidad'] ?> x €<?= number_format((float)$item['precio_unitario'], 2, ',', '.') ?></li>
                             <?php endforeach; ?>
                         </ul>
                         <?php if (!empty($order['notes'])): ?>
-                            <p><strong>Notas:</strong> <?= htmlspecialchars($order['notes']) ?></p>
+                            <p><strong data-i18n="adminOrders.notes">Notas:</strong> <?= htmlspecialchars($order['notes']) ?></p>
                         <?php endif; ?>
                         <form method="POST" class="form-inline">
                             <input type="hidden" name="order_id" value="<?= (int)$order['id_pedido'] ?>">
                             <input type="hidden" name="action" value="update_status">
-                            <label for="status-<?= (int)$order['id_pedido'] ?>">Cambiar estado:</label>
+                            <label for="status-<?= (int)$order['id_pedido'] ?>" data-i18n="adminOrders.changeStatus">Cambiar estado:</label>
                             <select name="status" id="status-<?= (int)$order['id_pedido'] ?>">
                                 <?php foreach (Order::allStatuses() as $statusOption): ?>
                                     <option value="<?= htmlspecialchars($statusOption) ?>" <?= $statusOption === $order['estado'] ? 'selected' : '' ?>><?= Order::statusLabel($statusOption) ?></option>
                                 <?php endforeach; ?>
                             </select>
-                            <button type="submit" class="btn-add-cart">Guardar</button>
+                            <button type="submit" class="btn-add-cart" data-i18n="adminOrders.save">Guardar</button>
                             <?php if (($order['estado'] ?? '') !== Order::STATUS_DELIVERED): ?>
-                                <button type="submit" name="action" value="advance" class="btn-add-cart">Avanzar</button>
+                                <button type="submit" name="action" value="advance" class="btn-add-cart" data-i18n="adminOrders.advance">Avanzar</button>
                             <?php endif; ?>
                         </form>
                     </div>
@@ -208,5 +208,17 @@ if (profileBtn && dropdownMenu) {
     });
 }
 </script>
+<script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/lang.js?v=20260428-1"></script>
+<footer>
+  <p data-i18n="footer.rights">&copy; 2026 Zyma. Todos los derechos reservados.</p>
+  <p class="footer-legal-links">
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
+    <span>|</span>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
+    <span>|</span>
+    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
+  </p>
+</footer>
 </body>
 </html>

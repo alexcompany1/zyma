@@ -94,13 +94,13 @@ try {
     }
 } catch (Exception $e) {
     $products = [
-        ['id' => 1, 'name' => 'Nachos con Queso', 'description' => 'Tortillas crujientes cubiertas con queso fundido y jalapenos.', 'price' => 6.00, 'image' => 'assets/nachos.png', 'allergens' => ['gluten', 'lacteos']],
-        ['id' => 2, 'name' => 'Patatas Fritas', 'description' => 'Crujientes y doradas, servidas con sal marina.', 'price' => 3.50, 'image' => 'assets/fries.png', 'allergens' => []],
-        ['id' => 3, 'name' => 'Hotdog BBQ', 'description' => 'Salchicha ahumada, salsa BBQ casera, cebolla caramelizada y queso derretido.', 'price' => 7.50, 'image' => 'assets/bbq_hotdog.png', 'allergens' => ['gluten', 'lacteos', 'soja']],
-        ['id' => 4, 'name' => 'Hotdog Clasico', 'description' => 'Pan artesanal, salchicha premium, mostaza y cebolla crujiente.', 'price' => 5.99, 'image' => 'assets/hotdog.png', 'allergens' => ['gluten', 'soja']],
-        ['id' => 5, 'name' => 'Hotdog Vegano', 'description' => 'Salchicha vegetal, mayonesa vegana, pepinillos y mostaza.', 'price' => 6.50, 'image' => 'assets/vegan-hotdog.png', 'allergens' => ['gluten', 'soja']],
-        ['id' => 6, 'name' => 'Refresco Cola', 'description' => 'Bebida refrescante y burbujeante.', 'price' => 2.00, 'image' => 'assets/soda.png', 'allergens' => []],
-        ['id' => 7, 'name' => 'Agua Mineral', 'description' => 'Agua pura y natural, sin gas.', 'price' => 1.00, 'image' => 'assets/water.png', 'allergens' => []]
+        ['id' => 1, 'name' => 'Nachos con Queso', 'description' => '', 'price' => 6.00, 'image' => 'assets/nachos.png', 'allergens' => ['gluten', 'lacteos']],
+        ['id' => 2, 'name' => 'Patatas Fritas', 'description' => '', 'price' => 3.50, 'image' => 'assets/fries.png', 'allergens' => []],
+        ['id' => 3, 'name' => 'Hotdog BBQ', 'description' => '', 'price' => 7.50, 'image' => 'assets/bbq_hotdog.png', 'allergens' => ['gluten', 'lacteos', 'soja']],
+        ['id' => 4, 'name' => 'Hotdog Clásico', 'description' => '', 'price' => 5.99, 'image' => 'assets/hotdog.png', 'allergens' => ['gluten', 'soja']],
+        ['id' => 5, 'name' => 'Hotdog Vegano', 'description' => '', 'price' => 6.50, 'image' => 'assets/vegan-hotdog.png', 'allergens' => ['gluten', 'soja']],
+        ['id' => 6, 'name' => 'Refresco Cola', 'description' => '', 'price' => 2.00, 'image' => 'assets/soda.png', 'allergens' => []],
+        ['id' => 7, 'name' => 'Agua Mineral', 'description' => '', 'price' => 1.00, 'image' => 'assets/water.png', 'allergens' => []]
     ];
 }
 

@@ -34,7 +34,7 @@ $unreadCount = getUnreadNotificationsCount($pdo, (int)$_SESSION['user_id']);
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin - Notificaciones</title>
+<title data-i18n="notif.title">Admin - Notificaciones</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <link rel="stylesheet" href="styles.css?v=20260211-5">
 <style>
@@ -64,19 +64,19 @@ $unreadCount = getUnreadNotificationsCount($pdo, (int)$_SESSION['user_id']);
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-          <a href="perfil.php">Mi perfil</a>
-          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-          <a href="logout.php">Cerrar Sesión</a>
+          <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
+          <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
+          <a href="logout.php" data-i18n="nav.logout">Cerrar Sesión</a>
       </div>
     </div>
     <a href="admin.php" class="landing-logo"><span class="landing-logo-text">Zyma</span></a>
-        <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
+    <div class="quick-menu-section">
+      <button class="quick-menu-btn" id="quickMenuBtn" data-i18n-aria="nav.quickMenu" aria-label="Menú rápido"></button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="admin.php">Panel Admin</a>
-        <a href="admin_orders.php">Pedidos</a>
-        <a href="admin_inventory.php">Inventario</a>
-        <a href="admin_products.php">Productos</a>
+        <a href="admin.php" data-i18n="admin.panelLink">Panel Admin</a>
+        <a href="admin_orders.php" data-i18n="admin.ordersLink">Pedidos</a>
+        <a href="admin_inventory.php" data-i18n="admin.inventoryLink">Inventario</a>
+        <a href="admin_products.php" data-i18n="admin.productsLink">Productos</a>
       </div>
     </div>
   </div>
@@ -86,11 +86,11 @@ $unreadCount = getUnreadNotificationsCount($pdo, (int)$_SESSION['user_id']);
     <div class="section-card">
         <div class="row-between section-head">
             <div>
-                <h2>Notificaciones</h2>
-                <p class="lead">Tienes <?= $unreadCount ?> notificación<?= $unreadCount === 1 ? '' : 'es' ?> sin leer.</p>
+                <h2 data-i18n="notif.title">Notificaciones</h2>
+                <p class="lead"><span data-i18n="notif.unread">No leídas:</span> <?= $unreadCount ?></p>
             </div>
             <div>
-                <a href="usuario.php" class="landing-link">Volver a inicio</a>
+                <a href="admin.php" class="landing-link" data-i18n="admin.backHome">Volver a inicio</a>
             </div>
         </div>
         <?php if ($message): ?>
@@ -99,12 +99,12 @@ $unreadCount = getUnreadNotificationsCount($pdo, (int)$_SESSION['user_id']);
         <div class="notification-actions">
             <form method="POST">
                 <input type="hidden" name="action" value="read_all">
-                <button type="submit" class="btn-add-cart">Marcar todas como leídas</button>
+                <button type="submit" class="btn-add-cart" data-i18n="notif.markAllRead">Marcar todas como leídas</button>
             </form>
         </div>
         <div class="notifications-list">
             <?php if (empty($notifications)): ?>
-                <div class="notification-card empty-state">No hay notificaciones aún.</div>
+                <div class="notification-card empty-state" data-i18n="notif.empty">No hay notificaciones aún.</div>
             <?php else: ?>
                 <?php foreach ($notifications as $notification): ?>
                     <div class="notification-card <?= $notification['leida'] ? 'notification-read' : 'notification-unread' ?>">
@@ -115,7 +115,7 @@ $unreadCount = getUnreadNotificationsCount($pdo, (int)$_SESSION['user_id']);
                             <form method="POST">
                                 <input type="hidden" name="action" value="read_single">
                                 <input type="hidden" name="notification_id" value="<?= (int)$notification['id'] ?>">
-                                <button type="submit" class="btn-add-cart">Marcar leída</button>
+                                <button type="submit" class="btn-add-cart" data-i18n="notif.markRead">Marcar leída</button>
                             </form>
                         <?php endif; ?>
                     </div>
@@ -137,5 +137,17 @@ if (profileBtn && dropdownMenu) {
     });
 }
 </script>
+<script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/lang.js?v=20260428-1"></script>
+<footer>
+  <p data-i18n="footer.rights">&copy; 2026 Zyma. Todos los derechos reservados.</p>
+  <p class="footer-legal-links">
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
+    <span>|</span>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
+    <span>|</span>
+    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
+  </p>
+</footer>
 </body>
 </html>
