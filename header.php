@@ -92,7 +92,11 @@ if ($show_notif && $is_logged_in) {
 
       <?php if ($is_logged_in && $quick_links): ?>
         <div class="quick-menu-section">
-          <button class="quick-menu-btn" id="quickMenuBtn" data-i18n-aria="nav.quickMenu" aria-label="Menú rápido"></button>
+          <button class="quick-menu-btn" id="quickMenuBtn" data-i18n-aria="nav.quickMenu" aria-label="Menú rápido">
+          <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 7h14M5 12h14M5 17h14" />
+          </svg>
+        </button>
           <div class="dropdown quick-dropdown" id="quickDropdown">
             <?php foreach ($quick_links as $quick_link): ?>
               <a href="<?= htmlspecialchars($quick_link['href']) ?>" <?= !empty($quick_link['i18n']) ? 'data-i18n="' . htmlspecialchars($quick_link['i18n']) . '"' : '' ?>><?= htmlspecialchars($quick_link['label']) ?></a>
@@ -138,3 +142,5 @@ if ($show_notif && $is_logged_in) {
     }
   });
 </script>
+
+

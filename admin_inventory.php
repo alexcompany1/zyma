@@ -23,19 +23,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $stmt = $pdo->prepare("UPDATE ingredientes SET cantidad = GREATEST(0, cantidad + :delta) WHERE id = :id");
             $stmt->execute([':delta' => $change, ':id' => $ingredientId]);
             $message = 'Stock actualizado.';
+            notifyCriticalIngredient($pdo, $ingredientId, (int)$_SESSION['user_id']);
         }
         if ($_POST['action'] === 'edit_threshold' && hasTableColumn($pdo, 'ingredientes', 'stock_minimo')) {
             $min = max(0, floatval($_POST['min_quantity'] ?? 0));
             $stmt = $pdo->prepare("UPDATE ingredientes SET stock_minimo = :min WHERE id = :id");
             $stmt->execute([':min' => $min, ':id' => $ingredientId]);
             $message = 'Umbral actualizado.';
+            notifyCriticalIngredient($pdo, $ingredientId, (int)$_SESSION['user_id']);
+        }
+    }
+    if ($_POST['action'] === 'add_ingredient') {
+        $name = trim($_POST['name'] ?? '');
+        $initialStock = max(0, floatval($_POST['initial_stock'] ?? 0));
+        $threshold = max(0, floatval($_POST['threshold'] ?? 0));
+        $unit = trim($_POST['unit'] ?? 'unidades');
+        $status = trim($_POST['status'] ?? 'Activo');
+
+        if ($name === '') {
+            $message = 'El nombre del ingrediente es obligatorio.';
+        } else {
+            $stmt = $pdo->prepare("INSERT INTO ingredientes (nombre, cantidad, stock_minimo, unidad) VALUES (:name, :cantidad, :stock_minimo, :unidad)");
+            $stmt->execute([
+                ':name' => $name,
+                ':cantidad' => $initialStock,
+                ':stock_minimo' => $threshold,
+                ':unidad' => $unit ?: 'unidades'
+            ]);
+            $message = 'Ingrediente añadido correctamente.';
+            // Reload ingredients
+            $stmt = $pdo->query(
+                "SELECT id, nombre, cantidad, unidad AS unit, stock_minimo, COALESCE(unit, 'unidades') AS safe_unit, COALESCE(stock_minimo, 1) AS safe_min
+                 FROM ingredientes
+                 ORDER BY nombre ASC"
+            );
+            $ingredients = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     }
 }
 
 try {
     $stmt = $pdo->query(
-        "SELECT id, nombre, cantidad, unidad AS unit, stock_minimo, COALESCE(unidad, 'unidades') AS safe_unit, COALESCE(stock_minimo, 1) AS safe_min
+        "SELECT id, nombre, cantidad, unidad AS unit, stock_minimo, COALESCE(unit, 'unidades') AS safe_unit, COALESCE(stock_minimo, 1) AS safe_min
          FROM ingredientes
          ORDER BY nombre ASC"
     );
@@ -44,14 +73,17 @@ try {
     $ingredients = [];
     $message = 'Error al cargar ingredientes: ' . htmlspecialchars($e->getMessage());
 }
+
+notifyCriticalIngredients($pdo, (int)$_SESSION['user_id']);
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title data-i18n="adminInventory.title">Admin - Inventario</title>
-<link rel="icon" type="image/png" href="assets/favicon.png">
+<title>Admin - Inventario</title>
+<link rel="icon" type="image/png" href="assets/fabiconig.png">
+<link rel="shortcut icon" type="image/png" href="assets/fabiconig.png">
 <link rel="stylesheet" href="styles.css?v=20260211-5">
 <style>
 .stock-badge { display:inline-block; min-width:72px; padding:.35rem .7rem; border-radius:999px; color:#fff; font-size:.85rem; }
@@ -83,19 +115,23 @@ if ($display_name === '') {
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-          <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
-          <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
-          <a href="logout.php" data-i18n="nav.logout">Cerrar Sesión</a>
+          <a href="perfil.php">Mi perfil</a>
+          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
+          <a href="logout.php">Cerrar Sesión</a>
       </div>
     </div>
     <a href="admin.php" class="landing-logo"><span class="landing-logo-text">Zyma</span></a>
-    <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" data-i18n-aria="nav.quickMenu" aria-label="Menú rápido"></button>
+        <div class="quick-menu-section">
+      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido">
+        <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 7h14M5 12h14M5 17h14" />
+        </svg>
+      </button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="admin.php" data-i18n="admin.panelLink">Panel Admin</a>
-        <a href="admin_orders.php" data-i18n="admin.ordersLink">Pedidos</a>
-        <a href="admin_inventory.php" data-i18n="admin.inventoryLink">Inventario</a>
-        <a href="admin_products.php" data-i18n="admin.productsLink">Productos</a>
+        <a href="admin.php">Panel Admin</a>
+        <a href="admin_orders.php">Pedidos</a>
+        <a href="admin_inventory.php">Inventario</a>
+        <a href="admin_products.php">Productos</a>
       </div>
     </div>
   </div>
@@ -105,11 +141,11 @@ if ($display_name === '') {
     <div class="section-card">
         <div class="row-between section-head">
             <div>
-                <h2 data-i18n="adminInventory.title">Inventario de ingredientes</h2>
-                <p class="lead" data-i18n="adminInventory.desc">Visualiza stock, umbrales y actualiza cantidades al instante.</p>
+                <h2>Inventario de ingredientes</h2>
+                <p class="lead">Visualiza stock, umbrales y actualiza cantidades al instante.</p>
             </div>
             <div>
-                <a href="admin.php" class="landing-link" data-i18n="admin.backHome">Volver a inicio</a>
+                <a href="usuario.php" class="landing-link">Volver a inicio</a>
             </div>
         </div>
         <?php if ($message): ?>
@@ -117,16 +153,16 @@ if ($display_name === '') {
         <?php endif; ?>
 
         <?php if (empty($ingredients)): ?>
-            <p class="empty-state" data-i18n="adminInventory.noIngredients">No hay ingredientes registrados.</p>
+            <p class="empty-state">No hay ingredientes registrados.</p>
         <?php else: ?>
             <table class="inventory-table">
                 <thead>
                     <tr>
-                        <th data-i18n="adminInventory.ingredient">Ingrediente</th>
-                        <th data-i18n="adminInventory.stock">Stock</th>
-                        <th data-i18n="adminInventory.threshold">Umbral</th>
-                        <th data-i18n="adminInventory.status">Estado</th>
-                        <th data-i18n="adminInventory.actions">Acciones</th>
+                        <th>Ingrediente</th>
+                        <th>Stock</th>
+                        <th>Umbral</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -150,13 +186,13 @@ if ($display_name === '') {
                                         <input type="hidden" name="action" value="update_stock">
                                         <input type="hidden" name="ingredient_id" value="<?= (int)$ingredient['id'] ?>">
                                         <input type="number" step="0.1" name="change" placeholder="+/-" style="width:80px;" required>
-                                        <button type="submit" class="btn-add-cart" data-i18n="adminInventory.update">Actualizar</button>
+                                        <button type="submit" class="btn-add-cart">Actualizar</button>
                                     </form>
                                     <form method="POST" style="display:inline-flex; gap:.4rem; align-items:center;">
                                         <input type="hidden" name="action" value="edit_threshold">
                                         <input type="hidden" name="ingredient_id" value="<?= (int)$ingredient['id'] ?>">
-                                        <input type="number" step="0.1" name="min_quantity" data-i18n-placeholder="adminInventory.threshold" placeholder="Umbral" style="width:80px;" value="<?= htmlspecialchars($minQuantity) ?>" required>
-                                        <button type="submit" class="btn-add-cart" data-i18n="adminInventory.save">Guardar</button>
+                                        <input type="number" step="0.1" name="min_quantity" placeholder="Umbral" style="width:80px;" value="<?= htmlspecialchars($minQuantity) ?>" required>
+                                        <button type="submit" class="btn-add-cart">Guardar</button>
                                     </form>
                                 </div>
                             </td>
@@ -165,12 +201,31 @@ if ($display_name === '') {
                 </tbody>
             </table>
         <?php endif; ?>
+
+        <div style="margin-top:1.5rem;">
+            <h3>Añadir ingrediente</h3>
+            <form method="POST" style="display:grid; gap:1rem; max-width:500px;">
+                <input type="hidden" name="action" value="add_ingredient">
+                <input type="text" name="name" placeholder="Nombre del ingrediente" required>
+                <input type="number" step="0.1" name="initial_stock" placeholder="Stock inicial" min="0" required>
+                <input type="number" step="0.1" name="threshold" placeholder="Umbral mínimo" min="0" required>
+                <input type="text" name="unit" placeholder="Unidad (ej: kg, litros, unidades)" value="unidades">
+                <select name="status">
+                    <option value="Activo" selected>Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                </select>
+                <button type="submit" class="btn-add-cart">Añadir ingrediente</button>
+            </form>
+        </div>
     </div>
 </div>
 
 <script>
 const profileBtn = document.getElementById('profileBtn');
 const dropdownMenu = document.getElementById('dropdownMenu');
+const quickBtn = document.getElementById('quickMenuBtn');
+const quickDropdown = document.getElementById('quickDropdown');
+
 if (profileBtn && dropdownMenu) {
     profileBtn.addEventListener('click', () => dropdownMenu.classList.toggle('show'));
     window.addEventListener('click', e => {
@@ -179,18 +234,19 @@ if (profileBtn && dropdownMenu) {
         }
     });
 }
+
+if (quickBtn && quickDropdown) {
+    quickBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        quickDropdown.classList.toggle('show');
+    });
+}
+
+window.addEventListener('click', (e) => {
+    if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
+        quickDropdown.classList.remove('show');
+    }
+});
 </script>
-<script src="assets/mobile-header.js?v=20260211-6"></script>
-<script src="assets/lang.js?v=20260428-1"></script>
-<footer>
-  <p data-i18n="footer.rights">&copy; 2026 Zyma. Todos los derechos reservados.</p>
-  <p class="footer-legal-links">
-    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
-    <span>|</span>
-    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
-    <span>|</span>
-    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
-  </p>
-</footer>
 </body>
 </html>
