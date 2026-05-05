@@ -23,8 +23,7 @@ $bizumBeneficiary = getenv('BIZUM_BENEFICIARY') ?: 'Zyma';
 $bizumConceptPrefix = getenv('BIZUM_CONCEPT_PREFIX') ?: 'Pedido Zyma';
 
 $localConfigPath = __DIR__ . DIRECTORY_SEPARATOR . 'config.local.php';
-$isProduction = isset($_SERVER['SERVER_NAME']) && (strpos($_SERVER['SERVER_NAME'], 'wuaze') !== false || strpos($_SERVER['SERVER_NAME'], 'infinityfree') !== false);
-if (is_file($localConfigPath) && !$isProduction) {
+if (is_file($localConfigPath)) {
     require $localConfigPath;
 }
 

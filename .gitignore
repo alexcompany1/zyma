@@ -2,3 +2,6 @@
 
 # Stripe keys - never commit
 stripe_keys.txt
+
+# Archivos locales con credenciales - nunca subir
+config.local.php
