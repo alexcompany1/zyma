@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'db.php';
+require_once 'config.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
@@ -23,7 +23,7 @@ if ($productId <= 0) {
     exit;
 }
 
-$pdo = getPDO();
+// $pdo ya está disponible desde config.php
 
 // Obtener producto
 $stmt = $pdo->prepare("SELECT id, nombre, precio FROM productos WHERE id = ?");
@@ -50,9 +50,9 @@ if (!empty($extras)) {
     foreach ($selectedExtras as $extra) {
         $extrasTotal += (float)$extra['precio_adicional'];
         $extrasDetails[] = [
-            'id' => $extra['id'],
-            'nombre' => $extra['nombre'],
-            'precio' => (float)$extra['precio_adicional']
+            'id' => (int)$extra['id'],
+            'name' => $extra['nombre'],
+            'price' => (float)$extra['precio_adicional']
         ];
     }
 }

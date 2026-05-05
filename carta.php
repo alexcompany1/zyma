@@ -392,8 +392,13 @@ if (profileBtn && dropdownMenu) {
 const productsData = <?= json_encode($products) ?>;
 
 function openCustomizer(productId) {
+  console.log('openCustomizer called with ID:', productId);
   const product = productsData.find(p => p.id === productId);
-  if (!product) return;
+  console.log('Product found:', product);
+  if (!product) {
+    console.error('Product not found');
+    return;
+  }
 
   document.getElementById('customizerProductId').value = productId;
   document.getElementById('customizerTitle').textContent = product.name;
@@ -409,6 +414,11 @@ function openCustomizer(productId) {
       div.className = 'customizer-item';
       div.innerHTML = '<label><input type="checkbox" name="extras[]" value="' + extra.id + '" data-price="' + extra.price + '"><span>' + extra.name + ' (+€' + extra.price.toFixed(2) + ')</span></label>';
       extrasContainer.appendChild(div);
+    });
+    
+    // Add event listeners after creating checkboxes
+    extrasContainer.querySelectorAll('input[type="checkbox"]').forEach(function(checkbox) {
+      checkbox.addEventListener('change', updateCustomizerTotal);
     });
   } else {
     extrasContainer.innerHTML = '<p>Sin extras disponibles.</p>';
@@ -452,9 +462,6 @@ function updateCustomizerTotal() {
 }
 
 document.getElementById('customizerQuantity').addEventListener('change', updateCustomizerTotal);
-document.querySelectorAll('input[name="extras[]"]').forEach(function(input) {
-  input.addEventListener('change', updateCustomizerTotal);
-});
 
 // Close modal on outside click
 document.getElementById('customizerModal').addEventListener('click', function(e) {

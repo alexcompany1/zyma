@@ -61,39 +61,7 @@ foreach ($_SESSION['cart'] ?? [] as $index => $item) {
         'subtotal' => $itemTotal
     ];
     
-    $total += $itemTotal;
-}
-
-    $product = $products[$item['id']];
-    $quantity = (int)($item['quantity'] ?? 1);
-    $basePrice = (float)($item['precio'] ?? $product['price']);
-    
-    // Calcular precio de extras
-    $extrasTotal = 0;
-    $extrasNames = [];
-    if (!empty($item['extras'])) {
-        foreach ($item['extras'] as $extra) {
-            $extrasTotal += (float)($extra['precio'] ?? 0);
-            $extrasNames[] = $extra['nombre'] ?? '';
-        }
-    }
-    
-    $itemTotal = ($basePrice + $extrasTotal) * $quantity;
-    
-    $cartItems[] = [
-        'index' => $index,
-        'id' => (int)$item['id'],
-        'name' => $product['name'],
-        'price' => $basePrice,
-        'image' => $product['image'],
-        'quantity' => $quantity,
-        'extras' => $item['extras'] ?? [],
-        'extras_names' => $extrasNames,
-        'extras_total' => $extrasTotal,
-        'subtotal' => $itemTotal
-    ];
-    
-    $total += $itemTotal;
+     $total += $itemTotal;
 }
 
 $error = null;
