@@ -1,0 +1,84 @@
+<?php
+session_start();
+require 'db.php';
+
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: carta.php');
+    exit;
+}
+
+$userId = $_SESSION['user_id'];
+$productId = (int)($_POST['product_id'] ?? 0);
+$quantity = max(1, (int)($_POST['quantity'] ?? 1));
+$extras = $_POST['extras'] ?? [];
+
+if ($productId <= 0) {
+    $_SESSION['error'] = 'Producto no válido.';
+    header('Location: carta.php');
+    exit;
+}
+
+$pdo = getPDO();
+
+// Obtener producto
+$stmt = $pdo->prepare("SELECT id, nombre, precio FROM productos WHERE id = ?");
+$stmt->execute([$productId]);
+$product = $stmt->fetch();
+
+if (!$product) {
+    $_SESSION['error'] = 'Producto no encontrado.';
+    header('Location: carta.php');
+    exit;
+}
+
+// Calcular precio con extras
+$basePrice = (float)$product['precio'];
+$extrasTotal = 0;
+$extrasDetails = [];
+
+if (!empty($extras)) {
+    $placeholders = implode(',', array_fill(0, count($extras), '?'));
+    $stmt = $pdo->prepare("SELECT id, nombre, precio_adicional FROM product_extras WHERE id IN ($placeholders) AND activo = 1");
+    $stmt->execute($extras);
+    $selectedExtras = $stmt->fetchAll();
+
+    foreach ($selectedExtras as $extra) {
+        $extrasTotal += (float)$extra['precio_adicional'];
+        $extrasDetails[] = [
+            'id' => $extra['id'],
+            'nombre' => $extra['nombre'],
+            'precio' => (float)$extra['precio_adicional']
+        ];
+    }
+}
+
+$finalPrice = ($basePrice + $extrasTotal) * $quantity;
+
+// Añadir al carrito
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+}
+
+$cartItem = [
+    'id' => $productId,
+    'nombre' => $product['nombre'],
+    'precio' => $basePrice,
+    'quantity' => $quantity,
+    'extras' => $extrasDetails,
+    'precio_final' => $finalPrice
+];
+
+$_SESSION['cart'][] = $cartItem;
+
+$_SESSION['toast_message'] = [
+    'text' => 'Producto personalizado añadido al carrito',
+    'icon' => 'OK'
+];
+
+header('Location: carta.php');
+exit;

@@ -49,6 +49,34 @@ $stmtItems = $pdo->prepare("
 ");
 $stmtItems->execute([':pedido_id' => $pedido_id]);
 $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
+
+// Cargar extras de los productos en este pedido (si los hay)
+$itemsWithExtras = [];
+$productIds = array_column($items, 'id_producto');
+if (!empty($productIds)) {
+    $placeholders = implode(',', array_fill(0, count($productIds), '?'));
+    $stmtExtras = $pdo->prepare("
+        SELECT pe.id_pedido_item, e.nombre, e.precio_adicional
+        FROM pedido_item_extras pe
+        JOIN product_extras e ON pe.id_extra = e.id
+        WHERE pe.id_pedido_item IN (
+            SELECT pi.id FROM pedido_items pi WHERE pi.id_pedido = ? AND pi.id_producto IN ($placeholders)
+        )
+    ");
+    $stmtExtras->execute(array_merge([$pedido_id], $productIds));
+    $extras = $stmtExtras->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Agrupar extras por item
+    $extrasByItem = [];
+    foreach ($extras as $extra) {
+        $extrasByItem[$extra['id_pedido_item']][] = $extra;
+    }
+    
+    // Añadir extras a los items
+    foreach ($items as &$item) {
+        $item['extras'] = $extrasByItem[$item['id']] ?? [];
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -132,7 +160,18 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
                 <tbody>
                     <?php foreach ($items as $item): ?>
                         <tr>
-                            <td><?= htmlspecialchars($item['nombre']) ?></td>
+                            <td>
+                                <?= htmlspecialchars($item['nombre']) ?>
+                                <?php if (!empty($item['extras'])): ?>
+                                    <div style="font-size:0.85rem;color:#666;margin-top:4px;">
+                                    <?php foreach ($item['extras'] as $extra): ?>
+                                        <span style="display:inline-block;background:#f5ede0;padding:2px 8px;border-radius:12px;margin:2px;">
+                                            <?= htmlspecialchars($extra['nombre']) ?> (+€<?= number_format($extra['precio_adicional'], 2, ',', '.') ?>)
+                                        </span>
+                                    <?php endforeach; ?>
+                                    </div>
+                                <?php endif; ?>
+                            </td>
                             <td class="center"><?= $item['cantidad'] ?></td>
                             <td class="text-right">€<?= number_format($item['precio_unitario'], 2, ',', '.') ?></td>
                             <td class="text-right">€<?= number_format($item['cantidad'] * $item['precio_unitario'], 2, ',', '.') ?></td>

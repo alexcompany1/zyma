@@ -79,15 +79,51 @@ try {
     ");
     $products_db = $stmt->fetchAll();
 
+    // Obtener extras y alérgenos para todos los productos
+    $extras_stmt = $pdo->query("
+        SELECT pe.id_producto, e.id as extra_id, e.nombre as extra_nombre, e.precio_adicional
+        FROM producto_extras pe
+        JOIN product_extras e ON pe.id_extra = e.id
+        WHERE e.activo = 1
+    ");
+    $extras_db = $extras_stmt->fetchAll();
+
+    $allergens_stmt = $pdo->query("
+        SELECT pa.id_producto, a.id as allergeno_id, a.nombre as allergeno_nombre, a.icono
+        FROM producto_allergens pa
+        JOIN product_allergens a ON pa.id_allergen = a.id
+    ");
+    $allergens_db = $allergens_stmt->fetchAll();
+
+    $products_extras = [];
+    foreach ($extras_db as $extra) {
+        $products_extras[$extra['id_producto']][] = [
+            'id' => $extra['extra_id'],
+            'nombre' => $extra['extra_nombre'],
+            'precio' => (float)$extra['precio_adicional']
+        ];
+    }
+
+    $products_allergens = [];
+    foreach ($allergens_db as $allergen) {
+        $products_allergens[$allergen['id_producto']][] = [
+            'id' => $allergen['allergeno_id'],
+            'nombre' => $allergen['allergeno_nombre'],
+            'icono' => $allergen['icono']
+        ];
+    }
+
     $products = [];
     foreach ($products_db as $product) {
+        $pid = $product['id'];
         $products[] = [
-            'id' => $product['id'],
+            'id' => $pid,
             'name' => $product['nombre'],
             'description' => '',
             'price' => (float)$product['precio'],
             'image' => $product['imagen'],
-            'allergens' => [],
+            'extras' => $products_extras[$pid] ?? [],
+            'allergens' => $products_allergens[$pid] ?? [],
             'promedio' => (float)($product['promedio_puntuacion'] ?? 0),
             'total_valoraciones' => (int)($product['total_valoraciones'] ?? 0)
         ];
@@ -281,15 +317,46 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
           <a href="login.php" class="btn-add-cart" data-i18n="menu.loginToOrder">Inicia Sesión para pedir</a>
           <a href="login.php" class="btn-valorar" data-i18n="menu.rateProduct">Valorar producto</a>
         <?php else: ?>
-          <form method="POST">
-            <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
-            <button type="submit" name="add_to_cart" class="btn-add-cart" data-i18n="menu.addToCart">Añadir al carrito</button>
-          </form>
+          <button type="button" class="btn-customize" onclick="openCustomizer(<?= (int)$product['id'] ?>)" data-i18n="customizer.customize">Personalizar</button>
           <a href="valoraciones.php?producto=<?= (int)$product['id'] ?>" class="btn-valorar" data-i18n="menu.rateProduct">Valorar producto</a>
         <?php endif; ?>
       </div>
     </div>
     <?php endforeach; ?>
+  </div>
+
+  <!-- Modal Personalizador -->
+  <div id="customizerModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeCustomizer()">&times;</span>
+      <h2 class="card-title" id="customizerTitle"></h2>
+      <p class="card-desc" id="customizerDesc"></p>
+      
+      <form method="POST" action="procesar_pedido_personalizado.php" id="customizerForm">
+        <input type="hidden" name="product_id" id="customizerProductId">
+        
+        <div class="customizer-section">
+          <h3 data-i18n="customizer.extras">Extras</h3>
+          <div id="customizerExtras"></div>
+        </div>
+
+        <div class="customizer-section">
+          <h3 data-i18n="customizer.allergens">Alérgenos</h3>
+          <div id="customizerAllergens"></div>
+        </div>
+
+        <div class="customizer-section">
+          <h3 data-i18n="customizer.quantity">Cantidad</h3>
+          <input type="number" name="quantity" id="customizerQuantity" value="1" min="1" max="10" style="width:60px;">
+        </div>
+
+        <div class="customizer-summary">
+          <strong>Total: €<span id="customizerTotal">0.00</span></strong>
+        </div>
+
+        <button type="submit" class="btn-add-cart" data-i18n="customizer.addToCart">Añadir al carrito</button>
+      </form>
+    </div>
   </div>
 </div>
 
@@ -318,15 +385,82 @@ if (profileBtn && dropdownMenu) {
 }
 <?php endif; ?>
 
+const productsData = <?= json_encode($products) ?>;
+ 
+function openCustomizer(productId) {
+  const product = productsData.find(p => p.id === productId);
+  if (!product) return;
+
+  document.getElementById('customizerProductId').value = productId;
+  document.getElementById('customizerTitle').textContent = product.name;
+  document.getElementById('customizerDesc').textContent = 'EUR ' + product.price.toFixed(2);
+  document.getElementById('customizerQuantity').value = 1;
+
+  // Render extras
+  const extrasContainer = document.getElementById('customizerExtras');
+  extrasContainer.innerHTML = '';
+  if (product.extras && product.extras.length > 0) {
+    product.extras.forEach(function(extra) {
+      const div = document.createElement('div');
+      div.className = 'customizer-item';
+      div.innerHTML = '<label><input type="checkbox" name="extras[]" value="' + extra.id + '" data-price="' + extra.precio + '"><span>' + extra.nombre + ' (+€' + extra.precio.toFixed(2) + ')</span></label>';
+      extrasContainer.appendChild(div);
+    });
+  } else {
+    extrasContainer.innerHTML = '<p data-i18n="customizer.noExtras">Sin extras disponibles.</p>';
+  }
+
+  // Render allergens
+  const allergensContainer = document.getElementById('customizerAllergens');
+  allergensContainer.innerHTML = '';
+  if (product.allergens && product.allergens.length > 0) {
+    product.allergens.forEach(function(allergen) {
+      const span = document.createElement('span');
+      span.className = 'allergen-tag';
+      span.textContent = (allergen.icono || '') + ' ' + allergen.nombre;
+      allergensContainer.appendChild(span);
+    });
+  }
+
+  updateCustomizerTotal();
+  document.getElementById('customizerModal').style.display = 'block';
+}
+
+function closeCustomizer() {
+  document.getElementById('customizerModal').style.display = 'none';
+}
+
+function updateCustomizerTotal() {
+  const productId = parseInt(document.getElementById('customizerProductId').value);
+  const product = productsData.find(p => p.id === productId);
+  if (!product) return;
+
+  let total = product.price;
+  const quantity = parseInt(document.getElementById('customizerQuantity').value) || 1;
+  
+  const checkedExtras = document.querySelectorAll('input[name="extras[]"]:checked');
+  checkedExtras.forEach(function(input) {
+    total += parseFloat(input.dataset.price);
+  });
+
+  total *= quantity;
+  document.getElementById('customizerTotal').textContent = total.toFixed(2);
+}
+
+document.getElementById('customizerQuantity').addEventListener('change', updateCustomizerTotal);
+document.querySelectorAll('input[name="extras[]"]').forEach(function(input) {
+  input.addEventListener('change', updateCustomizerTotal);
+});
+
+// Close modal on outside click
+document.getElementById('customizerModal').addEventListener('click', function(e) {
+  if (e.target.id === 'customizerModal') closeCustomizer();
+});
+
 const toast = document.getElementById('toastNotification');
 if (toast) {
-  setTimeout(() => {
-    toast.classList.add('show');
-  }, 100);
-
-  setTimeout(() => {
-    toast.classList.remove('show');
-  }, 3000);
+  setTimeout(() => toast.classList.add('show'), 100);
+  setTimeout(() => toast.classList.remove('show'), 3000);
 }
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>

@@ -3998,3 +3998,44 @@ body.cookie-modal-open {
     padding: 1rem;
   }
 }
+
+/* ===== MODAL PERSONALIZADOR ===== */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 10000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+}
+.modal-content {
+  background: #fff;
+  margin: 5% auto;
+  padding: 2rem;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 16px;
+  position: relative;
+}
+.close-modal {
+  position: absolute;
+  right: 1rem; top: 1rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+.customizer-section {
+  margin: 1rem 0;
+}
+.customizer-item {
+  margin: 0.5rem 0;
+}
+.customizer-summary {
+  margin-top: 1rem;
+  font-size: 1.1rem;
+}
+.btn-customize {
+  background: #45050C; color: #fff; border: none;
+  padding: 8px 16px; border-radius: 8px; cursor: pointer;
+}

@@ -943,6 +943,172 @@ ALTER TABLE `respuestas_valoraciones`
 ALTER TABLE `valoraciones`
   ADD CONSTRAINT `valoraciones_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `valoraciones_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`id`) ON DELETE CASCADE;
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `loyalty_users`
+--
+
+CREATE TABLE `loyalty_users` (
+  `id` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL UNIQUE,
+  `puntos` int(11) NOT NULL DEFAULT 0,
+  `nivel` enum('bronce','silver','gold') NOT NULL DEFAULT 'bronce',
+  `total_canjeado` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `loyalty_users`
+--
+
+INSERT INTO `loyalty_users` (`id`, `id_usuario`, `puntos`, `nivel`, `total_canjeado`, `created_at`, `updated_at`) VALUES
+(1, 1, 150, 'silver', 0.00, '2026-04-20 10:00:00', '2026-04-20 10:00:00'),
+(2, 2, 50, 'bronce', 0.00, '2026-04-20 10:00:00', '2026-04-20 10:00:00'),
+(3, 3, 500, 'gold', 25.00, '2026-04-20 10:00:00', '2026-04-20 10:00:00');
+
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `loyalty_transactions`
+--
+
+CREATE TABLE `loyalty_transactions` (
+  `id` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `tipo` enum('ganado','canjeado') NOT NULL,
+  `puntos` int(11) NOT NULL,
+  `concepto` varchar(255) NOT NULL,
+  `monto` decimal(10,2) DEFAULT NULL,
+  `fecha` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `loyalty_transactions`
+--
+
+INSERT INTO `loyalty_transactions` (`id`, `id_usuario`, `tipo`, `puntos`, `concepto`, `monto`, `fecha`) VALUES
+(1, 1, 'ganado', 50, 'Pedido #1', 12.50, '2026-04-15 10:00:00'),
+(2, 1, 'ganado', 100, 'Pedido #2', 25.00, '2026-04-18 10:00:00'),
+(3, 3, 'ganado', 300, 'Pedido #3', 75.00, '2026-04-10 10:00:00'),
+(4, 3, 'canjeado', -200, 'Descuento 5€', 5.00, '2026-04-12 10:00:00');
+
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `loyalty_rewards`
+--
+
+CREATE TABLE `loyalty_rewards` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `descripcion` text DEFAULT NULL,
+  `puntos_necesarios` int(11) NOT NULL,
+  `descuento_eur` decimal(6,2) DEFAULT NULL,
+  `producto_gratis_id` int(11) DEFAULT NULL,
+  `activo` tinyint(1) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `loyalty_rewards`
+--
+
+INSERT INTO `loyalty_rewards` (`id`, `nombre`, `descripcion`, `puntos_necesarios`, `descuento_eur`, `producto_gratis_id`, `activo`) VALUES
+(1, 'Descuento 5€', 'Canjea por 5€ de descuento en tu siguiente pedido', 200, 5.00, NULL, 1),
+(2, 'Hotdog Gratis', 'Recibe un hotdog clásico gratis', 300, NULL, 4, 1),
+(3, 'Descuento 10€', 'Canjea por 10€ de descuento', 500, 10.00, NULL, 1);
+
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `product_extras`
+--
+
+CREATE TABLE `product_extras` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `precio_adicional` decimal(6,2) NOT NULL DEFAULT 0.00,
+  `activo` tinyint(1) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `product_extras`
+--
+
+INSERT INTO `product_extras` (`id`, `nombre`, `precio_adicional`, `activo`) VALUES
+(1, 'Queso extra', 1.00, 1),
+(2, 'Bacon', 1.50, 1),
+(3, 'Cebolla caramelizada', 0.80, 1),
+(4, 'Jalapeños', 0.50, 1),
+(5, 'Salsa BBQ extra', 0.60, 1);
+
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `product_allergens`
+--
+
+CREATE TABLE `product_allergens` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `icono` varchar(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `product_allergens`
+--
+
+INSERT INTO `product_allergens` (`id`, `nombre`, `icono`) VALUES
+(1, 'Gluten', '🌾'),
+(2, 'Lácteos', '🥛'),
+(3, 'Huevos', '🥚'),
+(4, 'Soja', '🫘'),
+(5, 'Frutos secos', '🥜'),
+(6, 'Pescado', '🐟'),
+(7, 'Mariscos', '🦐'),
+(8, 'Sésamo', '🌱');
+
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `producto_extras`
+--
+
+CREATE TABLE `producto_extras` (
+  `id` int(11) NOT NULL,
+  `id_producto` int(11) NOT NULL,
+  `id_extra` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `producto_extras`
+--
+
+INSERT INTO `producto_extras` (`id`, `id_producto`, `id_extra`) VALUES
+(1, 3, 1),
+(2, 3, 2),
+(3, 3, 5),
+(4, 4, 1),
+(5, 4, 2),
+(6, 5, 2),
+(7, 5, 4);
+
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `producto_allergens`
+--
+
+CREATE TABLE `producto_allergens` (
+  `id` int(11) NOT NULL,
+  `id_producto` int(11) NOT NULL,
+  `id_allergen` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `producto_allergens`
+--
+
+INSERT INTO `producto_allergens` (`id`, `id_producto`, `id_allergen`) VALUES
+(1, 1, 2),
+(2, 3, 2),
+(3, 4, 2),
+(4, 5, 4);
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

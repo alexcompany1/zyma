@@ -27,17 +27,41 @@ try {
 $cartItems = [];
 $total = 0.0;
 
-foreach ($_SESSION['cart'] ?? [] as $id => $qty) {
-    $id = (int) $id;
-    if (!isset($products[$id])) {
+foreach ($_SESSION['cart'] ?? [] as $index => $item) {
+    if (!isset($item['id']) || !isset($products[$item['id']])) {
         continue;
     }
 
-    $product = $products[$id];
-    $product['quantity'] = (int) $qty;
-    $product['subtotal'] = (float) $product['price'] * (int) $qty;
-    $cartItems[] = $product;
-    $total += $product['subtotal'];
+    $product = $products[$item['id']];
+    $quantity = (int)($item['quantity'] ?? 1);
+    $basePrice = (float)($item['precio'] ?? $product['price']);
+    
+    // Calcular precio de extras
+    $extrasTotal = 0;
+    $extrasNames = [];
+    if (!empty($item['extras'])) {
+        foreach ($item['extras'] as $extra) {
+            $extrasTotal += (float)($extra['precio'] ?? 0);
+            $extrasNames[] = $extra['nombre'] ?? '';
+        }
+    }
+    
+    $itemTotal = ($basePrice + $extrasTotal) * $quantity;
+    
+    $cartItems[] = [
+        'index' => $index,
+        'id' => (int)$item['id'],
+        'name' => $product['name'],
+        'price' => $basePrice,
+        'image' => $product['image'],
+        'quantity' => $quantity,
+        'extras' => $item['extras'] ?? [],
+        'extras_names' => $extrasNames,
+        'extras_total' => $extrasTotal,
+        'subtotal' => $itemTotal
+    ];
+    
+    $total += $itemTotal;
 }
 
 $error = null;
@@ -193,23 +217,33 @@ foreach ($cartItems as $item) {
       </div>
     <?php else: ?>
       <?php foreach ($cartItems as $item): ?>
-      <div class="cart-item-row">
-        <img src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="cart-item-img">
-
-        <div class="cart-item-info">
-          <div class="cart-item-name" data-i18n="product.<?= (int) $item['id'] ?>"><?= htmlspecialchars($item['name']) ?></div>
-          <div class="cart-item-meta" id="desc-<?= (int) $item['id'] ?>">
-            EUR <?= number_format((float) $item['price'], 2, ',', '.') ?> x <?= (int) $item['quantity'] ?>
+      <div className="cart-item-row" id="cart-item-<?= (int)$item['index'] ?>">
+        <img src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" className="cart-item-img">
+        
+        <div className="cart-item-info">
+          <div className="cart-item-name"><?= htmlspecialchars($item['name']) ?></div>
+          <?php if (!empty($item['extras_names'])): ?>
+          <div className="cart-item-extras" style="font-size:0.85rem;color:#666;margin:4px 0;">
+            <?php foreach ($item['extras_names'] as $extraName): ?>
+              <span className="extra-tag"><?= htmlspecialchars($extraName) ?></span>
+            <?php endforeach; ?>
           </div>
-          <div class="cart-item-subtotal" id="subtotal-<?= (int) $item['id'] ?>">
-            EUR <?= number_format((float) $item['subtotal'], 2, ',', '.') ?>
+          <?php endif; ?>
+          <div className="cart-item-meta">
+            EUR <?= number_format((float)$item['price'], 2, ',', '.') ?> x <?= (int)$item['quantity'] ?>
+            <?php if (!empty($item['extras_total']) && $item['extras_total'] > 0): ?>
+              <span style="color:#45050C;">(+€<?= number_format($item['extras_total'], 2, ',', '.') ?> extras)</span>
+            <?php endif; ?>
+          </div>
+          <div className="cart-item-subtotal">
+            EUR <?= number_format((float)$item['subtotal'], 2, ',', '.') ?>
           </div>
         </div>
 
-        <div class="quantity-controls">
-          <button class="quantity-btn" onclick="changeQuantity(<?= (int) $item['id'] ?>, -1)">-</button>
-          <span class="quantity-value" id="qty-<?= (int) $item['id'] ?>"><?= (int) $item['quantity'] ?></span>
-          <button class="quantity-btn" onclick="changeQuantity(<?= (int) $item['id'] ?>, 1)">+</button>
+        <div className="quantity-controls">
+          <button className="quantity-btn" onclick="changeQuantity(<?= (int)$item['index'] ?>, -1)">-</button>
+          <span className="quantity-value"><?= (int)$item['quantity'] ?></span>
+          <button className="quantity-btn" onclick="changeQuantity(<?= (int)$item['index'] ?>, 1)">+</button>
         </div>
       </div>
       <?php endforeach; ?>
@@ -299,39 +333,35 @@ window.addEventListener('click', (e) => {
   }
 });
 
-function changeQuantity(productId, delta) {
-  const qtyElement = document.getElementById('qty-' + productId);
-  const descElement = document.getElementById('desc-' + productId);
-  const subtotalElement = document.getElementById('subtotal-' + productId);
+function changeQuantity(itemIndex, delta) {
+  const qtyElement = document.getElementById('qty-' + itemIndex);
+  const subtotalElement = document.getElementById('subtotal-' + itemIndex);
   const totalElement = document.getElementById('total-amount');
-
+  
   let currentQty = parseInt(qtyElement.textContent, 10);
-
+  
   if (delta === -1 && currentQty === 1) {
-    window.location.href = 'eliminar_producto.php?id=' + productId;
+    window.location.href = 'eliminar_producto.php?index=' + itemIndex;
     return;
   }
-
+  
   if (currentQty + delta < 1) return;
-
+  
   currentQty += delta;
   qtyElement.textContent = currentQty;
-
-  const price = Number(cartPrices[productId] || 0);
-  descElement.innerHTML = 'EUR ' + price.toFixed(2).replace('.', ',') + ' x ' + currentQty;
-
+  
+  const price = Number(cartPrices[itemIndex] || 0);
   const subtotal = price * currentQty;
   subtotalElement.innerHTML = 'EUR ' + subtotal.toFixed(2).replace('.', ',');
-
+  
+  // Recalcular total
   let total = 0;
-  <?php foreach ($cartItems as $item): ?>
-  if (<?= (int) $item['id'] ?> === productId) {
-    total += <?= (float) $item['price'] ?> * currentQty;
-  } else {
-    total += <?= (float) $item['price'] ?> * <?= (int) $item['quantity'] ?>;
-  }
-  <?php endforeach; ?>
-
+  document.querySelectorAll('.cart-item-row').forEach(function(row) {
+    const subtotalText = row.querySelector('.cart-item-subtotal').textContent;
+    const value = parseFloat(subtotalText.replace('EUR ', '').replace(',', '.')) || 0;
+    total += value;
+  });
+  
   const totalLabel = document.querySelector('[data-i18n="cart.total"]');
   totalElement.innerHTML = '<span data-i18n="cart.total">' + (totalLabel ? totalLabel.textContent : 'Total:') + '</span> EUR ' + total.toFixed(2).replace('.', ',');
 }
