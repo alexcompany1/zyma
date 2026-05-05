@@ -44,6 +44,88 @@ function zymaCreateOrderFromCart(PDO $pdo, int $userId, array $cartItems, string
     try {
         $orderId = zymaGetNextId($pdo, 'pedidos', 'id_pedido');
         $insertOrder = $pdo->prepare(
+            'INSERT INTO pedidos (id_pedido, id_mesa, id_usuario, fecha_hora, estado, total, metodo_pago, notas_cliente) VALUES (?, ?, ?, NOW(), ?, ?, ?)'
+        );
+        $insertOrder->execute([
+            $orderId,
+            0,
+            $userId,
+            'pendiente',
+            $total,
+            $paymentMethod,
+            $notes,
+        ]);
+
+        $insertItem = $pdo->prepare(
+            'INSERT INTO pedido_items (id, id_pedido, id_producto, cantidad, precio_unitario) VALUES (?, ?, ?, ?, ?)'
+        );
+        $nextItemId = zymaGetNextId($pdo, 'pedido_items', 'id');
+        
+        // Tabla para guardar extras de cada item (necesita ser creada)
+        $insertExtra = $pdo->prepare(
+            'INSERT INTO pedido_item_extras (id_pedido_item, id_extra, precio_extra) VALUES (?, ?, ?)'
+        );
+
+        foreach ($cartItems as $item) {
+            $insertItem->execute([
+                $nextItemId,
+                $orderId,
+                (int) $item['id'],
+                (int) $item['quantity'],
+                (float) $item['price'],
+            ]);
+
+            // Guardar extras si los hay
+            if (!empty($item['extras'])) {
+                foreach ($item['extras'] as $extra) {
+                    $insertExtra->execute([
+                        $nextItemId,
+                        (int) $extra['id'],
+                        (float) $extra['precio'],
+                    ]);
+                }
+            }
+
+            $nextItemId++;
+        }
+
+        $paymentId = zymaGetNextId($pdo, 'pagos', 'id_pago');
+        $insertPayment = $pdo->prepare(
+            'INSERT INTO pagos (id_pago, id_pedido, metodo, monto, estado, fecha_pago) VALUES (?, ?, ?, ?, ?, NOW())'
+        );
+        $insertPayment->execute([
+            $paymentId,
+            $orderId,
+            $paymentMethod,
+            $total,
+            'pendiente',
+        ]);
+
+        $pdo->commit();
+
+        return [
+            'order_id' => $orderId,
+            'payment_id' => $paymentId,
+            'total' => $total,
+        ];
+    } catch (Throwable $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        throw $e;
+    }
+}
+
+    $total = 0.0;
+    foreach ($cartItems as $item) {
+        $total += (float) $item['subtotal'];
+    }
+
+    $pdo->beginTransaction();
+
+    try {
+        $orderId = zymaGetNextId($pdo, 'pedidos', 'id_pedido');
+        $insertOrder = $pdo->prepare(
             'INSERT INTO pedidos (id_pedido, id_mesa, id_usuario, fecha_hora, estado, total, metodo_pago, notas_cliente) VALUES (?, ?, ?, NOW(), ?, ?, ?, ?)'
         );
         $insertOrder->execute([
