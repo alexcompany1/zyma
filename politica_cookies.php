@@ -25,6 +25,11 @@ $is_logged_in = !empty($_SESSION['user_id']);
         <a href="<?= $is_logged_in ? 'usuario.php' : 'index.php' ?>" class="landing-logo">
           <span class="landing-logo-text">Zyma</span>
         </a>
+        <nav class="landing-nav">
+          <a href="<?= $is_logged_in ? 'usuario.php' : 'index.php' ?>" class="landing-nav-link">Inicio</a>
+          <a href="carta.php<?= !$is_logged_in ? '?guest=1' : '' ?>" class="landing-nav-link">Carta</a>
+          <a href="politica_privacidad.php" class="landing-nav-link">Privacidad</a>
+        </nav>
         <div class="landing-actions">
           <?php if (!$is_logged_in): ?>
             <a href="login.php" class="landing-link" data-i18n="nav.enter">Entrar</a>

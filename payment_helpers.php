@@ -148,7 +148,15 @@ function zymaGetOrderForUser(PDO $pdo, int $orderId, int $userId): ?array
 
 function zymaStripeRequest(string $method, string $path, array $payload = []): array
 {
-    if (STRIPE_SECRET_KEY === '') {
+    $secretKey = defined('STRIPE_SECRET_KEY') ? STRIPE_SECRET_KEY : '';
+    if ($secretKey === '' && isset($GLOBALS['stripeSecretKey'])) {
+        $secretKey = trim($GLOBALS['stripeSecretKey']);
+    }
+    // Fallback directo para evitar fallos de configuracion
+    if ($secretKey === '') {
+        $secretKey = '';
+    }
+    if ($secretKey === '') {
         throw new RuntimeException('Configura STRIPE_SECRET_KEY antes de usar pagos con tarjeta.');
     }
 
@@ -160,7 +168,7 @@ function zymaStripeRequest(string $method, string $path, array $payload = []): a
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 30);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Authorization: Bearer ' . STRIPE_SECRET_KEY,
+        'Authorization: Bearer ' . $secretKey,
     ]);
 
     if ($method !== 'GET') {
