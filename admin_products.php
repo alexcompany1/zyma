@@ -110,8 +110,9 @@ try {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title data-i18n="adminProducts.title">Admin - Productos</title>
-<link rel="icon" type="image/png" href="assets/favicon.png">
+<title>Admin - Productos</title>
+<link rel="icon" type="image/png" href="assets/fabiconig.png">
+<link rel="shortcut icon" type="image/png" href="assets/fabiconig.png">
 <link rel="stylesheet" href="styles.css?v=20260211-5">
 <style>
 .table-compact { width:100%; border-collapse:collapse; }
@@ -144,19 +145,23 @@ if ($display_name === '') {
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-          <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
-          <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
-          <a href="logout.php" data-i18n="nav.logout">Cerrar Sesión</a>
+          <a href="perfil.php">Mi perfil</a>
+          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
+          <a href="logout.php">Cerrar Sesión</a>
       </div>
     </div>
     <a href="admin.php" class="landing-logo"><span class="landing-logo-text">Zyma</span></a>
-    <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" data-i18n-aria="nav.quickMenu" aria-label="Menú rápido"></button>
+        <div class="quick-menu-section">
+      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido">
+        <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 7h14M5 12h14M5 17h14" />
+        </svg>
+      </button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="admin.php" data-i18n="admin.panelLink">Panel Admin</a>
-        <a href="admin_orders.php" data-i18n="admin.ordersLink">Pedidos</a>
-        <a href="admin_inventory.php" data-i18n="admin.inventoryLink">Inventario</a>
-        <a href="admin_products.php" data-i18n="admin.productsLink">Productos</a>
+        <a href="admin.php">Panel Admin</a>
+        <a href="admin_orders.php">Pedidos</a>
+        <a href="admin_inventory.php">Inventario</a>
+        <a href="admin_products.php">Productos</a>
       </div>
     </div>
   </div>
@@ -166,11 +171,11 @@ if ($display_name === '') {
     <div class="section-card">
         <div class="row-between section-head">
             <div>
-                <h2 data-i18n="adminProducts.title">Catálogo de productos</h2>
-                <p class="lead" data-i18n="adminProducts.desc">Crea, edita y administra el catálogo con disponibilidad y soft delete.</p>
+                <h2>Catálogo de productos</h2>
+                <p class="lead">Crea, edita y administra el catálogo con disponibilidad y soft delete.</p>
             </div>
             <div>
-                <a href="admin.php" class="landing-link" data-i18n="admin.backHome">Volver a inicio</a>
+                <a href="usuario.php" class="landing-link">Volver a inicio</a>
             </div>
         </div>
         <?php if ($message): ?>
@@ -179,29 +184,29 @@ if ($display_name === '') {
 
         <form method="GET" class="row-between" style="gap:1rem; flex-wrap:wrap; margin-bottom:1.2rem;">
             <select name="filter_category">
-                <option value="" data-i18n="adminProducts.allCategories">Todas las categorías</option>
+                <option value="">Todas las categorías</option>
                 <?php foreach ($categories as $category): ?>
                     <option value="<?= htmlspecialchars($category) ?>" <?= $category === $filterCategory ? 'selected' : '' ?>><?= htmlspecialchars($category) ?></option>
                 <?php endforeach; ?>
             </select>
-            <input type="search" name="search" data-i18n-placeholder="adminProducts.name" placeholder="Buscar por nombre" value="<?= htmlspecialchars($searchName) ?>">
-            <button type="submit" class="btn-add-cart" data-i18n="adminProducts.filter">Filtrar</button>
+            <input type="search" name="search" placeholder="Buscar por nombre" value="<?= htmlspecialchars($searchName) ?>">
+            <button type="submit" class="btn-add-cart">Filtrar</button>
         </form>
 
         <table class="table-compact">
             <thead>
                 <tr>
-                    <th data-i18n="adminProducts.name">Nombre</th>
-                    <th data-i18n="adminProducts.category">Categoría</th>
-                    <th data-i18n="adminProducts.price">Precio</th>
-                    <th data-i18n="adminProducts.availability">Disponibilidad</th>
-                    <th data-i18n="adminProducts.description">Descripción</th>
-                    <th data-i18n="adminProducts.actions">Acciones</th>
+                    <th>Nombre</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Disponibilidad</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (empty($products)): ?>
-                    <tr><td colspan="6" class="empty-state" data-i18n="adminProducts.noProducts">No hay productos en el catálogo.</td></tr>
+                    <tr><td colspan="6" class="empty-state">No hay productos en el catálogo.</td></tr>
                 <?php endif; ?>
                 <?php foreach ($products as $product): ?>
                     <tr data-id="<?= (int)$product['id'] ?>">
@@ -215,11 +220,11 @@ if ($display_name === '') {
                         </td>
                         <td><?= htmlspecialchars(mb_strimwidth($product['description'] ?? '', 0, 80, '...')) ?></td>
                         <td class="product-actions">
-                            <button type="button" class="btn-add-cart edit-product" data-i18n="adminProducts.edit" data-product='<?= json_encode($product, JSON_HEX_APOS|JSON_HEX_QUOT) ?>'>Editar</button>
+                            <button type="button" class="btn-add-cart edit-product" data-product='<?= json_encode($product, JSON_HEX_APOS|JSON_HEX_QUOT) ?>'>Editar</button>
                             <form method="POST" style="display:inline-block;">
                                 <input type="hidden" name="action" value="destroy">
                                 <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
-                                <button type="submit" class="remove-item-btn" data-i18n="admin.delete" onclick="return confirm('Eliminar producto?');">Eliminar</button>
+                                <button type="submit" class="remove-item-btn" onclick="return confirm('Eliminar producto?');">Eliminar</button>
                             </form>
                         </td>
                     </tr>
@@ -228,15 +233,15 @@ if ($display_name === '') {
         </table>
 
         <div style="margin-top:1.5rem;">
-            <h3 data-i18n="adminProducts.addProduct">Añadir producto</h3>
+            <h3>Añadir producto</h3>
             <form method="POST" style="display:grid; gap:1rem; max-width:500px;">
                 <input type="hidden" name="action" value="store">
-                <input type="text" name="name" data-i18n-placeholder="adminProducts.name" placeholder="Nombre" required>
-                <input type="number" name="price" step="0.01" data-i18n-placeholder="adminProducts.price" placeholder="Precio" required>
-                <input type="text" name="category" data-i18n-placeholder="adminProducts.category" placeholder="Categoría" value="General">
-                <textarea name="description" data-i18n-placeholder="adminProducts.description" placeholder="Descripción" rows="3"></textarea>
-                <label><input type="checkbox" name="available" checked> <span data-i18n="adminProducts.available">Disponible</span></label>
-                <button type="submit" class="btn-add-cart" data-i18n="adminProducts.createProduct">Crear producto</button>
+                <input type="text" name="name" placeholder="Nombre" required>
+                <input type="number" name="price" step="0.01" placeholder="Precio" required>
+                <input type="text" name="category" placeholder="Categoría" value="General">
+                <textarea name="description" placeholder="Descripción" rows="3"></textarea>
+                <label><input type="checkbox" name="available" checked> Disponible</label>
+                <button type="submit" class="btn-add-cart">Crear producto</button>
             </form>
         </div>
     </div>
@@ -244,18 +249,18 @@ if ($display_name === '') {
 
 <div class="modal-backdrop" id="modalBackdrop">
     <div class="modal" role="dialog" aria-modal="true">
-        <h3 data-i18n="adminProducts.editProduct">Editar producto</h3>
+        <h3>Editar producto</h3>
         <form id="editProductForm" method="POST">
             <input type="hidden" name="action" value="update">
             <input type="hidden" name="product_id" id="editProductId">
-            <input type="text" name="name" id="editName" data-i18n-placeholder="adminProducts.name" placeholder="Nombre" required>
-            <input type="number" name="price" id="editPrice" step="0.01" data-i18n-placeholder="adminProducts.price" placeholder="Precio" required>
-            <input type="text" name="category" id="editCategory" data-i18n-placeholder="adminProducts.category" placeholder="Categoría">
-            <textarea name="description" id="editDescription" rows="4" data-i18n-placeholder="adminProducts.description" placeholder="Descripción"></textarea>
-            <label><input type="checkbox" name="available" id="editAvailable"> <span data-i18n="adminProducts.available">Disponible</span></label>
+            <input type="text" name="name" id="editName" placeholder="Nombre" required>
+            <input type="number" name="price" id="editPrice" step="0.01" placeholder="Precio" required>
+            <input type="text" name="category" id="editCategory" placeholder="Categoría">
+            <textarea name="description" id="editDescription" rows="4" placeholder="Descripción"></textarea>
+            <label><input type="checkbox" name="available" id="editAvailable"> Disponible</label>
             <div class="modal-footer">
-                <button type="button" class="remove-item-btn" id="closeModal" data-i18n="adminProducts.cancel">Cancelar</button>
-                <button type="submit" class="btn-add-cart" data-i18n="common.saveChanges">Guardar cambios</button>
+                <button type="button" class="remove-item-btn" id="closeModal">Cancelar</button>
+                <button type="submit" class="btn-add-cart">Guardar cambios</button>
             </div>
         </form>
     </div>
@@ -264,6 +269,9 @@ if ($display_name === '') {
 <script>
 const profileBtn = document.getElementById('profileBtn');
 const dropdownMenu = document.getElementById('dropdownMenu');
+const quickBtn = document.getElementById('quickMenuBtn');
+const quickDropdown = document.getElementById('quickDropdown');
+
 if (profileBtn && dropdownMenu) {
     profileBtn.addEventListener('click', () => dropdownMenu.classList.toggle('show'));
     window.addEventListener('click', e => {
@@ -272,6 +280,19 @@ if (profileBtn && dropdownMenu) {
         }
     });
 }
+
+if (quickBtn && quickDropdown) {
+    quickBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        quickDropdown.classList.toggle('show');
+    });
+}
+
+window.addEventListener('click', (e) => {
+    if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
+        quickDropdown.classList.remove('show');
+    }
+});
 
 const modalBackdrop = document.getElementById('modalBackdrop');
 const editForm = document.getElementById('editProductForm');
@@ -326,6 +347,7 @@ toggles.forEach(button => {
             if (data.success) {
                 const row = document.querySelector(`tr[data-id="${id}"]`);
                 if (row) {
+                    const nameCell = row.cells[0];
                     const availableButton = row.querySelector('.toggle-availability');
                     if (availableButton) {
                         const current = availableButton.textContent.trim();
@@ -337,17 +359,5 @@ toggles.forEach(button => {
     });
 });
 </script>
-<script src="assets/mobile-header.js?v=20260211-6"></script>
-<script src="assets/lang.js?v=20260428-1"></script>
-<footer>
-  <p data-i18n="footer.rights">&copy; 2026 Zyma. Todos los derechos reservados.</p>
-  <p class="footer-legal-links">
-    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
-    <span>|</span>
-    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
-    <span>|</span>
-    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
-  </p>
-</footer>
 </body>
 </html>

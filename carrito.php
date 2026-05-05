@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 if (!headers_sent()) {
     header('Content-Type: text/html; charset=UTF-8');
 }
@@ -162,7 +162,11 @@ foreach ($cartItems as $item) {
     </a>
 
     <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido"></button>
+      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menu rapido">
+          <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 7h14M5 12h14M5 17h14" />
+          </svg>
+        </button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
         <a href="usuario.php" data-i18n="nav.home">Inicio</a>
         <a href="carta.php" data-i18n="nav.viewMenu">Ver carta</a>
@@ -359,12 +363,14 @@ togglePaymentFields();
 <footer>
   <p data-i18n="footer.rights">&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">PolÃ­tica de Cookies</a>
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php" data-i18n="footer.privacy">PolÃ­tica de Privacidad</a>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
     <span>|</span>
     <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
   </p>
 </footer>
 </body>
 </html>
+
+
