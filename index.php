@@ -325,7 +325,7 @@ if ($basePath === '.' || $basePath === '/') {
       <span style="display: inline-block; background: rgba(255,255,255,0.15); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; margin-bottom: 1rem;">
         🌭 Hotdogs Artesanales
       </span>
-      <h1 class="hero-title">Zyma. Sabor con alma.</h1>
+      <h1 class="hero-title" style="color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">Zyma. Sabor con alma.</h1>
       <p class="hero-text">
         Recetas de la casa, ingredientes frescos y un sabor que no se olvida.
         Crea tu cuenta o inicia sesión y descubre nuestra carta.
