@@ -89,7 +89,11 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
     </a>
 
     <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" data-i18n-aria="nav.quickMenu" aria-label="Menú rápido"></button>
+      <button class="quick-menu-btn" id="quickMenuBtn" data-i18n-aria="nav.quickMenu" aria-label="Menú rápido">
+          <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 7h14M5 12h14M5 17h14" />
+          </svg>
+        </button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
         <a href="usuario.php" data-i18n="nav.home">Inicio</a>
         <a href="carta.php" data-i18n="nav.viewMenu">Ver carta</a>
@@ -184,3 +188,5 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
 <script src="assets/lang.js?v=20260428-1"></script>
 </body>
 </html>
+
+

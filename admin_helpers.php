@@ -149,6 +149,60 @@ function markAllNotificationsRead(PDO $pdo, int $userId): void
     $stmt->execute([':user_id' => $userId]);
 }
 
+function hasUnreadNotificationByTitle(PDO $pdo, int $userId, string $title): bool
+{
+    if (!hasTable($pdo, 'notificaciones')) {
+        return false;
+    }
+
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM notificaciones WHERE id_usuario = :user_id AND leida = 0 AND titulo = :title");
+    $stmt->execute([':user_id' => $userId, ':title' => $title]);
+    return (int)$stmt->fetchColumn() > 0;
+}
+
+function notifyCriticalIngredient(PDO $pdo, int $ingredientId, int $userId): void
+{
+    if (!hasTable($pdo, 'ingredientes') || !hasTableColumn($pdo, 'ingredientes', 'stock_minimo') || !hasTable($pdo, 'notificaciones')) {
+        return;
+    }
+
+    $stmt = $pdo->prepare("SELECT nombre, cantidad, stock_minimo, unidad FROM ingredientes WHERE id = :id");
+    $stmt->execute([':id' => $ingredientId]);
+    $ingredient = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$ingredient) {
+        return;
+    }
+
+    $quantity = (float)$ingredient['cantidad'];
+    $minimum = (float)$ingredient['stock_minimo'];
+    if ($minimum <= 0 || $quantity > $minimum) {
+        return;
+    }
+
+    $title = 'Ingrediente crítico: ' . $ingredient['nombre'];
+    if (hasUnreadNotificationByTitle($pdo, $userId, $title)) {
+        return;
+    }
+
+    $unitLabel = trim((string)($ingredient['unidad'] ?? ''));
+    $message = 'El ingrediente ' . $ingredient['nombre'] . ' está en estado crítico (' . $quantity . ' ' . $unitLabel . '). Debes comprar más cuanto antes.';
+    createNotification($pdo, $userId, $title, $message, 'admin_inventory.php', 'warning');
+}
+
+function notifyCriticalIngredients(PDO $pdo, int $userId): void
+{
+    if (!hasTable($pdo, 'ingredientes') || !hasTableColumn($pdo, 'ingredientes', 'stock_minimo')) {
+        return;
+    }
+
+    $stmt = $pdo->query("SELECT id FROM ingredientes WHERE cantidad <= stock_minimo");
+    $ingredientIds = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+    foreach ($ingredientIds as $ingredientId) {
+        notifyCriticalIngredient($pdo, (int)$ingredientId, $userId);
+    }
+}
+
 function decrementStockForOrder(PDO $pdo, int $orderId): void
 {
     if (!hasTable($pdo, 'pedido_items') || !hasTable($pdo, 'producto_ingredientes') || !hasTable($pdo, 'ingredientes')) {
@@ -449,10 +503,12 @@ class Ingredient
 {
     public static function stockStatus(float $quantity, float $minimum): string
     {
-        if ($quantity <= 0) {
+        $effectiveMinimum = $minimum > 0 ? $minimum : 1; // Default to 1 if no minimum set
+
+        if ($quantity <= $effectiveMinimum * 0.5) { // Critical when very low (half of minimum or 0.5)
             return 'rojo';
         }
-        if ($quantity <= $minimum * 1.25) {
+        if ($quantity <= $effectiveMinimum) {
             return 'amarillo';
         }
         return 'verde';

@@ -111,7 +111,8 @@ try {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin - Productos</title>
-<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="icon" type="image/png" href="assets/fabiconig.png">
+<link rel="shortcut icon" type="image/png" href="assets/fabiconig.png">
 <link rel="stylesheet" href="styles.css?v=20260211-5">
 <style>
 .table-compact { width:100%; border-collapse:collapse; }
@@ -151,7 +152,11 @@ if ($display_name === '') {
     </div>
     <a href="admin.php" class="landing-logo"><span class="landing-logo-text">Zyma</span></a>
         <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
+      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido">
+        <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 7h14M5 12h14M5 17h14" />
+        </svg>
+      </button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
         <a href="admin.php">Panel Admin</a>
         <a href="admin_orders.php">Pedidos</a>
@@ -264,6 +269,9 @@ if ($display_name === '') {
 <script>
 const profileBtn = document.getElementById('profileBtn');
 const dropdownMenu = document.getElementById('dropdownMenu');
+const quickBtn = document.getElementById('quickMenuBtn');
+const quickDropdown = document.getElementById('quickDropdown');
+
 if (profileBtn && dropdownMenu) {
     profileBtn.addEventListener('click', () => dropdownMenu.classList.toggle('show'));
     window.addEventListener('click', e => {
@@ -272,6 +280,19 @@ if (profileBtn && dropdownMenu) {
         }
     });
 }
+
+if (quickBtn && quickDropdown) {
+    quickBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        quickDropdown.classList.toggle('show');
+    });
+}
+
+window.addEventListener('click', (e) => {
+    if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
+        quickDropdown.classList.remove('show');
+    }
+});
 
 const modalBackdrop = document.getElementById('modalBackdrop');
 const editForm = document.getElementById('editProductForm');

@@ -23,19 +23,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $stmt = $pdo->prepare("UPDATE ingredientes SET cantidad = GREATEST(0, cantidad + :delta) WHERE id = :id");
             $stmt->execute([':delta' => $change, ':id' => $ingredientId]);
             $message = 'Stock actualizado.';
+            notifyCriticalIngredient($pdo, $ingredientId, (int)$_SESSION['user_id']);
         }
         if ($_POST['action'] === 'edit_threshold' && hasTableColumn($pdo, 'ingredientes', 'stock_minimo')) {
             $min = max(0, floatval($_POST['min_quantity'] ?? 0));
             $stmt = $pdo->prepare("UPDATE ingredientes SET stock_minimo = :min WHERE id = :id");
             $stmt->execute([':min' => $min, ':id' => $ingredientId]);
             $message = 'Umbral actualizado.';
+            notifyCriticalIngredient($pdo, $ingredientId, (int)$_SESSION['user_id']);
+        }
+    }
+    if ($_POST['action'] === 'add_ingredient') {
+        $name = trim($_POST['name'] ?? '');
+        $initialStock = max(0, floatval($_POST['initial_stock'] ?? 0));
+        $threshold = max(0, floatval($_POST['threshold'] ?? 0));
+        $unit = trim($_POST['unit'] ?? 'unidades');
+        $status = trim($_POST['status'] ?? 'Activo');
+
+        if ($name === '') {
+            $message = 'El nombre del ingrediente es obligatorio.';
+        } else {
+            $stmt = $pdo->prepare("INSERT INTO ingredientes (nombre, cantidad, stock_minimo, unidad) VALUES (:name, :cantidad, :stock_minimo, :unidad)");
+            $stmt->execute([
+                ':name' => $name,
+                ':cantidad' => $initialStock,
+                ':stock_minimo' => $threshold,
+                ':unidad' => $unit ?: 'unidades'
+            ]);
+            $message = 'Ingrediente añadido correctamente.';
+            // Reload ingredients
+            $stmt = $pdo->query(
+                "SELECT id, nombre, cantidad, unidad AS unit, stock_minimo, COALESCE(unit, 'unidades') AS safe_unit, COALESCE(stock_minimo, 1) AS safe_min
+                 FROM ingredientes
+                 ORDER BY nombre ASC"
+            );
+            $ingredients = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     }
 }
 
 try {
     $stmt = $pdo->query(
-        "SELECT id, nombre, cantidad, unidad AS unit, stock_minimo, COALESCE(unidad, 'unidades') AS safe_unit, COALESCE(stock_minimo, 1) AS safe_min
+        "SELECT id, nombre, cantidad, unidad AS unit, stock_minimo, COALESCE(unit, 'unidades') AS safe_unit, COALESCE(stock_minimo, 1) AS safe_min
          FROM ingredientes
          ORDER BY nombre ASC"
     );
@@ -44,6 +73,8 @@ try {
     $ingredients = [];
     $message = 'Error al cargar ingredientes: ' . htmlspecialchars($e->getMessage());
 }
+
+notifyCriticalIngredients($pdo, (int)$_SESSION['user_id']);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -51,7 +82,8 @@ try {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin - Inventario</title>
-<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="icon" type="image/png" href="assets/fabiconig.png">
+<link rel="shortcut icon" type="image/png" href="assets/fabiconig.png">
 <link rel="stylesheet" href="styles.css?v=20260211-5">
 <style>
 .stock-badge { display:inline-block; min-width:72px; padding:.35rem .7rem; border-radius:999px; color:#fff; font-size:.85rem; }
@@ -90,7 +122,11 @@ if ($display_name === '') {
     </div>
     <a href="admin.php" class="landing-logo"><span class="landing-logo-text">Zyma</span></a>
         <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
+      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido">
+        <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 7h14M5 12h14M5 17h14" />
+        </svg>
+      </button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
         <a href="admin.php">Panel Admin</a>
         <a href="admin_orders.php">Pedidos</a>
@@ -165,12 +201,31 @@ if ($display_name === '') {
                 </tbody>
             </table>
         <?php endif; ?>
+
+        <div style="margin-top:1.5rem;">
+            <h3>Añadir ingrediente</h3>
+            <form method="POST" style="display:grid; gap:1rem; max-width:500px;">
+                <input type="hidden" name="action" value="add_ingredient">
+                <input type="text" name="name" placeholder="Nombre del ingrediente" required>
+                <input type="number" step="0.1" name="initial_stock" placeholder="Stock inicial" min="0" required>
+                <input type="number" step="0.1" name="threshold" placeholder="Umbral mínimo" min="0" required>
+                <input type="text" name="unit" placeholder="Unidad (ej: kg, litros, unidades)" value="unidades">
+                <select name="status">
+                    <option value="Activo" selected>Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                </select>
+                <button type="submit" class="btn-add-cart">Añadir ingrediente</button>
+            </form>
+        </div>
     </div>
 </div>
 
 <script>
 const profileBtn = document.getElementById('profileBtn');
 const dropdownMenu = document.getElementById('dropdownMenu');
+const quickBtn = document.getElementById('quickMenuBtn');
+const quickDropdown = document.getElementById('quickDropdown');
+
 if (profileBtn && dropdownMenu) {
     profileBtn.addEventListener('click', () => dropdownMenu.classList.toggle('show'));
     window.addEventListener('click', e => {
@@ -179,6 +234,19 @@ if (profileBtn && dropdownMenu) {
         }
     });
 }
+
+if (quickBtn && quickDropdown) {
+    quickBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        quickDropdown.classList.toggle('show');
+    });
+}
+
+window.addEventListener('click', (e) => {
+    if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
+        quickDropdown.classList.remove('show');
+    }
+});
 </script>
 </body>
 </html>

@@ -36,6 +36,7 @@ $unreadCount = getUnreadNotificationsCount($pdo, (int)$_SESSION['user_id']);
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin - Notificaciones</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="shortcut icon" type="image/png" href="assets/favicon.png">
 <link rel="stylesheet" href="styles.css?v=20260211-5">
 <style>
 .notifications-list { display:grid; gap:1rem; }
