@@ -360,8 +360,9 @@ try {
         }
     }
 
-    if ($notificationsTable) {
-        $stmt = $pdo->query("SELECT COUNT(*) FROM notificaciones WHERE leida = 0");
+    if ($notificationsTable && isset($_SESSION['user_id'])) {
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM notificaciones WHERE id_usuario = :id_usuario AND leida = 0");
+        $stmt->execute([':id_usuario' => $_SESSION['user_id']]);
         $unreadNotifications = (int)$stmt->fetchColumn();
     }
 } catch (Exception $e) {
@@ -388,6 +389,7 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <title>Panel de Administracion</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="styles.css?v=20260317-1">
 </head>
 <body>
@@ -407,23 +409,26 @@ if ($display_name === '') {
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
       <div class="dropdown" id="dropdownMenu">
-          <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
-          <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
-          <a href="logout.php" data-i18n="nav.logout">Cerrar Sesión</a>
+          <a href="perfil.php">Mi perfil</a>
+          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
+          <a href="logout.php">Cerrar Sesión</a>
         </div>
     </div>
 
-    <a href="admin.php" class="landing-logo">
+    <a href="usuario.php" class="landing-logo">
       <span class="landing-logo-text">Zyma</span>
     </a>
 
                 <div class="quick-menu-section">
-            <button class="quick-menu-btn" id="quickMenuBtn" data-i18n-aria="nav.quickMenu" aria-label="Menú rápido"></button>
+            <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido">
+              <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 7h14M5 12h14M5 17h14" />
+              </svg>
+            </button>
             <div class="dropdown quick-dropdown" id="quickDropdown">
-                <a href="admin.php" data-i18n="nav.workerPanel">Panel</a>
-                <a href="gestionar_pedidos.php" data-i18n="nav.workerOrders">Pedidos</a>
-                <a href="estadisticas.php" data-i18n="nav.workerStats">Estadísticas</a>
-                <a href="incidencias.php" data-i18n="nav.incidents">Incidencias</a>
+                <a href="admin_orders.php">Pedidos</a>
+                <a href="admin_inventory.php">Inventario</a>
+                <a href="admin_products.php">Productos</a>
             </div>
         </div>
     <div class="notification-section">
@@ -432,12 +437,6 @@ if ($display_name === '') {
         <?php if ($notificationsTable && $unreadNotifications > 0): ?>
             <span class="notification-count"><?= $unreadNotifications ?></span>
         <?php endif; ?>
-      </a>
-    </div>
-    <div class="cart-section">
-      <a href="carrito.php" class="cart-btn">
-        <img src="assets/cart-icon.png" alt="Carrito">
-        <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
       </a>
     </div>
   </div>
@@ -449,74 +448,74 @@ if ($display_name === '') {
     <div class="section-card">
         <div class="row-between section-head">
             <div>
-                <h2 data-i18n="admin.panelTitle">Panel administrativo</h2>
-                <p class="lead" data-i18n="admin.panelDesc">Resumen de pedidos, inventario y usuarios. Accede rápidamente a las secciones principales.</p>
+                <h2>Panel administrativo</h2>
+                <p class="lead">Resumen de pedidos, inventario y usuarios. Accede rápidamente a las secciones principales.</p>
             </div>
             <div class="action-links">
-                <a href="admin_orders.php" class="landing-link" data-i18n="admin.ordersLink">Pedidos</a>
-                <a href="admin_inventory.php" class="landing-link" data-i18n="admin.inventoryLink">Inventario</a>
-                <a href="admin_products.php" class="landing-link" data-i18n="admin.productsLink">Productos</a>
+                <a href="admin_orders.php" class="landing-link">Pedidos</a>
+                <a href="admin_inventory.php" class="landing-link">Inventario</a>
+                <a href="admin_products.php" class="landing-link">Productos</a>
             </div>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card">
-                <h3 data-i18n="admin.todayOrders">Pedidos del día</h3>
+                <h3>Pedidos del día</h3>
                 <p class="stat-number" id="todayOrdersValue"><?= $hasFechaHora ? $todayOrders : 'N/D' ?></p>
-                <span <?= $hasFechaHora ? 'data-i18n="admin.todayOrdersDesc"' : 'data-i18n="admin.noDateAvail"' ?>><?= $hasFechaHora ? 'Pedidos registrados hoy' : 'Fecha no disponible' ?></span>
+                <span><?= $hasFechaHora ? 'Pedidos registrados hoy' : 'Fecha no disponible' ?></span>
             </div>
             <div class="stat-card">
-                <h3 data-i18n="admin.todayRevenue">Ingresos del día</h3>
+                <h3>Ingresos del día</h3>
                 <p class="stat-number" id="todayRevenueValue">€<?= number_format($todayRevenue, 2, ',', '.') ?></p>
-                <span <?= $hasFechaHora ? 'data-i18n="admin.todayRevenueDesc"' : 'data-i18n="admin.noDateAvail"' ?>><?= $hasFechaHora ? 'Ventas de hoy' : 'Fecha no disponible' ?></span>
+                <span><?= $hasFechaHora ? 'Ventas de hoy' : 'Fecha no disponible' ?></span>
             </div>
             <div class="stat-card">
-                <h3 data-i18n="admin.activeOrders">Pedidos activos</h3>
+                <h3>Pedidos activos</h3>
                 <p class="stat-number" id="activeOrdersValue"><?= $activeOrderCount ?></p>
-                <span data-i18n="admin.activeOrdersDesc">Pedidos en curso</span>
+                <span>Pedidos en curso</span>
             </div>
             <div class="stat-card">
-                <h3 data-i18n="admin.preparingOrders">Pedidos en preparación</h3>
+                <h3>Pedidos en preparación</h3>
                 <p class="stat-number"><?= $preparingOrders ?></p>
-                <span data-i18n="admin.preparingOrdersDesc">En proceso ahora</span>
+                <span>En proceso ahora</span>
             </div>
             <div class="stat-card">
-                <h3 data-i18n="admin.redIngredients">Ingredientes en rojo</h3>
+                <h3>Ingredientes en rojo</h3>
                 <p class="stat-number" id="redIngredientsValue"><?= $ingredientsTable ? $redIngredients : 'N/D' ?></p>
-                <span <?= $ingredientsTable ? 'data-i18n="admin.criticalInventory"' : 'data-i18n="admin.inventoryNotFound"' ?>><?= $ingredientsTable ? 'Inventario crítico' : 'Inventario no detectado' ?></span>
+                <span><?= $ingredientsTable ? 'Inventario crítico' : 'Inventario no detectado' ?></span>
             </div>
             <div class="stat-card">
-                <h3 data-i18n="admin.topProduct">Producto más vendido</h3>
+                <h3>Producto más vendido</h3>
                 <p class="stat-number" id="topProductValue"><?= htmlspecialchars($topSellingProduct) ?></p>
-                <span <?= $productCount > 0 ? 'data-i18n="admin.salesSummary"' : 'data-i18n="admin.noProducts"' ?>><?= $productCount > 0 ? 'Resumen de ventas' : 'Sin productos' ?></span>
+                <span><?= $productCount > 0 ? 'Resumen de ventas' : 'Sin productos' ?></span>
             </div>
             <div class="stat-card">
-                <h3 data-i18n="admin.internalNotif">Notificaciones internas</h3>
+                <h3>Notificaciones internas</h3>
                 <p class="stat-number" id="notificationsValue"><?= $notificationsTable ? $unreadNotifications : 'N/D' ?></p>
-                <span <?= $notificationsTable ? 'data-i18n="admin.unreadNotif"' : 'data-i18n="admin.notifsNotFound"' ?>><?= $notificationsTable ? 'No leídas' : 'Notificaciones no detectadas' ?></span>
+                <span><?= $notificationsTable ? 'No leídas' : 'Notificaciones no detectadas' ?></span>
             </div>
             <div class="stat-card">
-                <h3 data-i18n="admin.registeredUsers">Usuarios registrados</h3>
+                <h3>Usuarios registrados</h3>
                 <p class="stat-number"><?= count($usuarios) ?></p>
-                <span data-i18n="admin.usersDesc">Clientes, empleados y administradores</span>
+                <span>Clientes, empleados y administradores</span>
             </div>
         </div>
     </div>
 
     <div class="section-card">
         <div class="row-between section-head">
-            <h2 data-i18n="admin.realTimeOrders">Pedidos en tiempo real</h2>
-            <span class="badge-status badge-estado-pendiente" data-i18n="admin.updated">Actualizado</span>
+            <h2>Pedidos en tiempo real</h2>
+            <span class="badge-status badge-estado-pendiente">Actualizado</span>
         </div>
         <?php if (!empty($activeOrders)): ?>
             <div class="admin-table-wrap">
                 <table class="admin-users-table table-compact">
                     <thead>
                         <tr>
-                            <th data-i18n="admin.idOrder">ID Pedido</th>
-                            <th data-i18n="admin.statusCol">Estado</th>
-                            <th data-i18n="orders.total">Total</th>
-                            <th data-i18n="orders.date">Fecha</th>
+                            <th>ID Pedido</th>
+                            <th>Estado</th>
+                            <th>Total</th>
+                            <th>Fecha</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -536,7 +535,7 @@ if ($display_name === '') {
                 </table>
             </div>
         <?php else: ?>
-            <p class="empty-state" data-i18n="admin.noActiveOrders">No hay pedidos activos disponibles.</p>
+            <p class="empty-state">No hay pedidos activos disponibles.</p>
         <?php endif; ?>
     </div>
     <?php if (!$supportsBloqueado): ?>
@@ -544,7 +543,7 @@ if ($display_name === '') {
     <?php endif; ?>
 
     <div class="section-card">
-        <h2 data-i18n="admin.addUser">Añadir usuario</h2>
+        <h2>Añadir usuario</h2>
 
         <form method="POST">
             <input type="text" name="nombre" placeholder="Nombre" required>
@@ -556,23 +555,23 @@ if ($display_name === '') {
                 <option value="admin">Admin</option>
             </select>
             <input type="text" name="worker_code" placeholder="Código de trabajador (opcional)">
-            <button type="submit" name="add" data-i18n="admin.createUser">Crear usuario</button>
+            <button type="submit" name="add">Crear usuario</button>
         </form>
     </div>
 
     <div class="section-card">
-        <h2><span data-i18n="admin.registeredUsers">Usuarios registrados</span> (<?= count($usuarios) ?>)</h2>
+        <h2>Usuarios registrados (<?= count($usuarios) ?>)</h2>
         <div class="admin-table-wrap">
             <table class="admin-users-table">
                 <thead>
                     <tr>
-                        <th data-i18n="admin.idCol">ID</th>
-                        <th data-i18n="admin.nameCol">Nombre</th>
-                        <th data-i18n="admin.emailCol">Email</th>
-                        <th data-i18n="admin.roleCol">Rol</th>
-                        <th data-i18n="admin.codeCol">Código</th>
-                        <th data-i18n="admin.statusCol">Estado</th>
-                        <th data-i18n="admin.actionsCol">Acciones</th>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Código</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -606,14 +605,13 @@ if ($display_name === '') {
                                                 <option value="admin" <?= $rol === 'admin' ? 'selected' : '' ?>>Admin</option>
                                             </select>
                                             <input type="text" name="new_worker_code" placeholder="Código opcional">
-                                            <button type="submit" data-i18n="admin.saveRole">Guardar rol</button>
+                                            <button type="submit">Guardar rol</button>
                                         </form>
 
                                         <form method="POST" class="admin-action-form">
                                             <input type="hidden" name="action" value="toggle_block">
                                             <input type="hidden" name="user_id" value="<?= (int)$u['id'] ?>">
-                                            <button type="submit" <?= !$supportsBloqueado ? 'disabled' : '' ?>
-                                                data-i18n="<?= $isBlocked ? 'admin.unblock' : 'admin.block' ?>">
+                                            <button type="submit" <?= !$supportsBloqueado ? 'disabled' : '' ?>>
                                                 <?= $isBlocked ? 'Desbloquear' : 'Bloquear' ?>
                                             </button>
                                         </form>
@@ -621,11 +619,11 @@ if ($display_name === '') {
                                         <form method="POST" class="admin-action-form" onsubmit="return confirm('Eliminar usuario?');">
                                             <input type="hidden" name="action" value="delete">
                                             <input type="hidden" name="user_id" value="<?= (int)$u['id'] ?>">
-                                            <button type="submit" data-i18n="admin.delete">Eliminar</button>
+                                            <button type="submit">Eliminar</button>
                                         </form>
                                     </div>
                                 <?php else: ?>
-                                    <span class="admin-self-label" data-i18n="admin.yourUser">Tu usuario</span>
+                                    <span class="admin-self-label">Tu usuario</span>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -637,13 +635,13 @@ if ($display_name === '') {
 </div>
 
 <footer>
-    <p data-i18n="footer.rights">&copy; 2026 Zyma. Todos los derechos reservados.</p>
+    <p>&copy; 2026 Zyma. Todos los derechos reservados.</p>
     <p class="footer-legal-links">
-        <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
+        <a href="politica_cookies.php">Política de Cookies</a>
         <span>|</span>
-        <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
+        <a href="politica_privacidad.php">Política de Privacidad</a>
         <span>|</span>
-        <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
+        <a href="aviso_legal.php">Aviso Legal</a>
     </p>
 </footer>
 
@@ -652,6 +650,7 @@ if ($display_name === '') {
 <script>
 const profileBtn = document.getElementById('profileBtn');
 const dropdownMenu = document.getElementById('dropdownMenu');
+const quickBtn = document.getElementById('quickMenuBtn');
 const quickDropdown = document.getElementById('quickDropdown');
 if (profileBtn && dropdownMenu) {
   profileBtn.addEventListener('click', () => {
@@ -664,6 +663,19 @@ if (profileBtn && dropdownMenu) {
     }
   });
 }
+
+if (quickBtn && quickDropdown) {
+  quickBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    quickDropdown.classList.toggle('show');
+  });
+}
+
+window.addEventListener('click', (e) => {
+  if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
+    quickDropdown.classList.remove('show');
+  }
+});
 
 async function refreshDashboardStats() {
   try {
@@ -688,6 +700,5 @@ async function refreshDashboardStats() {
 setInterval(refreshDashboardStats, 30000);
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
-<script src="assets/lang.js?v=20260428-1"></script>
 </body>
 </html>

@@ -11,7 +11,7 @@ if (!headers_sent()) {
 
 $host = getenv('DB_HOST') ?: 'sql202.infinityfree.com';
 $port = getenv('DB_PORT') ?: '3306';
-$dbname = getenv('DB_NAME') ?: 'if0_41600982_zyma';
+$dbname = getenv('DB_NAME') ?: 'if0_41600982_zyma'; // Reemplaza con el nombre real de tu base de datos en InfinityFree
 $username = getenv('DB_USER') ?: 'if0_41600982';
 $password = getenv('DB_PASSWORD') ?: 'MRkaAubL6DN';
 
@@ -27,10 +27,29 @@ if (is_file($localConfigPath)) {
     require $localConfigPath;
 }
 
+// Sobreescribir con las keys correctas si no se definieron en config.local.php
+if (empty($stripeSecretKey)) {
+    $stripeSecretKey = '';
+}
+if (empty($stripePublishableKey)) {
+    $stripePublishableKey = '';
+}
+
 define('TAX_RATE', 0.10);
-define('STRIPE_SECRET_KEY', $stripeSecretKey);
-define('STRIPE_PUBLISHABLE_KEY', $stripePublishableKey);
-define('STRIPE_CURRENCY', $stripeCurrency);
+
+if (!defined('STRIPE_SECRET_KEY')) {
+    define('STRIPE_SECRET_KEY', trim($stripeSecretKey));
+}
+$GLOBALS['stripeSecretKey'] = trim($stripeSecretKey);
+
+if (!defined('STRIPE_PUBLISHABLE_KEY')) {
+    define('STRIPE_PUBLISHABLE_KEY', trim($stripePublishableKey));
+}
+
+if (!defined('STRIPE_CURRENCY')) {
+    define('STRIPE_CURRENCY', getenv('STRIPE_CURRENCY') ?: $stripeCurrency ?: 'eur');
+}
+error_reporting(E_ALL);
 define('BIZUM_PHONE', $bizumPhone);
 define('BIZUM_BENEFICIARY', $bizumBeneficiary);
 define('BIZUM_CONCEPT_PREFIX', $bizumConceptPrefix);
