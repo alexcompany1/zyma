@@ -63,12 +63,16 @@ if (!$guestMode) {
     }
 }
 
+$products_db = [];
+$products_extras = [];
+$products_allergens = [];
+
 try {
     $stmt = $pdo->query("
-        SELECT 
-            p.id, 
-            p.nombre, 
-            p.precio, 
+        SELECT
+            p.id,
+            p.nombre,
+            p.precio,
             p.imagen,
             ROUND(AVG(v.puntuacion), 1) as promedio_puntuacion,
             COUNT(v.id) as total_valoraciones
@@ -78,41 +82,48 @@ try {
         ORDER BY p.nombre
     ");
     $products_db = $stmt->fetchAll();
+} catch (Exception $e) {
+    $products_db = [];
+}
 
-    // Obtener extras y alérgenos para todos los productos
-    $extras_stmt = $pdo->query("
-        SELECT pe.id_producto, e.id as extra_id, e.nombre as extra_nombre, e.precio_adicional
-        FROM producto_extras pe
-        JOIN product_extras e ON pe.id_extra = e.id
-        WHERE e.activo = 1
-    ");
-    $extras_db = $extras_stmt->fetchAll();
-
-    $allergens_stmt = $pdo->query("
-        SELECT pa.id_producto, a.id as allergeno_id, a.nombre as allergeno_nombre, a.icono
-        FROM producto_allergens pa
-        JOIN product_allergens a ON pa.id_allergeno = a.id
-    ");
-    $allergens_db = $allergens_stmt->fetchAll();
-
-    $products_extras = [];
-    foreach ($extras_db as $extra) {
-        $products_extras[$extra['id_producto']][] = [
-            'id' => (int)$extra['extra_id'],
-            'name' => $extra['extra_nombre'],
-            'price' => (float)$extra['precio_adicional']
-        ];
+if (!empty($products_db)) {
+    try {
+        $extras_stmt = $pdo->query("
+            SELECT pe.id_producto, e.id as extra_id, e.nombre as extra_nombre, e.precio_adicional
+            FROM producto_extras pe
+            JOIN product_extras e ON pe.id_extra = e.id
+            WHERE e.activo = 1
+        ");
+        foreach ($extras_stmt->fetchAll() as $extra) {
+            $products_extras[$extra['id_producto']][] = [
+                'id' => (int)$extra['extra_id'],
+                'name' => $extra['extra_nombre'],
+                'price' => (float)$extra['precio_adicional']
+            ];
+        }
+    } catch (Exception $e) {
+        // Extras no disponibles, continuar sin ellos
     }
 
-    $products_allergens = [];
-    foreach ($allergens_db as $allergen) {
-        $products_allergens[$allergen['id_producto']][] = [
-            'id' => (int)$allergen['allergeno_id'],
-            'name' => $allergen['allergeno_nombre'],
-            'icon' => $allergen['icono']
-        ];
+    try {
+        $allergens_stmt = $pdo->query("
+            SELECT pa.id_producto, a.id as allergeno_id, a.nombre as allergeno_nombre, a.icono
+            FROM producto_allergens pa
+            JOIN product_allergens a ON pa.id_allergen = a.id
+        ");
+        foreach ($allergens_stmt->fetchAll() as $allergen) {
+            $products_allergens[$allergen['id_producto']][] = [
+                'id' => (int)$allergen['allergeno_id'],
+                'name' => $allergen['allergeno_nombre'],
+                'icon' => $allergen['icono']
+            ];
+        }
+    } catch (Exception $e) {
+        // Alérgenos no disponibles, continuar sin ellos
     }
+}
 
+if (!empty($products_db)) {
     $products = [];
     foreach ($products_db as $product) {
         $pid = (int)$product['id'];
@@ -128,13 +139,13 @@ try {
             'total_valoraciones' => (int)($product['total_valoraciones'] ?? 0)
         ];
     }
-} catch (Exception $e) {
+} else {
     $products = [
-        ['id' => 1, 'name' => 'Nachos con Queso', 'description' => '', 'price' => 6.00, 'image' => 'assets/nachos.png', 'extras' => [], 'allergens' => [['name' => 'gluten'], ['name' => 'lacteos']], 'promedio' => 0, 'total_valoraciones' => 0],
+        ['id' => 1, 'name' => 'Nachos con Queso', 'description' => '', 'price' => 6.00, 'image' => 'assets/nachos.png', 'extras' => [], 'allergens' => [['id' => 0, 'name' => 'Gluten', 'icon' => '🌾'], ['id' => 0, 'name' => 'Lácteos', 'icon' => '🥛']], 'promedio' => 0, 'total_valoraciones' => 0],
         ['id' => 2, 'name' => 'Patatas Fritas', 'description' => '', 'price' => 3.50, 'image' => 'assets/fries.png', 'extras' => [], 'allergens' => [], 'promedio' => 0, 'total_valoraciones' => 0],
-        ['id' => 3, 'name' => 'Hotdog BBQ', 'description' => '', 'price' => 7.50, 'image' => 'assets/bbq_hotdog.png', 'extras' => [['id' => 1, 'name' => 'Queso extra', 'price' => 1.00], ['id' => 2, 'name' => 'Bacon', 'price' => 1.50]], 'allergens' => [['name' => 'gluten'], ['name' => 'soja']], 'promedio' => 0, 'total_valoraciones' => 0],
-        ['id' => 4, 'name' => 'Hotdog Clásico', 'description' => '', 'price' => 5.99, 'image' => 'assets/hotdog.png', 'extras' => [['id' => 1, 'name' => 'Queso extra', 'price' => 1.00]], 'allergens' => [['name' => 'gluten'], ['name' => 'soja']], 'promedio' => 0, 'total_valoraciones' => 0],
-        ['id' => 5, 'name' => 'Hotdog Vegano', 'description' => '', 'price' => 6.50, 'image' => 'assets/vegan-hotdog.png', 'extras' => [], 'allergens' => [['name' => 'gluten'], ['name' => 'soja']], 'promedio' => 0, 'total_valoraciones' => 0],
+        ['id' => 3, 'name' => 'Hotdog BBQ', 'description' => '', 'price' => 7.50, 'image' => 'assets/bbq_hotdog.png', 'extras' => [['id' => 1, 'name' => 'Queso extra', 'price' => 1.00], ['id' => 2, 'name' => 'Bacon', 'price' => 1.50]], 'allergens' => [['id' => 0, 'name' => 'Gluten', 'icon' => '🌾'], ['id' => 0, 'name' => 'Soja', 'icon' => '🫘']], 'promedio' => 0, 'total_valoraciones' => 0],
+        ['id' => 4, 'name' => 'Hotdog Clásico', 'description' => '', 'price' => 5.99, 'image' => 'assets/hotdog.png', 'extras' => [['id' => 1, 'name' => 'Queso extra', 'price' => 1.00]], 'allergens' => [['id' => 0, 'name' => 'Gluten', 'icon' => '🌾'], ['id' => 0, 'name' => 'Soja', 'icon' => '🫘']], 'promedio' => 0, 'total_valoraciones' => 0],
+        ['id' => 5, 'name' => 'Hotdog Vegano', 'description' => '', 'price' => 6.50, 'image' => 'assets/vegan-hotdog.png', 'extras' => [], 'allergens' => [['id' => 0, 'name' => 'Gluten', 'icon' => '🌾'], ['id' => 0, 'name' => 'Soja', 'icon' => '🫘']], 'promedio' => 0, 'total_valoraciones' => 0],
         ['id' => 6, 'name' => 'Refresco Cola', 'description' => '', 'price' => 2.00, 'image' => 'assets/soda.png', 'extras' => [], 'allergens' => [], 'promedio' => 0, 'total_valoraciones' => 0],
         ['id' => 7, 'name' => 'Agua Mineral', 'description' => '', 'price' => 1.00, 'image' => 'assets/water.png', 'extras' => [], 'allergens' => [], 'promedio' => 0, 'total_valoraciones' => 0]
     ];
@@ -392,13 +403,8 @@ if (profileBtn && dropdownMenu) {
 const productsData = <?= json_encode($products) ?>;
 
 function openCustomizer(productId) {
-  console.log('openCustomizer called with ID:', productId);
   const product = productsData.find(p => p.id === productId);
-  console.log('Product found:', product);
-  if (!product) {
-    console.error('Product not found');
-    return;
-  }
+  if (!product) return;
 
   document.getElementById('customizerProductId').value = productId;
   document.getElementById('customizerTitle').textContent = product.name;
@@ -437,9 +443,7 @@ function openCustomizer(productId) {
   }
 
   updateCustomizerTotal();
-  console.log('Opening modal...');
   document.getElementById('customizerModal').style.display = 'block';
-  console.log('Modal display set to block');
 }
 
 function closeCustomizer() {
@@ -463,7 +467,7 @@ function updateCustomizerTotal() {
   document.getElementById('customizerTotal').textContent = total.toFixed(2);
 }
 
-document.getElementById('customizerQuantity').addEventListener('change', updateCustomizerTotal);
+document.getElementById('customizerQuantity').addEventListener('input', updateCustomizerTotal);
 
 // Close modal on outside click
 document.getElementById('customizerModal').addEventListener('click', function(e) {

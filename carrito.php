@@ -130,6 +130,9 @@ if ($displayName === '') {
     $displayName = strstr($_SESSION['email'] ?? '', '@', true) ?: ($_SESSION['email'] ?? '');
 }
 
+$toastMessage = $_SESSION['toast_message'] ?? null;
+unset($_SESSION['toast_message']);
+
 $cartPrices = [];
 foreach ($cartItems as $item) {
     $cartPrices[(int) $item['id']] = (float) $item['price'];
@@ -217,33 +220,33 @@ foreach ($cartItems as $item) {
       </div>
     <?php else: ?>
       <?php foreach ($cartItems as $item): ?>
-      <div className="cart-item-row" id="cart-item-<?= (int)$item['index'] ?>">
-        <img src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" className="cart-item-img">
-        
-        <div className="cart-item-info">
-          <div className="cart-item-name"><?= htmlspecialchars($item['name']) ?></div>
+      <div class="cart-item-row" id="cart-item-<?= (int)$item['index'] ?>">
+        <img src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="cart-item-img">
+
+        <div class="cart-item-info">
+          <div class="cart-item-name"><?= htmlspecialchars($item['name']) ?></div>
           <?php if (!empty($item['extras_names'])): ?>
-          <div className="cart-item-extras" style="font-size:0.85rem;color:#666;margin:4px 0;">
+          <div class="cart-item-extras" style="font-size:0.85rem;color:#666;margin:4px 0;">
             <?php foreach ($item['extras_names'] as $extraName): ?>
-              <span className="extra-tag"><?= htmlspecialchars($extraName) ?></span>
+              <span class="extra-tag"><?= htmlspecialchars($extraName) ?></span>
             <?php endforeach; ?>
           </div>
           <?php endif; ?>
-          <div className="cart-item-meta">
+          <div class="cart-item-meta">
             EUR <?= number_format((float)$item['price'], 2, ',', '.') ?> x <?= (int)$item['quantity'] ?>
             <?php if (!empty($item['extras_total']) && $item['extras_total'] > 0): ?>
               <span style="color:#45050C;">(+€<?= number_format($item['extras_total'], 2, ',', '.') ?> extras)</span>
             <?php endif; ?>
           </div>
-          <div className="cart-item-subtotal">
+          <div class="cart-item-subtotal">
             EUR <?= number_format((float)$item['subtotal'], 2, ',', '.') ?>
           </div>
         </div>
 
-        <div className="quantity-controls">
-          <button className="quantity-btn" onclick="changeQuantity(<?= (int)$item['index'] ?>, -1)">-</button>
-          <span className="quantity-value"><?= (int)$item['quantity'] ?></span>
-          <button className="quantity-btn" onclick="changeQuantity(<?= (int)$item['index'] ?>, 1)">+</button>
+        <div class="quantity-controls">
+          <button class="quantity-btn" onclick="changeQuantity(<?= (int)$item['index'] ?>, -1)">-</button>
+          <span class="quantity-value"><?= (int)$item['quantity'] ?></span>
+          <button class="quantity-btn" onclick="changeQuantity(<?= (int)$item['index'] ?>, 1)">+</button>
         </div>
       </div>
       <?php endforeach; ?>
@@ -318,10 +321,19 @@ foreach ($cartItems as $item) {
   </div>
 </div>
 
+<?php if ($toastMessage): ?>
+<div class="toast-notification" id="toastNotification">
+  <div class="toast-icon"><?= $toastMessage['icon'] ?></div>
+  <span><?= htmlspecialchars($toastMessage['text']) ?></span>
+</div>
+<?php endif; ?>
+
 <script>
 const profileBtn = document.getElementById('profileBtn');
 const dropdownMenu = document.getElementById('dropdownMenu');
 const cartData = <?= json_encode($cartItems, JSON_UNESCAPED_UNICODE) ?>;
+const cartMap = {};
+cartData.forEach(function(item) { cartMap[item.index] = item; });
 
 profileBtn.addEventListener('click', () => {
   dropdownMenu.classList.toggle('show');
@@ -354,7 +366,7 @@ function changeQuantity(itemIndex, delta) {
   qtyElement.textContent = currentQty;
   
   // Obtener datos del item
-  const item = cartData[itemIndex];
+  const item = cartMap[itemIndex];
   if (!item) return;
   
   const basePrice = Number(item.price || 0);
@@ -393,6 +405,12 @@ methodRadios.forEach((radio) => {
   radio.addEventListener('change', togglePaymentFields);
 });
 togglePaymentFields();
+
+const toast = document.getElementById('toastNotification');
+if (toast) {
+  setTimeout(() => toast.classList.add('show'), 100);
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
 <script src="assets/lang.js?v=20260428-1"></script>
