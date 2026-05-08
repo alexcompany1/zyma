@@ -17,6 +17,12 @@ $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $ingredientId = intval($_POST['ingredient_id'] ?? 0);
+    if ($_POST['action'] === 'delete_ingredient' && $ingredientId > 0) {
+        $stmt = $pdo->prepare("DELETE FROM ingredientes WHERE id = :id");
+        $stmt->execute([':id' => $ingredientId]);
+        $message = 'Ingrediente eliminado correctamente.';
+    }
+
     if ($ingredientId > 0 && hasTableColumn($pdo, 'ingredientes', 'cantidad')) {
         if ($_POST['action'] === 'update_stock') {
             $change = floatval($_POST['change'] ?? 0);
@@ -94,7 +100,7 @@ notifyCriticalIngredients($pdo, (int)$_SESSION['user_id']);
 .inventory-table { width:100%; border-collapse: collapse; }
 .inventory-table th, .inventory-table td { padding:.85rem .75rem; border:1px solid #e7e7e7; text-align:left; }
 .inventory-table th { background:#f9f9f9; }
-.inventory-actions { display:flex; gap:.6rem; flex-wrap:wrap; }
+.inventory-actions { display:flex; align-items:center; gap:.35rem; flex-wrap:nowrap; }
 small { color:#555; }
 </style>
 </head>
@@ -181,20 +187,23 @@ if ($display_name === '') {
                             <td><?= $minQuantity ?></td>
                             <td><span class="stock-badge stock-<?= htmlspecialchars($status) ?>"><?= Ingredient::stockLabel($status) ?></span></td>
                             <td>
-                                <div class="inventory-actions">
-                                    <form method="POST" style="display:inline-flex; gap:.4rem; align-items:center;">
-                                        <input type="hidden" name="action" value="update_stock">
-                                        <input type="hidden" name="ingredient_id" value="<?= (int)$ingredient['id'] ?>">
-                                        <input type="number" step="0.1" name="change" placeholder="+/-" style="width:80px;" required>
-                                        <button type="submit" class="btn-add-cart">Actualizar</button>
-                                    </form>
-                                    <form method="POST" style="display:inline-flex; gap:.4rem; align-items:center;">
-                                        <input type="hidden" name="action" value="edit_threshold">
-                                        <input type="hidden" name="ingredient_id" value="<?= (int)$ingredient['id'] ?>">
-                                        <input type="number" step="0.1" name="min_quantity" placeholder="Umbral" style="width:80px;" value="<?= htmlspecialchars($minQuantity) ?>" required>
-                                        <button type="submit" class="btn-add-cart">Guardar</button>
-                                    </form>
-                                </div>
+                                <form method="POST" class="inventory-actions" onsubmit="return confirm('¿Eliminar este ingrediente?');" style="display:inline;">
+                                    <input type="hidden" name="action" value="delete_ingredient">
+                                    <input type="hidden" name="ingredient_id" value="<?= (int)$ingredient['id'] ?>">
+                                    <button type="submit" class="remove-item-btn" style="padding:4px 8px;font-size:.8rem;">Borrar</button>
+                                </form>
+                                <form method="POST" class="inventory-actions" style="display:inline;">
+                                    <input type="hidden" name="action" value="edit_threshold">
+                                    <input type="hidden" name="ingredient_id" value="<?= (int)$ingredient['id'] ?>">
+                                    <input type="number" step="0.1" name="min_quantity" placeholder="Umbral" style="width:60px;padding:3px 5px;font-size:.8rem;" value="<?= htmlspecialchars($minQuantity) ?>" required>
+                                    <button type="submit" class="btn-add-cart" style="padding:4px 8px;font-size:.8rem;">Guardar</button>
+                                </form>
+                                <form method="POST" class="inventory-actions" style="display:inline;">
+                                    <input type="hidden" name="action" value="update_stock">
+                                    <input type="hidden" name="ingredient_id" value="<?= (int)$ingredient['id'] ?>">
+                                    <input type="number" step="0.1" name="change" placeholder="+/-" style="width:60px;padding:3px 5px;font-size:.8rem;" required>
+                                    <button type="submit" class="btn-add-cart" style="padding:4px 8px;font-size:.8rem;">Actualizar</button>
+                                </form>
                             </td>
                         </tr>
                     <?php endforeach; ?>

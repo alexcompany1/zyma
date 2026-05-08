@@ -121,7 +121,7 @@ try {
 .product-actions { display:flex; gap:.5rem; flex-wrap:wrap; }
 .modal-backdrop { position: fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; z-index:50; }
 .modal { background:#fff; border-radius:12px; width:min(640px,95vw); padding:1.2rem; box-shadow:0 22px 60px rgba(0,0,0,.18); }
-.modal.show { display:flex; }
+.modal-backdrop.show { display:flex; }
 .modal h3 { margin-top:0; }
 .modal form { display:grid; gap:1rem; }
 .modal input, .modal textarea, .modal select { width:100%; padding:.8rem; border:1px solid #ccc; border-radius:8px; }

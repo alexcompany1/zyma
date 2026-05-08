@@ -650,32 +650,16 @@ if ($display_name === '') {
 <script>
 const profileBtn = document.getElementById('profileBtn');
 const dropdownMenu = document.getElementById('dropdownMenu');
-const quickBtn = document.getElementById('quickMenuBtn');
-const quickDropdown = document.getElementById('quickDropdown');
 if (profileBtn && dropdownMenu) {
   profileBtn.addEventListener('click', () => {
     dropdownMenu.classList.toggle('show');
   });
-
   window.addEventListener('click', (e) => {
     if (!profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
       dropdownMenu.classList.remove('show');
     }
   });
 }
-
-if (quickBtn && quickDropdown) {
-  quickBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    quickDropdown.classList.toggle('show');
-  });
-}
-
-window.addEventListener('click', (e) => {
-  if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
-    quickDropdown.classList.remove('show');
-  }
-});
 
 async function refreshDashboardStats() {
   try {
