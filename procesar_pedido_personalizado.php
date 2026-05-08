@@ -42,18 +42,23 @@ $extrasTotal = 0;
 $extrasDetails = [];
 
 if (!empty($extras)) {
-    $placeholders = implode(',', array_fill(0, count($extras), '?'));
-    $stmt = $pdo->prepare("SELECT id, nombre, precio_adicional FROM product_extras WHERE id IN ($placeholders) AND activo = 1");
-    $stmt->execute($extras);
-    $selectedExtras = $stmt->fetchAll();
+    try {
+        $placeholders = implode(',', array_fill(0, count($extras), '?'));
+        $stmt = $pdo->prepare("SELECT id, nombre, precio_adicional FROM product_extras WHERE id IN ($placeholders) AND activo = 1");
+        $stmt->execute($extras);
+        $selectedExtras = $stmt->fetchAll();
 
-    foreach ($selectedExtras as $extra) {
-        $extrasTotal += (float)$extra['precio_adicional'];
-        $extrasDetails[] = [
-            'id' => (int)$extra['id'],
-            'name' => $extra['nombre'],
-            'price' => (float)$extra['precio_adicional']
-        ];
+        foreach ($selectedExtras as $extra) {
+            $extrasTotal += (float)$extra['precio_adicional'];
+            $extrasDetails[] = [
+                'id'    => (int)$extra['id'],
+                'name'  => $extra['nombre'],
+                'price' => (float)$extra['precio_adicional'],
+            ];
+        }
+    } catch (Throwable $e) {
+        $extrasTotal = 0;
+        $extrasDetails = [];
     }
 }
 

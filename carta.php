@@ -74,11 +74,11 @@ try {
             p.nombre,
             p.precio,
             p.imagen,
-            ROUND(AVG(v.puntuacion), 1) as promedio_puntuacion,
-            COUNT(v.id) as total_valoraciones
+            ROUND(AVG(v.puntuacion), 1) AS promedio_puntuacion,
+            COUNT(v.id) AS total_valoraciones
         FROM productos p
         LEFT JOIN valoraciones v ON p.id = v.id_producto
-        GROUP BY p.id
+        GROUP BY p.id, p.nombre, p.precio, p.imagen
         ORDER BY p.nombre
     ");
     $products_db = $stmt->fetchAll();
@@ -128,26 +128,26 @@ if (!empty($products_db)) {
     foreach ($products_db as $product) {
         $pid = (int)$product['id'];
         $products[] = [
-            'id' => $pid,
-            'name' => $product['nombre'],
-            'description' => '',
-            'price' => (float)$product['precio'],
-            'image' => $product['imagen'],
-            'extras' => $products_extras[$pid] ?? [],
-            'allergens' => $products_allergens[$pid] ?? [],
-            'promedio' => (float)($product['promedio_puntuacion'] ?? 0),
-            'total_valoraciones' => (int)($product['total_valoraciones'] ?? 0)
+            'id'                 => $pid,
+            'name'               => $product['nombre'],
+            'description'        => '',
+            'price'              => (float)$product['precio'],
+            'image'              => $product['imagen'],
+            'extras'             => $products_extras[$pid] ?? [],
+            'allergens'          => $products_allergens[$pid] ?? [],
+            'promedio'           => (float)($product['promedio_puntuacion'] ?? 0),
+            'total_valoraciones' => (int)($product['total_valoraciones'] ?? 0),
         ];
     }
 } else {
     $products = [
-        ['id' => 1, 'name' => 'Nachos con Queso', 'description' => '', 'price' => 6.00, 'image' => 'assets/nachos.png', 'extras' => [], 'allergens' => [['id' => 0, 'name' => 'Gluten', 'icon' => '🌾'], ['id' => 0, 'name' => 'Lácteos', 'icon' => '🥛']], 'promedio' => 0, 'total_valoraciones' => 0],
-        ['id' => 2, 'name' => 'Patatas Fritas', 'description' => '', 'price' => 3.50, 'image' => 'assets/fries.png', 'extras' => [], 'allergens' => [], 'promedio' => 0, 'total_valoraciones' => 0],
-        ['id' => 3, 'name' => 'Hotdog BBQ', 'description' => '', 'price' => 7.50, 'image' => 'assets/bbq_hotdog.png', 'extras' => [['id' => 1, 'name' => 'Queso extra', 'price' => 1.00], ['id' => 2, 'name' => 'Bacon', 'price' => 1.50]], 'allergens' => [['id' => 0, 'name' => 'Gluten', 'icon' => '🌾'], ['id' => 0, 'name' => 'Soja', 'icon' => '🫘']], 'promedio' => 0, 'total_valoraciones' => 0],
-        ['id' => 4, 'name' => 'Hotdog Clásico', 'description' => '', 'price' => 5.99, 'image' => 'assets/hotdog.png', 'extras' => [['id' => 1, 'name' => 'Queso extra', 'price' => 1.00]], 'allergens' => [['id' => 0, 'name' => 'Gluten', 'icon' => '🌾'], ['id' => 0, 'name' => 'Soja', 'icon' => '🫘']], 'promedio' => 0, 'total_valoraciones' => 0],
-        ['id' => 5, 'name' => 'Hotdog Vegano', 'description' => '', 'price' => 6.50, 'image' => 'assets/vegan-hotdog.png', 'extras' => [], 'allergens' => [['id' => 0, 'name' => 'Gluten', 'icon' => '🌾'], ['id' => 0, 'name' => 'Soja', 'icon' => '🫘']], 'promedio' => 0, 'total_valoraciones' => 0],
-        ['id' => 6, 'name' => 'Refresco Cola', 'description' => '', 'price' => 2.00, 'image' => 'assets/soda.png', 'extras' => [], 'allergens' => [], 'promedio' => 0, 'total_valoraciones' => 0],
-        ['id' => 7, 'name' => 'Agua Mineral', 'description' => '', 'price' => 1.00, 'image' => 'assets/water.png', 'extras' => [], 'allergens' => [], 'promedio' => 0, 'total_valoraciones' => 0]
+        ['id' => 1, 'name' => 'Nachos con Queso',  'description' => '', 'price' => 6.00, 'image' => 'assets/nachos.png',       'extras' => [], 'allergens' => [['id' => 0, 'name' => 'Gluten', 'icon' => '🌾'], ['id' => 0, 'name' => 'Lácteos', 'icon' => '🥛']], 'promedio' => 0, 'total_valoraciones' => 0],
+        ['id' => 2, 'name' => 'Patatas Fritas',     'description' => '', 'price' => 3.50, 'image' => 'assets/fries.png',        'extras' => [], 'allergens' => [], 'promedio' => 0, 'total_valoraciones' => 0],
+        ['id' => 3, 'name' => 'Hotdog BBQ',         'description' => '', 'price' => 7.50, 'image' => 'assets/bbq_hotdog.png',   'extras' => [['id' => 1, 'name' => 'Queso extra', 'price' => 1.00], ['id' => 2, 'name' => 'Bacon', 'price' => 1.50]], 'allergens' => [['id' => 0, 'name' => 'Gluten', 'icon' => '🌾'], ['id' => 0, 'name' => 'Soja', 'icon' => '🫘']], 'promedio' => 0, 'total_valoraciones' => 0],
+        ['id' => 4, 'name' => 'Hotdog Clásico',     'description' => '', 'price' => 5.99, 'image' => 'assets/hotdog.png',       'extras' => [['id' => 1, 'name' => 'Queso extra', 'price' => 1.00]], 'allergens' => [['id' => 0, 'name' => 'Gluten', 'icon' => '🌾'], ['id' => 0, 'name' => 'Soja', 'icon' => '🫘']], 'promedio' => 0, 'total_valoraciones' => 0],
+        ['id' => 5, 'name' => 'Hotdog Vegano',      'description' => '', 'price' => 6.50, 'image' => 'assets/vegan-hotdog.png', 'extras' => [], 'allergens' => [['id' => 0, 'name' => 'Gluten', 'icon' => '🌾'], ['id' => 0, 'name' => 'Soja', 'icon' => '🫘']], 'promedio' => 0, 'total_valoraciones' => 0],
+        ['id' => 6, 'name' => 'Refresco Cola',      'description' => '', 'price' => 2.00, 'image' => 'assets/soda.png',         'extras' => [], 'allergens' => [], 'promedio' => 0, 'total_valoraciones' => 0],
+        ['id' => 7, 'name' => 'Agua Mineral',       'description' => '', 'price' => 1.00, 'image' => 'assets/water.png',        'extras' => [], 'allergens' => [], 'promedio' => 0, 'total_valoraciones' => 0],
     ];
 }
 
@@ -420,9 +420,10 @@ function openCustomizer(productId) {
   extrasContainer.innerHTML = '';
   if (product.extras && product.extras.length > 0) {
     product.extras.forEach(function(extra) {
+      const priceLabel = extra.price > 0 ? ' (+' + extra.price.toFixed(2) + ' €)' : ' (gratis)';
       const div = document.createElement('div');
       div.className = 'customizer-item';
-      div.innerHTML = '<label><input type="checkbox" name="extras[]" value="' + extra.id + '" data-price="' + extra.price + '"><span>' + extra.name + ' (+€' + extra.price.toFixed(2) + ')</span></label>';
+      div.innerHTML = '<label><input type="checkbox" name="extras[]" value="' + extra.id + '" data-price="' + extra.price + '"><span>' + extra.name + priceLabel + '</span></label>';
       extrasContainer.appendChild(div);
     });
     

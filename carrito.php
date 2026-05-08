@@ -41,8 +41,8 @@ foreach ($_SESSION['cart'] ?? [] as $index => $item) {
     $extrasNames = [];
     if (!empty($item['extras'])) {
         foreach ($item['extras'] as $extra) {
-            $extrasTotal += (float)($extra['price'] ?? 0);
-            $extrasNames[] = $extra['name'] ?? '';
+            $extrasTotal += (float)($extra['precio'] ?? $extra['price'] ?? 0);
+            $extrasNames[] = $extra['nombre'] ?? $extra['name'] ?? '';
         }
     }
     
@@ -61,7 +61,7 @@ foreach ($_SESSION['cart'] ?? [] as $index => $item) {
         'subtotal' => $itemTotal
     ];
     
-     $total += $itemTotal;
+    $total += $itemTotal;
 }
 
 $error = null;
@@ -165,6 +165,18 @@ foreach ($cartItems as $item) {
 .payment-panel-icon{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:14px;background:#fff;box-shadow:inset 0 0 0 1px rgba(114,14,7,.08)}
 .payment-panel-icon svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .payment-note{color:rgba(69,5,12,.75);line-height:1.5}
+.cart-item-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid rgba(114,14,7,.08)}
+.cart-item-img{width:60px;height:60px;object-fit:cover;border-radius:10px;flex:0 0 60px}
+.cart-item-info{flex:1;min-width:0}
+.cart-item-name{font-weight:600;color:#45050C;font-size:1rem}
+.cart-item-extras{font-size:0.82rem;color:#888;margin:3px 0}
+.extra-tag{display:inline-block;background:rgba(114,14,7,.07);border-radius:6px;padding:1px 7px;margin:2px 3px 2px 0;font-size:0.8rem;color:#45050C}
+.cart-item-meta{font-size:0.88rem;color:#666;margin-top:3px}
+.cart-item-subtotal{font-weight:700;color:#45050C;font-size:0.97rem;margin-top:3px}
+.quantity-controls{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.quantity-btn{width:30px;height:30px;border-radius:50%;border:1.5px solid rgba(114,14,7,.3);background:#fff;color:#45050C;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.quantity-btn:hover{background:#45050C;color:#fff;border-color:#45050C}
+.quantity-value{min-width:22px;text-align:center;font-weight:600;font-size:1rem}
 </style>
 </head>
 <body>
@@ -237,13 +249,13 @@ foreach ($cartItems as $item) {
           </div>
           <?php endif; ?>
           <div class="cart-item-meta">
-            EUR <?= number_format((float)$item['price'], 2, ',', '.') ?> x <?= (int)$item['quantity'] ?>
-            <?php if (!empty($item['extras_total']) && $item['extras_total'] > 0): ?>
-              <span style="color:#45050C;">(+€<?= number_format($item['extras_total'], 2, ',', '.') ?> extras)</span>
+            <?= number_format((float)$item['price'], 2, ',', '.') ?> € x <?= (int)$item['quantity'] ?>
+            <?php if ($item['extras_total'] > 0): ?>
+              <span style="color:#45050C;">(+<?= number_format($item['extras_total'], 2, ',', '.') ?> € extras)</span>
             <?php endif; ?>
           </div>
           <div class="cart-item-subtotal">
-            EUR <?= number_format((float)$item['subtotal'], 2, ',', '.') ?>
+            <?= number_format((float)$item['subtotal'], 2, ',', '.') ?> €
           </div>
         </div>
 
@@ -257,7 +269,7 @@ foreach ($cartItems as $item) {
 
       <div class="center mt-3">
         <div class="cart-total-line" id="total-amount">
-          <span data-i18n="cart.total">Total:</span> EUR <?= number_format($total, 2, ',', '.') ?>
+          <span data-i18n="cart.total">Total:</span> <?= number_format($total, 2, ',', '.') ?> €
         </div>
 
         <div class="btn-row center">
@@ -352,44 +364,42 @@ window.addEventListener('click', (e) => {
 function changeQuantity(itemIndex, delta) {
   const row = document.getElementById('cart-item-' + itemIndex);
   if (!row) return;
-  
+
   const qtyElement = row.querySelector('.quantity-value');
   const subtotalElement = row.querySelector('.cart-item-subtotal');
   const totalElement = document.getElementById('total-amount');
-  
+
   let currentQty = parseInt(qtyElement.textContent, 10);
-  
+
   if (delta === -1 && currentQty === 1) {
     window.location.href = 'eliminar_producto.php?index=' + itemIndex;
     return;
   }
-  
+
   if (currentQty + delta < 1) return;
-  
+
   currentQty += delta;
   qtyElement.textContent = currentQty;
   
   // Obtener datos del item
   const item = cartMap[itemIndex];
   if (!item) return;
-  
+
   const basePrice = Number(item.price || 0);
   const extrasTotal = Number(item.extras_total || 0);
   const subtotal = (basePrice + extrasTotal) * currentQty;
-  
-  subtotalElement.innerHTML = 'EUR ' + subtotal.toFixed(2).replace('.', ',');
-  
-  
-  // Recalcular total
+
+  subtotalElement.textContent = subtotal.toFixed(2).replace('.', ',') + ' €';
+
   let total = 0;
   document.querySelectorAll('.cart-item-row').forEach(function(r) {
     const text = r.querySelector('.cart-item-subtotal').textContent;
-    const value = parseFloat(text.replace('EUR ', '').replace(',', '.')) || 0;
+    const value = parseFloat(text.replace(' €', '').replace(',', '.')) || 0;
     total += value;
   });
-  
+
   const totalLabel = document.querySelector('[data-i18n="cart.total"]');
-  totalElement.innerHTML = '<span data-i18n="cart.total">' + (totalLabel ? totalLabel.textContent : 'Total:') + '</span> EUR ' + total.toFixed(2).replace('.', ',');
+  totalElement.innerHTML = '<span data-i18n="cart.total">' + (totalLabel ? totalLabel.textContent : 'Total:') + '</span> ' + total.toFixed(2).replace('.', ',') + ' €';
 }
 
 const methodRadios = document.querySelectorAll('input[name="metodo_pago"]');
@@ -421,9 +431,9 @@ if (toast) {
 <footer>
   <p data-i18n="footer.rights">&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Pol�tica de Cookies</a>
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Pol�tica de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php" data-i18n="footer.privacy">Pol�tica de Privacidad</a>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Pol�tica de Privacidad</a>
     <span>|</span>
     <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
   </p>
