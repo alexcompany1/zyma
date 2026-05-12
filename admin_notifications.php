@@ -46,6 +46,8 @@ $unreadCount = getUnreadNotificationsCount($pdo, (int)$_SESSION['user_id']);
 .notification-card small { color:#666; }
 .notification-actions { display:flex; gap:.75rem; flex-wrap:wrap; margin-top:1rem; }
 .notification-actions form { display:inline-block; }
+.landing-bar.mobile-ready .profile-section { display: flex !important; }
+.landing-bar.mobile-ready .quick-menu-section { display: flex !important; }
 </style>
 </head>
 <body>
@@ -58,13 +60,13 @@ $unreadCount = getUnreadNotificationsCount($pdo, (int)$_SESSION['user_id']);
 <header class="landing-header">
   <div class="landing-bar">
     <div class="profile-section">
-      <button class="profile-btn" onclick="toggleProfile()">
+      <button class="profile-btn" id="profileBtn">
         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="white">
           <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c1.52 0 5.1 1.34 5.1 5v1H6.9v-1c0-3.66 3.58-5 5.1-5z"/>
         </svg>
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
-      <div class="dropdown" id="profileDropdown">
+      <div class="dropdown" id="dropdownMenu">
           <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
           <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
           <a href="logout.php" data-i18n="nav.logout">Cerrar sesión</a>
@@ -72,12 +74,12 @@ $unreadCount = getUnreadNotificationsCount($pdo, (int)$_SESSION['user_id']);
     </div>
     <a href="admin.php" class="landing-logo"><span class="landing-logo-text">Zyma</span></a>
         <div class="quick-menu-section">
-      <button class="quick-menu-btn" onclick="toggleMenu()" aria-label="Menú rápido">
+      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido">
         <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
           <path d="M5 7h14M5 12h14M5 17h14" />
         </svg>
       </button>
-      <div class="dropdown quick-dropdown" id="menuDropdown">
+      <div class="dropdown quick-dropdown" id="quickDropdown">
         <a href="admin.php">Panel Admin</a>
         <a href="admin_orders.php">Pedidos</a>
         <a href="admin_inventory.php">Inventario</a>
@@ -131,26 +133,36 @@ $unreadCount = getUnreadNotificationsCount($pdo, (int)$_SESSION['user_id']);
 </div>
 
 <script>
-function toggleMenu() {
-    var d = document.getElementById('menuDropdown');
-    if (d) d.classList.toggle('show');
-}
+document.addEventListener('DOMContentLoaded', function() {
+    var profileBtn = document.getElementById('profileBtn');
+    var dropdownMenu = document.getElementById('dropdownMenu');
+    var quickBtn = document.getElementById('quickMenuBtn');
+    var quickDropdown = document.getElementById('quickDropdown');
 
-function toggleProfile() {
-    var d = document.getElementById('profileDropdown');
-    if (d) d.classList.toggle('show');
-}
+    if (profileBtn && dropdownMenu) {
+        profileBtn.addEventListener('click', function() {
+            dropdownMenu.classList.toggle('show');
+        });
+    }
 
-document.addEventListener('click', function(e) {
-    var d = document.getElementById('menuDropdown');
-    if (d && !e.target.closest('.quick-menu-section')) {
-        d.classList.remove('show');
+    if (quickBtn && quickDropdown) {
+        quickBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            quickDropdown.classList.toggle('show');
+        });
     }
-    var p = document.getElementById('profileDropdown');
-    if (p && !e.target.closest('.profile-section')) {
-        p.classList.remove('show');
-    }
+
+    document.addEventListener('click', function(e) {
+        if (profileBtn && dropdownMenu && !profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+            dropdownMenu.classList.remove('show');
+        }
+        if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
+            quickDropdown.classList.remove('show');
+        }
+    });
 });
 </script>
+<script src="assets/mobile-header.js?v=20260211-6"></script>
+<?php include 'cookie_popup.php'; ?>
 </body>
 </html>

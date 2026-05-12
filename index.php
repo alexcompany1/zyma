@@ -460,5 +460,6 @@ if ($basePath === '.' || $basePath === '/') {
   </script>
   <script src="<?= $basePath ?>/assets/mobile-header.js?v=20260211-6"></script>
   <script src="<?= $basePath ?>/assets/lang.js?v=20260428-1"></script>
+<?php include 'cookie_popup.php'; ?>
 </body>
 </html>

@@ -199,6 +199,7 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
 <script src="assets/lang.js?v=20260428-1"></script>
+<?php include 'cookie_popup.php'; ?>
 </body>
 </html>
 
