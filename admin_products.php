@@ -328,33 +328,31 @@ document.querySelectorAll('.toggle-availability').forEach(function(btn) {
     });
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    var profileBtn = document.getElementById('profileBtn');
-    var dropdownMenu = document.getElementById('dropdownMenu');
-    var quickBtn = document.getElementById('quickMenuBtn');
-    var quickDropdown = document.getElementById('quickDropdown');
+var profileBtn = document.getElementById('profileBtn');
+var dropdownMenu = document.getElementById('dropdownMenu');
+var quickBtn = document.getElementById('quickMenuBtn');
+var quickDropdown = document.getElementById('quickDropdown');
 
-    if (profileBtn && dropdownMenu) {
-        profileBtn.addEventListener('click', function() {
-            dropdownMenu.classList.toggle('show');
-        });
-    }
-
-    if (quickBtn && quickDropdown) {
-        quickBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            quickDropdown.classList.toggle('show');
-        });
-    }
-
-    document.addEventListener('click', function(e) {
-        if (profileBtn && dropdownMenu && !profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-            dropdownMenu.classList.remove('show');
-        }
-        if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
-            quickDropdown.classList.remove('show');
-        }
+if (profileBtn && dropdownMenu) {
+    profileBtn.addEventListener('click', function() {
+        dropdownMenu.classList.toggle('show');
     });
+}
+
+if (quickBtn && quickDropdown) {
+    quickBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        quickDropdown.classList.toggle('show');
+    });
+}
+
+document.addEventListener('click', function(e) {
+    if (profileBtn && dropdownMenu && !profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+        dropdownMenu.classList.remove('show');
+    }
+    if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
+        quickDropdown.classList.remove('show');
+    }
 });
 </script>
 </body>
