@@ -97,10 +97,12 @@ notifyCriticalIngredients($pdo, (int)$_SESSION['user_id']);
 .stock-amarillo { background:#f1c40f; color:#222; }
 .stock-rojo { background:#e74c3c; }
 .stock-gris { background:#95a5a6; }
-.inventory-table { width:100%; border-collapse: collapse; }
-.inventory-table th, .inventory-table td { padding:.85rem .75rem; border:1px solid #e7e7e7; text-align:left; }
+.table-scroll { overflow-x:auto; width:100%; }
+.inventory-table { width:100%; border-collapse: collapse; min-width:850px; }
+.inventory-table th, .inventory-table td { padding:.85rem .75rem; border:1px solid #e7e7e7; text-align:left; white-space:nowrap; }
 .inventory-table th { background:#f9f9f9; }
-.inventory-actions { display:flex; align-items:center; gap:.35rem; flex-wrap:nowrap; }
+.inventory-actions { display:flex; align-items:center; gap:.35rem; flex-wrap:wrap; }
+.inventory-actions input, .inventory-actions button { flex-shrink:0; }
 small { color:#555; }
 </style>
 </head>
@@ -161,6 +163,7 @@ if ($display_name === '') {
         <?php if (empty($ingredients)): ?>
             <p class="empty-state">No hay ingredientes registrados.</p>
         <?php else: ?>
+            <div class="table-scroll">
             <table class="inventory-table">
                 <thead>
                     <tr>
@@ -209,6 +212,7 @@ if ($display_name === '') {
                     <?php endforeach; ?>
                 </tbody>
             </table>
+            </div>
         <?php endif; ?>
 
         <div style="margin-top:1.5rem;">

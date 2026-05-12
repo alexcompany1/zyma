@@ -41,16 +41,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $name = trim($_POST['name'] ?? '');
         $price = max(0, floatval($_POST['price'] ?? 0));
         $category = trim($_POST['category'] ?? 'General');
-        $description = trim($_POST['description'] ?? '');
         $available = isset($_POST['available']) ? 1 : 0;
 
         if ($id > 0 && $name !== '') {
-            $stmt = $pdo->prepare("UPDATE productos SET nombre = :name, precio = :price, category = :category, description = :description, available = :available WHERE id = :id");
+            $stmt = $pdo->prepare("UPDATE productos SET nombre = :name, precio = :price, category = :category, available = :available WHERE id = :id");
             $stmt->execute([
                 ':name' => $name,
                 ':price' => $price,
                 ':category' => $category,
-                ':description' => $description,
                 ':available' => $available,
                 ':id' => $id
             ]);
@@ -119,13 +117,34 @@ try {
 .table-compact th, .table-compact td { padding:.85rem .75rem; border:1px solid #e7e7e7; }
 .table-compact th { background:#f9f9f9; }
 .product-actions { display:flex; gap:.5rem; flex-wrap:wrap; }
-.modal-backdrop { position: fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; z-index:50; }
-.modal { background:#fff; border-radius:12px; width:min(640px,95vw); padding:1.2rem; box-shadow:0 22px 60px rgba(0,0,0,.18); }
-.modal-backdrop.show { display:flex; }
-.modal h3 { margin-top:0; }
-.modal form { display:grid; gap:1rem; }
-.modal input, .modal textarea, .modal select { width:100%; padding:.8rem; border:1px solid #ccc; border-radius:8px; }
-.modal-footer { display:flex; justify-content:flex-end; gap:.75rem; margin-top:1rem; }
+
+#editOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 99999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+#editBox {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+#editBox h3 { margin-top:0; margin-bottom:15px; }
+#editBox form { display:grid; gap:12px; }
+#editBox input { width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing:border-box; }
+#editBox label { display:flex; align-items:center; gap:8px; }
+#editBoxButtons { display:flex; justify-content:flex-end; gap:10px; margin-top:15px; }
 </style>
 </head>
 <body>
@@ -200,30 +219,31 @@ if ($display_name === '') {
                     <th>Categoría</th>
                     <th>Precio</th>
                     <th>Disponibilidad</th>
-                    <th>Descripción</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (empty($products)): ?>
-                    <tr><td colspan="6" class="empty-state">No hay productos en el catálogo.</td></tr>
+                    <tr><td colspan="5" class="empty-state">No hay productos en el catálogo.</td></tr>
                 <?php endif; ?>
                 <?php foreach ($products as $product): ?>
-                    <tr data-id="<?= (int)$product['id'] ?>">
-                        <td><?= htmlspecialchars($product['nombre']) ?></td>
-                        <td><?= htmlspecialchars($product['category'] ?: 'General') ?></td>
-                        <td>€<?= number_format((float)$product['precio'], 2, ',', '.') ?></td>
-                        <td>
-                            <button type="button" class="toggle-availability btn-add-cart" data-id="<?= (int)$product['id'] ?>">
-                                <?= Product::availableLabel((int)$product['available']) ?>
-                            </button>
-                        </td>
-                        <td><?= htmlspecialchars(mb_strimwidth($product['description'] ?? '', 0, 80, '...')) ?></td>
+                <?php
+                $pid = (int)$product['id'];
+                $pname = htmlspecialchars($product['nombre']);
+                $pprice = (float)$product['precio'];
+                $pcat = htmlspecialchars($product['category'] ?: 'General');
+                $pavail = (int)$product['available'];
+                ?>
+                    <tr>
+                        <td><?= $pname ?></td>
+                        <td><?= $pcat ?></td>
+                        <td>€<?= number_format($pprice, 2, ',', '.') ?></td>
+                        <td><button type="button" class="toggle-availability btn-add-cart" data-id="<?= $pid ?>"><?= Product::availableLabel($pavail) ?></button></td>
                         <td class="product-actions">
-                            <button type="button" class="btn-add-cart edit-product" data-product='<?= json_encode($product, JSON_HEX_APOS|JSON_HEX_QUOT) ?>'>Editar</button>
+                            <button type="button" class="btn-add-cart" onclick="abrirEditar(<?= $pid ?>,'<?= addslashes($product['nombre']) ?>',<?= $pprice ?>,'<?= addslashes($product['category'] ?: 'General') ?>',<?= $pavail ?>)">Editar</button>
                             <form method="POST" style="display:inline-block;">
                                 <input type="hidden" name="action" value="destroy">
-                                <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
+                                <input type="hidden" name="product_id" value="<?= $pid ?>">
                                 <button type="submit" class="remove-item-btn" onclick="return confirm('Eliminar producto?');">Eliminar</button>
                             </form>
                         </td>
@@ -247,34 +267,75 @@ if ($display_name === '') {
     </div>
 </div>
 
-<div class="modal-backdrop" id="modalBackdrop">
-    <div class="modal" role="dialog" aria-modal="true">
+<div id="editOverlay">
+    <div id="editBox">
         <h3>Editar producto</h3>
-        <form id="editProductForm" method="POST">
+        <form method="POST">
             <input type="hidden" name="action" value="update">
-            <input type="hidden" name="product_id" id="editProductId">
-            <input type="text" name="name" id="editName" placeholder="Nombre" required>
-            <input type="number" name="price" id="editPrice" step="0.01" placeholder="Precio" required>
-            <input type="text" name="category" id="editCategory" placeholder="Categoría">
-            <textarea name="description" id="editDescription" rows="4" placeholder="Descripción"></textarea>
-            <label><input type="checkbox" name="available" id="editAvailable"> Disponible</label>
-            <div class="modal-footer">
-                <button type="button" class="remove-item-btn" id="closeModal">Cancelar</button>
-                <button type="submit" class="btn-add-cart">Guardar cambios</button>
+            <input type="hidden" name="product_id" id="edit_id">
+            <label>Nombre:</label>
+            <input type="text" name="name" id="edit_nombre" required>
+            <label>Precio:</label>
+            <input type="number" name="price" id="edit_precio" step="0.01" required>
+            <label>Categoría:</label>
+            <input type="text" name="category" id="edit_categoria">
+            <label><input type="checkbox" name="available" id="edit_disponible"> Disponible</label>
+            <div id="editBoxButtons">
+                <button type="button" class="remove-item-btn" onclick="cerrarEditar()">Cancelar</button>
+                <button type="submit" class="btn-add-cart">Guardar</button>
             </div>
         </form>
     </div>
 </div>
 
 <script>
-const profileBtn = document.getElementById('profileBtn');
-const dropdownMenu = document.getElementById('dropdownMenu');
-const quickBtn = document.getElementById('quickMenuBtn');
-const quickDropdown = document.getElementById('quickDropdown');
+function abrirEditar(id, nombre, precio, categoria, disponible) {
+    document.getElementById('edit_id').value = id;
+    document.getElementById('edit_nombre').value = nombre;
+    document.getElementById('edit_precio').value = precio;
+    document.getElementById('edit_categoria').value = categoria;
+    document.getElementById('edit_disponible').checked = (disponible === 1);
+    document.getElementById('editOverlay').style.display = 'flex';
+}
+
+function cerrarEditar() {
+    document.getElementById('editOverlay').style.display = 'none';
+}
+
+document.getElementById('editOverlay').addEventListener('click', function(e) {
+    if (e.target === this) {
+        cerrarEditar();
+    }
+});
+
+document.querySelectorAll('.toggle-availability').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var id = this.getAttribute('data-id');
+        var self = this;
+        var formData = new FormData();
+        formData.append('action', 'toggle_available');
+        formData.append('product_id', id);
+
+        fetch('admin_products.php', {
+            method: 'POST',
+            body: formData
+        }).then(function(r) { return r.json(); }).then(function(data) {
+            if (data.success) {
+                var txt = self.textContent.trim();
+                self.textContent = txt === 'Disponible' ? 'No disponible' : 'Disponible';
+            }
+        });
+    });
+});
+
+var profileBtn = document.getElementById('profileBtn');
+var dropdownMenu = document.getElementById('dropdownMenu');
+var quickBtn = document.getElementById('quickMenuBtn');
+var quickDropdown = document.getElementById('quickDropdown');
 
 if (profileBtn && dropdownMenu) {
-    profileBtn.addEventListener('click', () => dropdownMenu.classList.toggle('show'));
-    window.addEventListener('click', e => {
+    profileBtn.addEventListener('click', function() { dropdownMenu.classList.toggle('show'); });
+    window.addEventListener('click', function(e) {
         if (!profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
             dropdownMenu.classList.remove('show');
         }
@@ -282,81 +343,16 @@ if (profileBtn && dropdownMenu) {
 }
 
 if (quickBtn && quickDropdown) {
-    quickBtn.addEventListener('click', (e) => {
+    quickBtn.addEventListener('click', function(e) {
         e.stopPropagation();
         quickDropdown.classList.toggle('show');
     });
 }
 
-window.addEventListener('click', (e) => {
+window.addEventListener('click', function(e) {
     if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
         quickDropdown.classList.remove('show');
     }
-});
-
-const modalBackdrop = document.getElementById('modalBackdrop');
-const editForm = document.getElementById('editProductForm');
-const editProductId = document.getElementById('editProductId');
-const editName = document.getElementById('editName');
-const editPrice = document.getElementById('editPrice');
-const editCategory = document.getElementById('editCategory');
-const editDescription = document.getElementById('editDescription');
-const editAvailable = document.getElementById('editAvailable');
-const closeModal = document.getElementById('closeModal');
-
-function openModal(product) {
-    editProductId.value = product.id;
-    editName.value = product.nombre;
-    editPrice.value = product.precio;
-    editCategory.value = product.category || 'General';
-    editDescription.value = product.description || '';
-    editAvailable.checked = Number(product.available) === 1;
-    modalBackdrop.classList.add('show');
-}
-
-function closeProductModal() {
-    modalBackdrop.classList.remove('show');
-}
-
-document.querySelectorAll('.edit-product').forEach(button => {
-    button.addEventListener('click', () => {
-        const product = JSON.parse(button.getAttribute('data-product'));
-        openModal(product);
-    });
-});
-
-closeModal.addEventListener('click', closeProductModal);
-modalBackdrop.addEventListener('click', e => {
-    if (e.target === modalBackdrop) {
-        closeProductModal();
-    }
-});
-
-const toggles = document.querySelectorAll('.toggle-availability');
-toggles.forEach(button => {
-    button.addEventListener('click', () => {
-        const id = button.dataset.id;
-        const formData = new FormData();
-        formData.append('action', 'toggle_available');
-        formData.append('product_id', id);
-
-        fetch('admin_products.php', {
-            method: 'POST',
-            body: formData
-        }).then(response => response.json()).then(data => {
-            if (data.success) {
-                const row = document.querySelector(`tr[data-id="${id}"]`);
-                if (row) {
-                    const nameCell = row.cells[0];
-                    const availableButton = row.querySelector('.toggle-availability');
-                    if (availableButton) {
-                        const current = availableButton.textContent.trim();
-                        availableButton.textContent = current === 'Disponible' ? 'No disponible' : 'Disponible';
-                    }
-                }
-            }
-        }).catch(console.error);
-    });
 });
 </script>
 </body>
