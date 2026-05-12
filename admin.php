@@ -419,18 +419,18 @@ if ($display_name === '') {
       <span class="landing-logo-text">Zyma</span>
     </a>
 
-                <div class="quick-menu-section">
-            <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido">
-              <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5 7h14M5 12h14M5 17h14" />
-              </svg>
-            </button>
-            <div class="dropdown quick-dropdown" id="quickDropdown">
-                <a href="admin_orders.php">Pedidos</a>
-                <a href="admin_inventory.php">Inventario</a>
-                <a href="admin_products.php">Productos</a>
-            </div>
-        </div>
+    <div class="quick-menu-section">
+      <button class="quick-menu-btn" onclick="toggleMenu()" aria-label="Menú rápido">
+        <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 7h14M5 12h14M5 17h14" />
+        </svg>
+      </button>
+      <div class="dropdown quick-dropdown" id="menuDropdown">
+        <a href="admin_orders.php">Pedidos</a>
+        <a href="admin_inventory.php">Inventario</a>
+        <a href="admin_products.php">Productos</a>
+      </div>
+    </div>
     <div class="notification-section">
       <a href="admin_notifications.php" class="notification-link">
         <span class="bell-icon">🔔</span>
@@ -648,32 +648,34 @@ if ($display_name === '') {
 <?php include 'cookie_popup.php'; ?>
 
 <script>
+function toggleMenu() {
+    var d = document.getElementById('menuDropdown');
+    if (d) {
+        d.classList.toggle('show');
+    }
+}
+
+document.addEventListener('click', function(e) {
+    var d = document.getElementById('menuDropdown');
+    if (d && !e.target.closest('.quick-menu-section')) {
+        d.classList.remove('show');
+    }
+});
+
 var profileBtn = document.getElementById('profileBtn');
 var dropdownMenu = document.getElementById('dropdownMenu');
-var quickBtn = document.getElementById('quickMenuBtn');
-var quickDropdown = document.getElementById('quickDropdown');
 
 if (profileBtn && dropdownMenu) {
     profileBtn.addEventListener('click', function() {
         dropdownMenu.classList.toggle('show');
     });
-}
 
-if (quickBtn && quickDropdown) {
-    quickBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        quickDropdown.classList.toggle('show');
+    document.addEventListener('click', function(e) {
+        if (!profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+            dropdownMenu.classList.remove('show');
+        }
     });
 }
-
-document.addEventListener('click', function(e) {
-    if (profileBtn && dropdownMenu && !profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-        dropdownMenu.classList.remove('show');
-    }
-    if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
-        quickDropdown.classList.remove('show');
-    }
-});
 
 async function refreshDashboardStats() {
   try {
