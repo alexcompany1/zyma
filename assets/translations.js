@@ -487,6 +487,23 @@
     translations: translations
   };
 
+  function mergeExtraTranslations() {
+    if (!window.ZymaExtraTranslations) return;
+    var extra = window.ZymaExtraTranslations;
+    for (var lang in extra) {
+      if (!extra.hasOwnProperty(lang)) continue;
+      translations[lang] = translations[lang] || {};
+      for (var key in extra[lang]) {
+        if (extra[lang].hasOwnProperty(key) && !translations[lang][key]) {
+          translations[lang][key] = extra[lang][key];
+        }
+      }
+    }
+    translations.ca = translations.ca || {};
+    translations.de = translations.de || {};
+    translations.it = translations.it || {};
+  }
+
   function startObserver() {
     if (observerStarted || !document.body || !window.MutationObserver) return;
     observerStarted = true;
@@ -501,6 +518,7 @@
   }
 
   function boot() {
+    mergeExtraTranslations();
     apply(getLang());
     startObserver();
   }
