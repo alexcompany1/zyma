@@ -28,6 +28,14 @@ if (is_file($localConfigPath) && !$isProduction) {
     require $localConfigPath;
 }
 
+// Sobreescribir con las keys correctas si no se definieron en config.local.php
+if (empty($stripeSecretKey)) {
+    $stripeSecretKey = '';
+}
+if (empty($stripePublishableKey)) {
+    $stripePublishableKey = '';
+}
+
 define('TAX_RATE', 0.10);
 
 if (!defined('STRIPE_SECRET_KEY')) {

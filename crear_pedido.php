@@ -5,12 +5,10 @@
  */
 
 session_start();
+require_once 'auth.php';
 
 // Validar Sesión
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
+zymaRequireRole('client');
 
 // Validar carrito
 if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
@@ -78,5 +76,4 @@ try {
     echo "</div>";
 }
 ?>
-
 

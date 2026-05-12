@@ -5,9 +5,9 @@
  */
 
 session_start();
-unset($_SESSION['user_id'], $_SESSION['email'], $_SESSION['worker_code'], $_SESSION['nombre']);
+require_once 'auth.php';
+zymaClearAuthenticatedUser();
 $_SESSION['guest_mode'] = true;
 
 header('Location: carta.php');
 exit;
-

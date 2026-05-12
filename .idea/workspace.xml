@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="e050e89f-4bae-4342-9ead-c915d042b87e" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/admin.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/translations.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/aviso_legal.php" beforeDir="false" afterPath="$PROJECT_DIR$/aviso_legal.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bizum_instrucciones.php" beforeDir="false" afterPath="$PROJECT_DIR$/bizum_instrucciones.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/carrito.php" beforeDir="false" afterPath="$PROJECT_DIR$/carrito.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/carta.php" beforeDir="false" afterPath="$PROJECT_DIR$/carta.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chequear_valoraciones.php" beforeDir="false" afterPath="$PROJECT_DIR$/chequear_valoraciones.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/confirmacion_pedido.php" beforeDir="false" afterPath="$PROJECT_DIR$/confirmacion_pedido.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/editar_carta.php" beforeDir="false" afterPath="$PROJECT_DIR$/editar_carta.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/estadisticas.php" beforeDir="false" afterPath="$PROJECT_DIR$/estadisticas.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/forgot_password.php" beforeDir="false" afterPath="$PROJECT_DIR$/forgot_password.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gestionar_pedidos.php" beforeDir="false" afterPath="$PROJECT_DIR$/gestionar_pedidos.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/login.php" beforeDir="false" afterPath="$PROJECT_DIR$/login.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/menú.php" beforeDir="false" afterPath="$PROJECT_DIR$/menú.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mis_pedidos.php" beforeDir="false" afterPath="$PROJECT_DIR$/mis_pedidos.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notificaciones.php" beforeDir="false" afterPath="$PROJECT_DIR$/notificaciones.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pedido_confirmado.php" beforeDir="false" afterPath="$PROJECT_DIR$/pedido_confirmado.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/perfil.php" beforeDir="false" afterPath="$PROJECT_DIR$/perfil.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/politica_cookies.php" beforeDir="false" afterPath="$PROJECT_DIR$/politica_cookies.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/politica_privacidad.php" beforeDir="false" afterPath="$PROJECT_DIR$/politica_privacidad.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/registro.php" beforeDir="false" afterPath="$PROJECT_DIR$/registro.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reset_password.php" beforeDir="false" afterPath="$PROJECT_DIR$/reset_password.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stripe_return.php" beforeDir="false" afterPath="$PROJECT_DIR$/stripe_return.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_valoracion.php" beforeDir="false" afterPath="$PROJECT_DIR$/test_valoracion.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ticket.php" beforeDir="false" afterPath="$PROJECT_DIR$/ticket.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tickets.php" beforeDir="false" afterPath="$PROJECT_DIR$/tickets.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/trabajador.php" beforeDir="false" afterPath="$PROJECT_DIR$/trabajador.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usuario.php" beforeDir="false" afterPath="$PROJECT_DIR$/usuario.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/valoraciones.php" beforeDir="false" afterPath="$PROJECT_DIR$/valoraciones.php" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "alexcompany1"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/alexcompany1/zyma.git",
+    "accountId": "7f1c4370-a7be-4e6e-ac80-87c50f2b1ae1"
+  }
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 8
+}]]></component>
+  <component name="ProjectId" id="3DO9TxEDb8NNiEOQUeVNxKT2mBi" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "alex",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e050e89f-4bae-4342-9ead-c915d042b87e" name="Changes" comment="" />
+      <created>1778142262044</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1778142262044</updated>
+    </task>
+    <servers />
+  </component>
+</project>

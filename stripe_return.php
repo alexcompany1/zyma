@@ -98,14 +98,14 @@ try {
       </button>
       <span class="user-name"><?= htmlspecialchars($displayName) ?></span>
       <div class="dropdown" id="dropdownMenu">
-        <a href="perfil.php">Mi perfil</a>
-        <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-        <a href="logout.php">Cerrar Sesion</a>
+        <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
+        <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
+        <a href="logout.php" data-i18n="nav.logout">Cerrar Sesión</a>
       </div>
     </div>
     <a href="usuario.php" class="landing-logo"><span class="landing-logo-text">Zyma</span></a>
     <div class="cart-section">
-      <a href="carrito.php" class="cart-btn">
+      <a href="carrito.php" class="cart-btn" data-i18n-aria="nav.cart" aria-label="Carrito">
         <img src="assets/cart-icon.png" alt="Carrito">
         <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
       </a>
@@ -120,20 +120,20 @@ try {
     <?php if ($error): ?>
       <p class="empty-state">No hemos podido cerrar el pago: <?= htmlspecialchars($error) ?></p>
       <div class="btn-row center mt-3">
-        <a href="carrito.php" class="btn-cart">Volver al carrito</a>
-        <a href="mis_pedidos.php" class="btn-seguir-comprando">Ver mis pedidos</a>
+        <a href="carrito.php" class="btn-cart" data-i18n="stripe.backToCart">Volver al carrito</a>
+        <a href="mis_pedidos.php" class="btn-seguir-comprando" data-i18n="bizum.viewOrders">Ver mis pedidos</a>
       </div>
     <?php else: ?>
       <p class="muted lead mt-2"><?= htmlspecialchars($message) ?></p>
       <?php if ($orderId > 0): ?>
-        <p class="mt-2"><strong>Pedido:</strong> #<?= (int) $orderId ?></p>
+        <p class="mt-2"><strong data-i18n="stripe.orderLabel">Pedido:</strong> #<?= (int) $orderId ?></p>
       <?php endif; ?>
       <div class="btn-row center mt-3">
         <?php if ($orderId > 0): ?>
-          <a href="ticket.php?id=<?= (int) $orderId ?>" class="btn-cart">Ver ticket</a>
+          <a href="ticket.php?id=<?= (int) $orderId ?>" class="btn-cart" data-i18n="bizum.viewTicket">Ver ticket</a>
         <?php endif; ?>
-        <a href="mis_pedidos.php" class="btn-cart">Ver mis pedidos</a>
-        <a href="usuario.php" class="btn-seguir-comprando">Volver al inicio</a>
+        <a href="mis_pedidos.php" class="btn-cart" data-i18n="bizum.viewOrders">Ver mis pedidos</a>
+        <a href="usuario.php" class="btn-seguir-comprando" data-i18n="bizum.backHome">Volver al inicio</a>
       </div>
     <?php endif; ?>
   </div>
@@ -152,14 +152,15 @@ if (profileBtn && dropdownMenu) {
 }
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/lang.js?v=20260428-1"></script>
 <footer>
-  <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
+  <p data-i18n="footer.rights">&copy; 2026 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
-    <a href="politica_cookies.php">Politica de Cookies</a>
+    <a href="politica_cookies.php" data-i18n="footer.cookiePolicy">Política de Cookies</a>
     <span>|</span>
-    <a href="politica_privacidad.php">Politica de Privacidad</a>
+    <a href="politica_privacidad.php" data-i18n="footer.privacy">Política de Privacidad</a>
     <span>|</span>
-    <a href="aviso_legal.php">Aviso Legal</a>
+    <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
   </p>
 </footer>
 
