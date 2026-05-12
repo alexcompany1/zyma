@@ -210,6 +210,7 @@ if (profileBtn && dropdownMenu) {
     <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
   </p>
 </footer>
+<?php include 'cookie_popup.php'; ?>
 </body>
 </html>
 

@@ -753,6 +753,7 @@ if ($is_logged_in) {
 
 <script src="assets/lang.js?v=20260428-1"></script>
 <?php if ($is_logged_in): ?>
+    <?php include 'cookie_popup.php'; ?>
     <script src="assets/mobile-header.js?v=20260211-6"></script>
 <?php endif; ?>
 
