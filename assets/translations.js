@@ -373,16 +373,32 @@
   }
 
   function applyDataTranslations(lang) {
+    var count = 0;
     document.querySelectorAll('[data-i18n]').forEach(function (el) {
       var key = el.getAttribute('data-i18n');
       var value = translateKey(key, lang);
-      if (!value) return;
+      if (!value) {
+        // Si no hay valor, mantener el original
+        if (el.hasAttribute('data-i18n-original')) {
+          if (el.getAttribute('data-i18n-raw') === '1') {
+            el.innerHTML = el.getAttribute('data-i18n-original');
+          } else {
+            el.textContent = el.getAttribute('data-i18n-original');
+          }
+        }
+        return;
+      }
+      count++;
       if (!el.hasAttribute('data-i18n-original')) {
         el.setAttribute('data-i18n-original', el.innerHTML);
       }
       if (el.getAttribute('data-i18n-raw') === '1') el.innerHTML = value;
       else el.textContent = value;
     });
+    // Debug: loguear cantidad de elementos traducidos
+    if (typeof console !== 'undefined' && console.log) {
+      console.log('[i18n] Elementos traducidos con data-i18n:', count, 'Idioma:', lang);
+    }
 
     document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
       var value = translateKey(el.getAttribute('data-i18n-placeholder'), lang);
@@ -447,8 +463,10 @@
       if (SUPPORTED.indexOf(lang) === -1) lang = DEFAULT_LANG;
       localStorage.setItem(STORAGE_KEY, lang);
       document.cookie = STORAGE_KEY + '=' + encodeURIComponent(lang) + '; path=/; max-age=31536000; SameSite=Lax';
+      // Asegurar que apply se llama inmediatamente y sincrónicamente
       apply(lang);
       document.dispatchEvent(new CustomEvent('zyma:language-change', { detail: { lang: lang } }));
+      document.dispatchEvent(new CustomEvent('zyma:language-applied', { detail: { lang: lang } }));
     },
     apply: apply,
     translations: translations
