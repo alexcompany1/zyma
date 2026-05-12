@@ -94,7 +94,7 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
     <div class="cart-section">
       <a href="carrito.php" class="cart-btn" data-i18n-aria="nav.cart" aria-label="Carrito">
         <img src="assets/cart-icon.png" alt="Carrito">
-        <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
+        <span class="cart-count"><?= zymaCartTotalItems() ?></span>
       </a>
     </div>
   </div>

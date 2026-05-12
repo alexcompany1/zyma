@@ -348,22 +348,41 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', function() {
     applyTranslations();
     injectButton();
+    initQuickMenu();
   });
 } else {
   applyTranslations();
   injectButton();
+  initQuickMenu();
+}
+
+function initQuickMenu() {
+  var quickBtn = document.getElementById('quickMenuBtn');
+  var quickDropdown = document.getElementById('quickDropdown');
+  if (quickBtn && quickDropdown) {
+    quickBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      quickDropdown.classList.toggle('show');
+    });
+  }
 }
 
 const profileBtn = document.getElementById('profileBtn');
 const dropdownMenu = document.getElementById('dropdownMenu');
 if (profileBtn && dropdownMenu) {
   profileBtn.addEventListener('click', () => dropdownMenu.classList.toggle('show'));
-  window.addEventListener('click', (e) => {
-    if (!profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-      dropdownMenu.classList.remove('show');
-    }
-  });
 }
+
+window.addEventListener('click', function(e) {
+  var quickBtn = document.getElementById('quickMenuBtn');
+  var quickDropdown = document.getElementById('quickDropdown');
+  if (profileBtn && dropdownMenu && !profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+    dropdownMenu.classList.remove('show');
+  }
+  if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
+    quickDropdown.classList.remove('show');
+  }
+});
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
