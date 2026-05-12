@@ -26,6 +26,11 @@ if ($basePath === '.' || $basePath === '') {
 </div>
 
 <style>
+/* Transición fluida para cambio de idioma */
+html {
+  transition: opacity 0.15s ease;
+}
+
 .zyma-lang-selector {
   position: fixed;
   bottom: 20px;
@@ -145,6 +150,38 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  function applyLanguageWithTransition(lang) {
+    // Agregar efecto de transición visual
+    var html = document.documentElement;
+    html.style.opacity = '0.8';
+    html.style.transition = 'opacity 0.15s ease';
+    
+    // Aplicar idioma
+    pendingLang = lang;
+    saveFallback(lang);
+    if (window.ZymaLang) {
+      window.ZymaLang.set(lang);
+    } else {
+      var tries = 0;
+      var retry = setInterval(function() {
+        tries++;
+        if (window.ZymaLang) {
+          clearInterval(retry);
+          window.ZymaLang.set(lang);
+        }
+        if (tries > 20) clearInterval(retry);
+      }, 50);
+    }
+    
+    updateUI();
+    dropdown.classList.remove('open');
+    
+    // Restaurar opacidad
+    setTimeout(function() {
+      html.style.opacity = '1';
+    }, 150);
+  }
+
   if (toggle) {
     toggle.addEventListener('click', function(e) {
       e.preventDefault();
@@ -158,23 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
       e.preventDefault();
       e.stopPropagation();
       var lang = this.getAttribute('data-lang');
-      pendingLang = lang;
-      saveFallback(lang);
-      if (window.ZymaLang) {
-        window.ZymaLang.set(lang);
-      } else {
-        var tries = 0;
-        var retry = setInterval(function() {
-          tries++;
-          if (window.ZymaLang) {
-            clearInterval(retry);
-            window.ZymaLang.set(lang);
-          }
-          if (tries > 20) clearInterval(retry);
-        }, 100);
-      }
-      updateUI();
-      dropdown.classList.remove('open');
+      applyLanguageWithTransition(lang);
     });
   });
 

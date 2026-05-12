@@ -456,7 +456,7 @@
       clearTimeout(timeout);
       timeout = setTimeout(function () {
         apply(getLang());
-      }, 80);
+      }, 40);
     });
     observer.observe(document.body, { childList: true, subtree: true });
   }
