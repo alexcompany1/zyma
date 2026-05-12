@@ -112,7 +112,7 @@ if ($initials === '') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zyma - Mi Perfil</title>
-  <link rel="stylesheet" href="styles.css?v=20260320-1">
+  <link rel="stylesheet" href="styles.css?v=20260512-1">
 </head>
 <body>
 <header class="landing-header">
@@ -341,5 +341,8 @@ document.querySelectorAll('[data-password-toggle]').forEach((button) => {
     <a href="aviso_legal.php">Aviso Legal</a>
   </p>
 </footer>
+
+<?php require_once 'language_selector.php'; ?>
+  <script src="assets/animations.js?v=20260512-1" defer></script>
 </body>
 </html>

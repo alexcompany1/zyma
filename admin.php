@@ -312,7 +312,7 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>Panel de Administración</title>
-    <link rel="stylesheet" href="styles.css?v=20260317-1">
+    <link rel="stylesheet" href="styles.css?v=20260512-1">
 </head>
 <body>
 <?php
@@ -489,6 +489,9 @@ if (profileBtn && dropdownMenu) {
 
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+
+<?php require_once 'language_selector.php'; ?>
+  <script src="assets/animations.js?v=20260512-1" defer></script>
 </body>
 </html>
 

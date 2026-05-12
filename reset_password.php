@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $error === '') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nueva Contraseña - Zyma</title>
-  <link rel="stylesheet" href="styles.css?v=20260211-5">
+  <link rel="stylesheet" href="styles.css?v=20260512-1">
 </head>
 <body>
   <div class="container">
@@ -136,6 +136,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $error === '') {
     <span>|</span>
     <a href="aviso_legal.php">Aviso Legal</a>
   </p></footer>
+
+<?php require_once 'language_selector.php'; ?>
+  <script src="assets/animations.js?v=20260512-1" defer></script>
 </body>
 </html>
 

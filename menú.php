@@ -50,7 +50,7 @@ $result_productos = $stmt->get_result();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Menú - Restaurante</title>
-    <link rel="stylesheet" href="styles.css?v=20260211-5" />
+    <link rel="stylesheet" href="styles.css?v=20260512-1" />
     <script src="script.js" defer></script> <!-- JS del carrito -->
 </head>
 <body>
@@ -126,6 +126,9 @@ $result_productos = $stmt->get_result();
     <span>|</span>
     <a href="aviso_legal.php">Aviso Legal</a>
   </p></footer>
+
+<?php require_once 'language_selector.php'; ?>
+  <script src="assets/animations.js?v=20260512-1" defer></script>
 </body>
 </html>
 

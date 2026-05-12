@@ -62,13 +62,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registrarse - Zyma</title>
-  <link rel="stylesheet" href="styles.css?v=20260211-5">
+  <link rel="stylesheet" href="styles.css?v=20260512-1">
 </head>
-<body>
+<body class="page-enter">
   <div class="container">
     <header class="landing-header">
       <div class="landing-bar">
         <a href="index.php" class="landing-logo">
+          <img src="assets/Zyma.png" alt="Zyma" class="landing-logo-img">
           <span class="landing-logo-text">Zyma</span>
         </a>
         <div class="landing-actions">
@@ -81,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
 
-    <form method="POST" action="registro.php">
+    <form method="POST" action="registro.php" class="reveal">
       <h2>Crea tu cuenta</h2>
 
       <label for="email">
@@ -216,12 +217,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </script>
   <?php endif; ?>
   <script src="assets/mobile-header.js?v=20260211-6"></script>
+  <script src="assets/animations.js?v=20260512-1" defer></script>
   <script>
     document.querySelectorAll('[data-password-toggle]').forEach((button) => {
       button.addEventListener('click', () => {
         const input = document.getElementById(button.dataset.passwordToggle);
         if (!input) return;
-
         const showPassword = input.type === 'password';
         input.type = showPassword ? 'text' : 'password';
         button.setAttribute('aria-label', showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
@@ -229,15 +230,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       });
     });
   </script>
-  <footer>
-    <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
-    <p class="footer-legal-links">
-      <a href="politica_cookies.php">Política de Cookies</a>
-      <span>|</span>
-      <a href="politica_privacidad.php">Política de Privacidad</a>
-      <span>|</span>
-      <a href="aviso_legal.php">Aviso Legal</a>
-    </p>
-  </footer>
+<?php require_once 'language_selector.php'; ?>
 </body>
 </html>

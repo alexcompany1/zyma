@@ -99,13 +99,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iniciar Sesión - Zyma</title>
-  <link rel="stylesheet" href="styles.css?v=20260211-5">
+  <link rel="stylesheet" href="styles.css?v=20260512-1">
 </head>
-<body>
+<body class="page-enter">
   <div class="container">
     <header class="landing-header">
       <div class="landing-bar">
         <a href="index.php" class="landing-logo">
+          <img src="assets/Zyma.png" alt="Zyma" class="landing-logo-img">
           <span class="landing-logo-text">Zyma</span>
         </a>
         <div class="landing-actions">
@@ -121,16 +122,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="alert"><?= htmlspecialchars($info) ?></div>
     <?php endif; ?>
 
-    <form method="POST" action="login.php">
-      <h2>Iniciar Sesión</h2>
+    <form method="POST" action="login.php" class="reveal">
+      <h2 data-i18n="auth.loginBtn">Iniciar Sesión</h2>
 
       <label for="email">
-        Email <span class="required">*</span>
+        <span data-i18n="auth.email">Email</span> <span class="required" data-i18n="auth.required">*</span>
         <input type="email" id="email" name="email" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
       </label>
 
       <label for="password">
-        Contraseña <span class="required">*</span>
+        <span data-i18n="auth.password">Contraseña</span> <span class="required" data-i18n="auth.required">*</span>
         <div class="password-field">
           <input type="password" id="password" name="password" required>
           <button type="button" class="password-toggle" data-password-toggle="password" aria-label="Mostrar contraseña" aria-pressed="false">
@@ -143,29 +144,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </label>
 
       <label for="workerCode">
-        Código de trabajador (opcional)
+        <span data-i18n="auth.workerCodeOptional">Código de trabajador (opcional)</span>
         <input type="text" id="workerCode" name="workerCode" value="<?= htmlspecialchars($_POST['workerCode'] ?? '') ?>">
-        <span class="optional-label">Trabajador: ej. TRAB001<br>Administrador: ADMIN</span>
+        <span class="optional-label" data-i18n="auth.workerCodeHint">Trabajador: ej. TRAB001<br>Administrador: ADMIN</span>
       </label>
 
-      <button type="submit">Iniciar Sesión</button>
+      <button type="submit" data-i18n="auth.loginBtn">Iniciar Sesión</button>
     </form>
 
     <div class="center mt-3">
-      <a href="registro.php">No tienes cuenta? Registrate</a>
+      <a href="registro.php" data-i18n="auth.noAccount">No tienes cuenta? Registrate</a>
     </div>
     <div class="center mt-2">
-      <a href="forgot_password.php">He olvidado la Contraseña</a>
+      <a href="forgot_password.php" data-i18n="auth.forgotPassword">He olvidado la Contraseña</a>
     </div>
     <div class="center mt-3 footer-legal-links">
-      <a href="politica_cookies.php">Política de Cookies</a>
+      <a href="politica_cookies.php" data-i18n="common.cookiePolicy">Política de Cookies</a>
       <span>|</span>
-      <a href="politica_privacidad.php">Política de Privacidad</a>
+      <a href="politica_privacidad.php" data-i18n="common.privacyPolicy">Política de Privacidad</a>
       <span>|</span>
-      <a href="aviso_legal.php">Aviso Legal</a>
+      <a href="aviso_legal.php" data-i18n="common.legalNotice">Aviso Legal</a>
     </div>
   </div>
-<script src="assets/mobile-header.js?v=20260211-6"></script>
+  <script src="assets/mobile-header.js?v=20260211-6"></script>
+  <script src="assets/animations.js?v=20260512-1" defer></script>
 <script>
 document.querySelectorAll('[data-password-toggle]').forEach((button) => {
   button.addEventListener('click', () => {
@@ -179,5 +181,7 @@ document.querySelectorAll('[data-password-toggle]').forEach((button) => {
   });
 });
 </script>
+
+<?php require_once 'language_selector.php'; ?>
 </body>
 </html>

@@ -98,7 +98,7 @@ $unread_count = (int)$stmt->fetchColumn();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zyma - Notificaciones</title>
-  <link rel="stylesheet" href="styles.css?v=20260211-5">
+  <link rel="stylesheet" href="styles.css?v=20260512-1">
 </head>
 <body>
 <?php
@@ -215,6 +215,9 @@ setInterval(() => {
 }, AUTO_REFRESH_MS);
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+
+<?php require_once 'language_selector.php'; ?>
+  <script src="assets/animations.js?v=20260512-1" defer></script>
 </body>
 </html>
 

@@ -41,7 +41,7 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ticket #<?= htmlspecialchars($pedido_num) ?> - Zyma</title>
-    <link rel="stylesheet" href="styles.css?v=20260211-5">
+    <link rel="stylesheet" href="styles.css?v=20260512-1">
     <style>
         .ticket-box{max-width:720px;margin:16px auto;padding:20px;border-radius:8px;background:#fff;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
         .ticket-header{display:flex;justify-content:space-between;align-items:center}
@@ -198,6 +198,9 @@ $items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
     });
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+
+<?php require_once 'language_selector.php'; ?>
+  <script src="assets/animations.js?v=20260512-1" defer></script>
 </body>
 </html>
 

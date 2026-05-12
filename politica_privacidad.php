@@ -15,7 +15,7 @@ $is_logged_in = !empty($_SESSION['user_id']);
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Política de Privacidad - Zyma</title>
-  <link rel="stylesheet" href="styles.css?v=20260317-1">
+  <link rel="stylesheet" href="styles.css?v=20260512-1">
 </head>
 <body>
   <div class="container legal-page-wrapper">
@@ -24,6 +24,11 @@ $is_logged_in = !empty($_SESSION['user_id']);
         <a href="<?= $is_logged_in ? 'usuario.php' : 'index.php' ?>" class="landing-logo">
           <span class="landing-logo-text">Zyma</span>
         </a>
+        <nav class="landing-nav">
+          <a href="<?= $is_logged_in ? 'usuario.php' : 'index.php' ?>" class="landing-nav-link">Inicio</a>
+          <a href="carta.php<?= !$is_logged_in ? '?guest=1' : '' ?>" class="landing-nav-link">Carta</a>
+          <a href="politica_cookies.php" class="landing-nav-link">Cookies</a>
+        </nav>
         <div class="landing-actions">
           <?php if (!$is_logged_in): ?>
             <a href="login.php" class="landing-link">Entrar</a>
@@ -100,6 +105,9 @@ $is_logged_in = !empty($_SESSION['user_id']);
     </footer>
   </div>
   <script src="assets/mobile-header.js?v=20260211-6"></script>
+
+<?php require_once 'language_selector.php'; ?>
+  <script src="assets/animations.js?v=20260512-1" defer></script>
 </body>
 </html>
 

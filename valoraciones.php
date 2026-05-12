@@ -122,7 +122,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zyma - Valoraciones y Opiniones</title>
-    <link rel="stylesheet" href="styles.css?v=20260227-4">
+    <link rel="stylesheet" href="styles.css?v=20260512-1">
     <style>
         /* Estilos para las estrellas de valoración */
         .quick-star-selector {
@@ -745,6 +745,8 @@ if ($is_logged_in) {
     <script src="assets/mobile-header.js?v=20260211-6"></script>
 <?php endif; ?>
 
+
+<?php require_once 'language_selector.php'; ?>
 </body>
 </html>
 

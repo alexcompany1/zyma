@@ -23,7 +23,7 @@ try {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Estado de Valoraciones</title>
-<link rel="stylesheet" href="styles.css?v=20260211-5">
+<link rel="stylesheet" href="styles.css?v=20260512-1">
 </head>
 <body>
 <div class="container">
@@ -66,5 +66,8 @@ try {
     <span>|</span>
     <a href="aviso_legal.php">Aviso Legal</a>
   </p></footer>
+
+<?php require_once 'language_selector.php'; ?>
+  <script src="assets/animations.js?v=20260512-1" defer></script>
 </body>
 </html>

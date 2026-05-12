@@ -156,13 +156,14 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zyma - Carta</title>
-<link rel="stylesheet" href="styles.css?v=20260227-2">
+<link rel="stylesheet" href="styles.css?v=20260512-1">
 </head>
-<body>
+<body class="page-enter">
 <header class="landing-header">
   <div class="landing-bar">
     <?php if ($guestMode): ?>
       <a href="index.php" class="landing-logo">
+        <img src="assets/Zyma.png" alt="Zyma" class="landing-logo-img">
         <span class="landing-logo-text">Zyma</span>
       </a>
       <div class="landing-actions">
@@ -185,6 +186,7 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
       </div>
 
       <a href="usuario.php" class="landing-logo">
+        <img src="assets/Zyma.png" alt="Zyma" class="landing-logo-img">
         <span class="landing-logo-text">Zyma</span>
       </a>
 
@@ -216,7 +218,7 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
 </header>
 
 <div class="container">
-  <div class="hero">
+  <div class="hero reveal">
     <h1 class="hero-title">Carta de Zyma</h1>
     <p class="hero-sub"><?= $selectedProductId > 0 ? 'Vista destacada de nuestro producto estrella.' : 'Disfruta de nuestros deliciosos platos artesanales.' ?></p>
     <?php if ($starProductId > 0): ?>
@@ -230,9 +232,9 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
     <?php endif; ?>
   </div>
 
-  <div class="grid grid-products">
+  <div class="grid grid-products reveal-stagger" data-stagger-delay="100">
     <?php foreach ($products as $product): ?>
-    <div class="card-product <?= ((int)$product['id'] === $starProductId) ? 'card-product-star' : '' ?>" id="producto-<?= (int)$product['id'] ?>">
+    <div class="card-product hover-lift <?= ((int)$product['id'] === $starProductId) ? 'card-product-star' : '' ?>" id="producto-<?= (int)$product['id'] ?>">
       <img src="<?= htmlspecialchars($product['image']) ?>"
            alt="<?= htmlspecialchars($product['name']) ?>"
            onerror="this.src='assets/default-product.png';">
@@ -324,6 +326,7 @@ if (toast) {
 }
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/animations.js?v=20260512-1" defer></script>
 <footer>
   <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
@@ -333,6 +336,8 @@ if (toast) {
     <span>|</span>
     <a href="aviso_legal.php">Aviso Legal</a>
   </p></footer>
+
+<?php require_once 'language_selector.php'; ?>
 </body>
 </html>
 
