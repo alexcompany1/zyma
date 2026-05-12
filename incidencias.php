@@ -312,7 +312,7 @@ if (profileBtn && dropdownMenu) {
 }
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
-<script src="assets/lang.js?v=20260428-1"></script>
+<?php require_once 'language_selector.php'; ?>
 </body>
 </html>
 

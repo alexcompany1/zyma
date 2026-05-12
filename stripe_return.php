@@ -152,7 +152,6 @@ if (profileBtn && dropdownMenu) {
 }
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
-<script src="assets/lang.js?v=20260428-1"></script>
 <footer>
   <p data-i18n="footer.rights">&copy; 2026 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">

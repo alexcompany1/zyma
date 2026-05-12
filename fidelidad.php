@@ -149,6 +149,6 @@ $pointsForNextLevel = $nextLevelInfo['points_needed'] - $loyalty['puntos'];
         <a href="aviso_legal.php" data-i18n="footer.legal">Aviso Legal</a>
     </footer>
 
-    <script src="assets/lang.js?v=20260428-1"></script>
+    <?php require_once 'language_selector.php'; ?>
 </body>
 </html>

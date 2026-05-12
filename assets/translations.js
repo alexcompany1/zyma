@@ -404,6 +404,21 @@
       var value = translateKey(el.getAttribute('data-i18n-placeholder'), lang);
       if (value) el.setAttribute('placeholder', value);
     });
+
+    document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+      var value = translateKey(el.getAttribute('data-i18n-html'), lang);
+      if (value) {
+        if (!el.hasAttribute('data-i18n-original')) {
+          el.setAttribute('data-i18n-original', el.innerHTML);
+        }
+        el.innerHTML = value;
+      }
+    });
+
+    document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
+      var value = translateKey(el.getAttribute('data-i18n-aria'), lang);
+      if (value) el.setAttribute('aria-label', value);
+    });
   }
 
   function applyPhraseTranslations(lang) {

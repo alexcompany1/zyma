@@ -1785,188 +1785,44 @@
      }
   };
 
-  // ─── HELPERS ──────────────────────────────────────────────────────────────
-  function getLang() {
-    return localStorage.getItem('zyma_lang') || 'es';
-  }
+  // ─── INTEGRATION WITH ZymaLang ─────────────────────────────────────────────
+  // Instead of being a standalone system, this file merges its translations
+  // into window.ZymaLang (provided by translations.js).
 
-  function setLang(lang) {
-    localStorage.setItem('zyma_lang', lang);
-  }
-
-  function t(key) {
-    var lang = getLang();
-    return (T[lang] && T[lang][key] !== undefined)
-      ? T[lang][key]
-      : (T['es'][key] !== undefined ? T['es'][key] : key);
-  }
-
-  // ─── DOM TRANSLATION ──────────────────────────────────────────────────────
-  function applyTranslations() {
-    var lang = getLang();
-
-    // data-i18n → textContent (safe for elements without child elements)
-    document.querySelectorAll('[data-i18n]').forEach(function (el) {
-      var key = el.getAttribute('data-i18n');
-      var text = t(key);
-      if (el.children.length === 0) {
-        el.textContent = text;
-      } else {
-        // Only replace the first non-empty text node
-        var replaced = false;
-        el.childNodes.forEach(function (node) {
-          if (!replaced && node.nodeType === 3 && node.textContent.trim() !== '') {
-            node.textContent = text + ' ';
-            replaced = true;
-          }
-        });
+  function mergeIntoZymaLang() {
+    if (!window.ZymaLang) return false;
+    var target = window.ZymaLang.translations;
+    for (var lang in T) {
+      if (!T.hasOwnProperty(lang)) continue;
+      target[lang] = target[lang] || {};
+      for (var key in T[lang]) {
+        if (T[lang].hasOwnProperty(key) && !target[lang][key]) {
+          target[lang][key] = T[lang][key];
+        }
       }
-    });
-
-    // data-i18n-html → innerHTML (for strings that contain HTML like <br>)
-    document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
-      var key = el.getAttribute('data-i18n-html');
-      el.innerHTML = t(key);
-    });
-
-    // data-i18n-placeholder → placeholder attribute
-    document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
-      var key = el.getAttribute('data-i18n-placeholder');
-      el.placeholder = t(key);
-    });
-
-    // data-i18n-aria → aria-label attribute
-    document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
-      var key = el.getAttribute('data-i18n-aria');
-      el.setAttribute('aria-label', t(key));
-    });
-
-    // Update <html lang="...">
-    document.documentElement.lang = lang;
-  }
-
-  // ─── FLOATING BUTTON ──────────────────────────────────────────────────────
-  function injectButton() {
-    var langs = [
-      { code: 'es', flag: '🇪🇸', label: 'ES', name: 'Español' },
-      { code: 'fr', flag: '🇫🇷', label: 'FR', name: 'Français' },
-      { code: 'en', flag: '🇬🇧', label: 'EN', name: 'English' }
-    ];
-    var currentCode = getLang();
-    var current = langs.find(function (l) { return l.code === currentCode; }) || langs[0];
-
-    // Wrapper
-    var wrapper = document.createElement('div');
-    wrapper.id = 'zyma-lang-sw';
-    wrapper.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:99999;font-family:Montserrat,sans-serif;';
-
-    // Dropdown panel
-    var panel = document.createElement('div');
-    panel.id = 'zyma-lang-panel';
-    panel.style.cssText = [
-      'position:absolute;bottom:calc(100% + 10px);right:0;',
-      'background:#fff;border-radius:14px;',
-      'box-shadow:0 8px 32px rgba(0,0,0,0.18);',
-      'overflow:hidden;display:none;min-width:152px;',
-      'border:1px solid rgba(0,0,0,0.07);'
-    ].join('');
-
-    langs.forEach(function (lang) {
-      var btn = document.createElement('button');
-      var isActive = lang.code === currentCode;
-      btn.style.cssText = [
-        'display:flex;align-items:center;gap:10px;width:100%;',
-        'padding:11px 16px;background:' + (isActive ? '#f5ede0' : 'transparent') + ';',
-        'border:none;cursor:pointer;font-family:inherit;font-size:14px;',
-        'font-weight:' + (isActive ? '700' : '500') + ';',
-        'color:#45050C;text-align:left;transition:background .15s;'
-      ].join('');
-      btn.innerHTML = '<span style="font-size:18px">' + lang.flag + '</span>'
-        + '<span>' + lang.name + '</span>';
-
-      btn.addEventListener('mouseenter', function () {
-        if (lang.code !== getLang()) btn.style.background = '#fdf6ec';
-      });
-      btn.addEventListener('mouseleave', function () {
-        btn.style.background = lang.code === getLang() ? '#f5ede0' : 'transparent';
-      });
-
-      btn.addEventListener('click', function () {
-        setLang(lang.code);
-        applyTranslations();
-        currentCode = lang.code;
-        current = lang;
-        toggleBtn.innerHTML = '<span style="font-size:20px">' + lang.flag + '</span>'
-          + '<span style="letter-spacing:.5px">' + lang.label + '</span>'
-          + '<span style="font-size:11px;opacity:.7">▲</span>';
-        closePanel();
-        // Refresh active highlight
-        panel.querySelectorAll('button').forEach(function (b, i) {
-          var isNowActive = langs[i].code === lang.code;
-          b.style.background = isNowActive ? '#f5ede0' : 'transparent';
-          b.style.fontWeight = isNowActive ? '700' : '500';
-        });
-      });
-
-      panel.appendChild(btn);
-    });
-
-    // Toggle button
-    var toggleBtn = document.createElement('button');
-    toggleBtn.id = 'zyma-lang-btn';
-    toggleBtn.style.cssText = [
-      'background:#45050C;color:#fff;border:none;border-radius:50px;',
-      'padding:10px 18px;cursor:pointer;font-family:inherit;font-size:13px;',
-      'font-weight:700;display:flex;align-items:center;gap:8px;',
-      'box-shadow:0 4px 16px rgba(69,5,12,.45);transition:background .2s,transform .15s;',
-      'white-space:nowrap;'
-    ].join('');
-    toggleBtn.innerHTML = '<span style="font-size:20px">' + current.flag + '</span>'
-      + '<span style="letter-spacing:.5px">' + current.label + '</span>'
-      + '<span style="font-size:11px;opacity:.7">▲</span>';
-
-    toggleBtn.addEventListener('mouseenter', function () {
-      toggleBtn.style.background = '#720E07';
-      toggleBtn.style.transform = 'translateY(-2px)';
-    });
-    toggleBtn.addEventListener('mouseleave', function () {
-      toggleBtn.style.background = '#45050C';
-      toggleBtn.style.transform = 'translateY(0)';
-    });
-
-    var open = false;
-    function closePanel() {
-      open = false;
-      panel.style.display = 'none';
-      toggleBtn.querySelector('span:last-child').style.transform = 'rotate(0deg)';
     }
-
-    toggleBtn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      open = !open;
-      panel.style.display = open ? 'block' : 'none';
-      toggleBtn.querySelector('span:last-child').style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
-    });
-
-    document.addEventListener('click', function () {
-      if (open) closePanel();
-    });
-
-    wrapper.appendChild(panel);
-    wrapper.appendChild(toggleBtn);
-    document.body.appendChild(wrapper);
+    target.ca = target.ca || {};
+    target.de = target.de || {};
+    target.it = target.it || {};
+    return true;
   }
 
-  // ─── INIT ─────────────────────────────────────────────────────────────────
-  function init() {
-    applyTranslations();
-    injectButton();
+  function tryMerge() {
+    if (mergeIntoZymaLang()) {
+      window.ZymaLang.apply(window.ZymaLang.get());
+    }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+  if (window.ZymaLang) {
+    tryMerge();
   } else {
-    init();
+    var checkInterval = setInterval(function () {
+      if (window.ZymaLang) {
+        clearInterval(checkInterval);
+        tryMerge();
+      }
+    }, 10);
+    setTimeout(function () { clearInterval(checkInterval); }, 5000);
   }
 })();
 
