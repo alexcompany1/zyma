@@ -391,6 +391,10 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link rel="shortcut icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="styles.css?v=20260317-1">
+    <style>
+    .landing-bar.mobile-ready .profile-section { display: flex !important; }
+    .landing-bar.mobile-ready .quick-menu-section { display: flex !important; }
+    </style>
 </head>
 <body>
 <?php
@@ -648,18 +652,34 @@ if ($display_name === '') {
 <?php include 'cookie_popup.php'; ?>
 
 <script>
-const profileBtn = document.getElementById('profileBtn');
-const dropdownMenu = document.getElementById('dropdownMenu');
-if (profileBtn && dropdownMenu) {
-  profileBtn.addEventListener('click', () => {
-    dropdownMenu.classList.toggle('show');
-  });
-  window.addEventListener('click', (e) => {
-    if (!profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-      dropdownMenu.classList.remove('show');
+document.addEventListener('DOMContentLoaded', function() {
+    var profileBtn = document.getElementById('profileBtn');
+    var dropdownMenu = document.getElementById('dropdownMenu');
+    var quickBtn = document.getElementById('quickMenuBtn');
+    var quickDropdown = document.getElementById('quickDropdown');
+
+    if (profileBtn && dropdownMenu) {
+        profileBtn.addEventListener('click', function() {
+            dropdownMenu.classList.toggle('show');
+        });
     }
-  });
-}
+
+    if (quickBtn && quickDropdown) {
+        quickBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            quickDropdown.classList.toggle('show');
+        });
+    }
+
+    document.addEventListener('click', function(e) {
+        if (profileBtn && dropdownMenu && !profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+            dropdownMenu.classList.remove('show');
+        }
+        if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
+            quickDropdown.classList.remove('show');
+        }
+    });
+});
 
 async function refreshDashboardStats() {
   try {

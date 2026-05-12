@@ -145,6 +145,9 @@ try {
 #editBox input { width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing:border-box; }
 #editBox label { display:flex; align-items:center; gap:8px; }
 #editBoxButtons { display:flex; justify-content:flex-end; gap:10px; margin-top:15px; }
+
+.landing-bar.mobile-ready .profile-section { display: flex !important; }
+.landing-bar.mobile-ready .quick-menu-section { display: flex !important; }
 </style>
 </head>
 <body>
@@ -328,31 +331,33 @@ document.querySelectorAll('.toggle-availability').forEach(function(btn) {
     });
 });
 
-var profileBtn = document.getElementById('profileBtn');
-var dropdownMenu = document.getElementById('dropdownMenu');
-var quickBtn = document.getElementById('quickMenuBtn');
-var quickDropdown = document.getElementById('quickDropdown');
+document.addEventListener('DOMContentLoaded', function() {
+    var profileBtn = document.getElementById('profileBtn');
+    var dropdownMenu = document.getElementById('dropdownMenu');
+    var quickBtn = document.getElementById('quickMenuBtn');
+    var quickDropdown = document.getElementById('quickDropdown');
 
-if (profileBtn && dropdownMenu) {
-    profileBtn.addEventListener('click', function() { dropdownMenu.classList.toggle('show'); });
-    window.addEventListener('click', function(e) {
-        if (!profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+    if (profileBtn && dropdownMenu) {
+        profileBtn.addEventListener('click', function() {
+            dropdownMenu.classList.toggle('show');
+        });
+    }
+
+    if (quickBtn && quickDropdown) {
+        quickBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            quickDropdown.classList.toggle('show');
+        });
+    }
+
+    document.addEventListener('click', function(e) {
+        if (profileBtn && dropdownMenu && !profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
             dropdownMenu.classList.remove('show');
         }
+        if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
+            quickDropdown.classList.remove('show');
+        }
     });
-}
-
-if (quickBtn && quickDropdown) {
-    quickBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        quickDropdown.classList.toggle('show');
-    });
-}
-
-window.addEventListener('click', function(e) {
-    if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
-        quickDropdown.classList.remove('show');
-    }
 });
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>

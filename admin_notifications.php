@@ -46,6 +46,8 @@ $unreadCount = getUnreadNotificationsCount($pdo, (int)$_SESSION['user_id']);
 .notification-card small { color:#666; }
 .notification-actions { display:flex; gap:.75rem; flex-wrap:wrap; margin-top:1rem; }
 .notification-actions form { display:inline-block; }
+.landing-bar.mobile-ready .profile-section { display: flex !important; }
+.landing-bar.mobile-ready .quick-menu-section { display: flex !important; }
 </style>
 </head>
 <body>
@@ -131,29 +133,33 @@ $unreadCount = getUnreadNotificationsCount($pdo, (int)$_SESSION['user_id']);
 </div>
 
 <script>
-const profileBtn = document.getElementById('profileBtn');
-const dropdownMenu = document.getElementById('dropdownMenu');
-const quickBtn = document.getElementById('quickMenuBtn');
-const quickDropdown = document.getElementById('quickDropdown');
-if (profileBtn && dropdownMenu) {
-    profileBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        dropdownMenu.classList.toggle('show');
-    });
-}
-if (quickBtn && quickDropdown) {
-    quickBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        quickDropdown.classList.toggle('show');
-    });
-}
-window.addEventListener('click', e => {
-    if (profileBtn && dropdownMenu && !profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-        dropdownMenu.classList.remove('show');
+document.addEventListener('DOMContentLoaded', function() {
+    var profileBtn = document.getElementById('profileBtn');
+    var dropdownMenu = document.getElementById('dropdownMenu');
+    var quickBtn = document.getElementById('quickMenuBtn');
+    var quickDropdown = document.getElementById('quickDropdown');
+
+    if (profileBtn && dropdownMenu) {
+        profileBtn.addEventListener('click', function() {
+            dropdownMenu.classList.toggle('show');
+        });
     }
-    if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
-        quickDropdown.classList.remove('show');
+
+    if (quickBtn && quickDropdown) {
+        quickBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            quickDropdown.classList.toggle('show');
+        });
     }
+
+    document.addEventListener('click', function(e) {
+        if (profileBtn && dropdownMenu && !profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+            dropdownMenu.classList.remove('show');
+        }
+        if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
+            quickDropdown.classList.remove('show');
+        }
+    });
 });
 </script>
 <script src="assets/mobile-header.js?v=20260211-6"></script>
