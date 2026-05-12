@@ -8,7 +8,7 @@ if ($basePath === '.' || $basePath === '') {
   $basePath = '';
 }
 ?>
-<script src="<?= $basePath ?>/assets/translations.js?v=20260428-2"></script>
+<script src="<?= $basePath ?>/assets/translations.js?v=20260512-4"></script>
 
 <div class="zyma-lang-selector" id="zymaLangSelector">
   <button class="zyma-lang-toggle" id="zymaLangToggle" aria-label="Cambiar idioma">
@@ -127,10 +127,17 @@ document.addEventListener('DOMContentLoaded', function() {
   var dropdown = document.getElementById('zymaLangDropdown');
   var current = document.getElementById('zymaLangCurrent');
   var options = document.querySelectorAll('.zyma-lang-option');
+  var pendingLang = null;
+
+  function saveFallback(lang) {
+    try {
+      localStorage.setItem('zyma_lang', lang);
+    } catch (e) {}
+    document.cookie = 'zyma_lang=' + encodeURIComponent(lang) + '; path=/; max-age=31536000; SameSite=Lax';
+  }
 
   function updateUI() {
-    if (!window.ZymaLang) return;
-    var lang = window.ZymaLang.get();
+    var lang = window.ZymaLang ? window.ZymaLang.get() : (pendingLang || localStorage.getItem('zyma_lang') || 'es');
     var labels = { es: 'ES', en: 'EN', fr: 'FR', ca: 'CA', de: 'DE', it: 'IT' };
     if (current) current.textContent = labels[lang] || 'ES';
     options.forEach(function(opt) {
@@ -140,20 +147,39 @@ document.addEventListener('DOMContentLoaded', function() {
 
   if (toggle) {
     toggle.addEventListener('click', function(e) {
+      e.preventDefault();
       e.stopPropagation();
       dropdown.classList.toggle('open');
     });
   }
 
   options.forEach(function(opt) {
-    opt.addEventListener('click', function() {
+    opt.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
       var lang = this.getAttribute('data-lang');
+      pendingLang = lang;
+      saveFallback(lang);
       if (window.ZymaLang) {
         window.ZymaLang.set(lang);
+      } else {
+        var tries = 0;
+        var retry = setInterval(function() {
+          tries++;
+          if (window.ZymaLang) {
+            clearInterval(retry);
+            window.ZymaLang.set(lang);
+          }
+          if (tries > 20) clearInterval(retry);
+        }, 100);
       }
+      updateUI();
       dropdown.classList.remove('open');
     });
   });
+
+  document.addEventListener('zyma:language-change', updateUI);
+  document.addEventListener('zyma:language-applied', updateUI);
 
   document.addEventListener('click', function(e) {
     if (!document.getElementById('zymaLangSelector').contains(e.target)) {

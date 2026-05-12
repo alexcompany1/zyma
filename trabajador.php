@@ -114,7 +114,7 @@ if (profileBtn && dropdownMenu) {
 <script src="assets/mobile-header.js?v=20260211-6"></script>
 
 <?php require_once 'language_selector.php'; ?>
-  <script src="assets/animations.js?v=20260512-1" defer></script>
+  <script src="assets/animations.js?v=20260512-3" defer></script>
 </body>
 </html>
 

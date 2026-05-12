@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </div>
   <script src="assets/mobile-header.js?v=20260211-6"></script>
-  <script src="assets/animations.js?v=20260512-1" defer></script>
+  <script src="assets/animations.js?v=20260512-3" defer></script>
 <script>
 document.querySelectorAll('[data-password-toggle]').forEach((button) => {
   button.addEventListener('click', () => {

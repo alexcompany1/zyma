@@ -223,7 +223,7 @@ if ($basePath === '.' || $basePath === '/') {
     </footer>
   </div>
   <script src="<?= $basePath ?>/assets/mobile-header.js?v=20260211-6"></script>
-  <script src="<?= $basePath ?>/assets/animations.js?v=20260512-1" defer></script>
+  <script src="<?= $basePath ?>/assets/animations.js?v=20260512-3" defer></script>
 <?php require_once 'language_selector.php'; ?>
 </body>
 </html>

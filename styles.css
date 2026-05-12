@@ -4745,6 +4745,7 @@ body.cookie-modal-open {
 
 /* Clases de revelado al scroll (solo cuando JS está activo) */
 .js-animations-ready .reveal,
+.js-animations-ready .reveal-up,
 .js-animations-ready .reveal-left,
 .js-animations-ready .reveal-right,
 .js-animations-ready .reveal-scale,
@@ -4753,8 +4754,16 @@ body.cookie-modal-open {
   will-change: transform, opacity;
 }
 
+.js-animations-ready .reveal-up {
+  transform: translateY(42px);
+}
+
 .js-animations-ready .reveal.revealed {
   animation: fadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.js-animations-ready .reveal-up.revealed {
+  animation: fadeInUp 0.78s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .js-animations-ready .reveal-left.revealed {
@@ -4848,6 +4857,75 @@ body.cookie-modal-open {
 
 .interactive-card:hover {
   border-color: rgba(238, 207, 109, 0.72);
+}
+
+.user-home-hover-focus {
+  transition:
+    transform 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.34s ease,
+    filter 0.34s ease;
+}
+
+.user-home-hover-focus:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 24px 55px rgba(60, 16, 16, 0.16);
+  filter: saturate(1.04);
+}
+
+.user-home-copy:hover .user-home-greeting-name {
+  text-shadow: 0 12px 34px rgba(238, 207, 109, 0.32);
+}
+
+.user-home-actions a,
+.user-home-shortcuts a,
+.user-home-inline-link {
+  position: relative;
+  overflow: hidden;
+}
+
+.user-home-actions a::before,
+.user-home-shortcuts a::before,
+.user-home-inline-link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.24) 45%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.55s ease;
+  pointer-events: none;
+}
+
+.user-home-actions a:hover::before,
+.user-home-shortcuts a:hover::before,
+.user-home-inline-link:hover::before {
+  transform: translateX(120%);
+}
+
+.user-home-shortcuts a:hover {
+  transform: translateX(7px) translateY(-2px);
+  box-shadow: 0 12px 28px rgba(60, 16, 16, 0.1);
+}
+
+.user-home-actions a:hover,
+.user-home-inline-link:hover {
+  transform: translateY(-4px) scale(1.015);
+}
+
+.user-link-card-star:hover {
+  box-shadow: 0 22px 50px rgba(114, 14, 7, 0.18), 0 0 0 1px rgba(238, 207, 109, 0.34);
+}
+
+.user-link-card:hover .user-link-tag,
+.user-featured-card:hover .user-featured-price,
+.user-stat-card:hover strong {
+  transform: translateY(-1px) scale(1.04);
+}
+
+.user-link-tag,
+.user-featured-price,
+.user-stat-card strong {
+  transition: transform 0.25s ease, color 0.25s ease;
+  display: inline-flex;
 }
 
 .media-animated {
@@ -5003,6 +5081,7 @@ body {
   }
 
   .js-animations-ready .reveal,
+  .js-animations-ready .reveal-up,
   .js-animations-ready .reveal-left,
   .js-animations-ready .reveal-right,
   .js-animations-ready .reveal-scale,

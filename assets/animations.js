@@ -20,6 +20,7 @@
 
     document.querySelectorAll([
       '.hero',
+      '.landing-hero-section',
       '.landing-hero-card',
       '.landing-hero-visual',
       '.landing-section',
@@ -27,15 +28,32 @@
       '.legal-main-card',
       '.profile-page > .profile-hero',
       '.user-home-hero',
+      '.user-home-copy',
+      '.user-home-spotlight',
+      '.user-home-links',
+      '.user-home-section',
       '.cart-header',
       '.profile-card',
       '.section-card',
       'form'
     ].join(',')).forEach(function (el, index) {
-      if (!el.classList.contains('reveal') && !el.classList.contains('reveal-left') && !el.classList.contains('reveal-right')) {
-        addClass(el, index % 3 === 1 ? 'reveal-left' : index % 3 === 2 ? 'reveal-right' : 'reveal');
+      if (!el.classList.contains('reveal') && !el.classList.contains('reveal-left') && !el.classList.contains('reveal-right') && !el.classList.contains('reveal-up')) {
+        addClass(el, 'reveal-up');
       }
       el.setAttribute('data-delay', el.getAttribute('data-delay') || Math.min(index * 45, 240));
+    });
+
+    document.querySelectorAll([
+      '.page-index .landing-hero-card',
+      '.page-index .landing-hero-visual',
+      '.page-index .landing-section',
+      '.page-login form',
+      '.page-registro form',
+      '.page-forgot_password form',
+      '.page-reset_password form'
+    ].join(',')).forEach(function (el, index) {
+      addClass(el, 'reveal-up');
+      el.setAttribute('data-delay', el.getAttribute('data-delay') || Math.min(index * 70, 260));
     });
 
     document.querySelectorAll([
@@ -49,7 +67,10 @@
       '.products-ratings-grid',
       '.support-orders-grid',
       '.user-home-stats',
+      '.user-home-shortcuts',
+      '.user-home-actions',
       '.user-link-grid',
+      '.user-home-links',
       '.user-featured-grid',
       '.user-reviews-grid'
     ].join(',')).forEach(function (el) {
@@ -71,6 +92,9 @@
       '.support-order-card',
       '.user-stat-card',
       '.user-link-card',
+      '.user-home-shortcuts a',
+      '.user-home-actions a',
+      '.user-home-inline-link',
       '.user-featured-card',
       '.payment-option'
     ].join(',')).forEach(function (el, index) {
@@ -96,10 +120,14 @@
     document.querySelectorAll('.card-product img, .landing-featured-img img, .user-featured-card img').forEach(function (img) {
       addClass(img, 'media-animated');
     });
+
+    document.querySelectorAll('.user-home-copy, .user-home-spotlight, .user-link-card-star').forEach(function (el) {
+      addClass(el, 'user-home-hover-focus');
+    });
   }
 
   function initScrollReveal() {
-    var targets = '.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-fade, .reveal-stagger';
+    var targets = '.reveal, .reveal-up, .reveal-left, .reveal-right, .reveal-scale, .reveal-fade, .reveal-stagger';
     var els = document.querySelectorAll(targets);
     if (els.length === 0) return;
 
