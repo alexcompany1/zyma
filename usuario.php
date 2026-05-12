@@ -17,7 +17,7 @@ if ($display_name === '') {
     $display_name = strstr($_SESSION['email'] ?? '', '@', true) ?: ($_SESSION['email'] ?? '');
 }
 
-$cart_count = count($_SESSION['cart'] ?? []);
+$cart_count = zymaCartTotalItems();
 $first_name = trim(explode(' ', $display_name)[0] ?? $display_name);
 
 $featuredProducts = [];

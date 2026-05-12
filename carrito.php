@@ -216,7 +216,7 @@ foreach ($cartItems as $item) {
     <div class="cart-section">
       <a href="carrito.php" class="cart-btn">
         <img src="assets/cart-icon.png" alt="Carrito">
-        <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
+        <span class="cart-count"><?= zymaCartTotalItems() ?></span>
       </a>
     </div>
   </div>
@@ -361,7 +361,7 @@ window.addEventListener('click', (e) => {
   }
 });
 
-function changeQuantity(itemIndex, delta) {
+async function changeQuantity(itemIndex, delta) {
   const row = document.getElementById('cart-item-' + itemIndex);
   if (!row) return;
 
@@ -378,10 +378,25 @@ function changeQuantity(itemIndex, delta) {
 
   if (currentQty + delta < 1) return;
 
-  currentQty += delta;
+  const res = await fetch('actualizar_cantidad.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ index: itemIndex, delta: delta })
+  });
+
+  if (!res.ok) return;
+  const data = await res.json();
+  if (!data.success) return;
+
+  if (data.removed) {
+    row.remove();
+    location.reload();
+    return;
+  }
+
+  currentQty = data.quantity;
   qtyElement.textContent = currentQty;
-  
-  // Obtener datos del item
+
   const item = cartMap[itemIndex];
   if (!item) return;
 
@@ -400,6 +415,16 @@ function changeQuantity(itemIndex, delta) {
 
   const totalLabel = document.querySelector('[data-i18n="cart.total"]');
   totalElement.innerHTML = '<span data-i18n="cart.total">' + (totalLabel ? totalLabel.textContent : 'Total:') + '</span> ' + total.toFixed(2).replace('.', ',') + ' €';
+
+  const cartCount = document.querySelector('.cart-count');
+  if (cartCount) {
+    let totalItems = 0;
+    document.querySelectorAll('.cart-item-row').forEach(function(r) {
+      const qty = parseInt(r.querySelector('.quantity-value').textContent, 10) || 0;
+      totalItems += qty;
+    });
+    cartCount.textContent = totalItems;
+  }
 }
 
 const methodRadios = document.querySelectorAll('input[name="metodo_pago"]');

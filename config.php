@@ -73,4 +73,12 @@ try {
         "<p>Comprueba en el panel de InfinityFree los datos de host, usuario, contrasena y nombre de base de datos.</p>"
     );
 }
+
+function zymaCartTotalItems(): int {
+    $total = 0;
+    foreach (($_SESSION['cart'] ?? []) as $item) {
+        $total += (int)($item['quantity'] ?? 1);
+    }
+    return $total;
+}
 ?>

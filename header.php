@@ -23,7 +23,7 @@ if ($is_logged_in) {
 $show_cart = $show_cart ?? ($current_role === 'client');
 $show_notif = $show_notif ?? ($current_role === 'client');
 $home_link = $home_link ?? zymaHomeForRole($current_role);
-$cart_count = count($_SESSION['cart'] ?? []);
+$cart_count = zymaCartTotalItems();
 
 $quick_links = [];
 if ($current_role === 'client') {
