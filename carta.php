@@ -163,7 +163,7 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
   <div class="landing-bar">
     <?php if ($guestMode): ?>
       <a href="index.php" class="landing-logo">
-        <img src="assets/Zyma.png" alt="Zyma" class="landing-logo-img">
+        <img src="assets/zyma.jpg" alt="Zyma" class="landing-logo-img">
         <span class="landing-logo-text">Zyma</span>
       </a>
       <div class="landing-actions">
@@ -186,7 +186,7 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
       </div>
 
       <a href="usuario.php" class="landing-logo">
-        <img src="assets/Zyma.png" alt="Zyma" class="landing-logo-img">
+        <img src="assets/zyma.jpg" alt="Zyma" class="landing-logo-img">
         <span class="landing-logo-text">Zyma</span>
       </a>
 

@@ -64,7 +64,7 @@ if ($basePath === '.' || $basePath === '/') {
   <header class="landing-header">
     <div class="landing-bar">
       <a href="index.php" class="landing-logo">
-        <img src="assets/Zyma.png" alt="Zyma" class="landing-logo-img">
+        <img src="assets/zyma.jpg" alt="Zyma" class="landing-logo-img">
         <span class="landing-logo-text">Zyma</span>
       </a>
       <nav class="landing-nav">
