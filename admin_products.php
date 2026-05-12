@@ -170,19 +170,6 @@ if ($display_name === '') {
       </div>
     </div>
     <a href="admin.php" class="landing-logo"><span class="landing-logo-text">Zyma</span></a>
-        <div class="quick-menu-section">
-      <button class="quick-menu-btn" onclick="toggleMenu()" aria-label="Menú rápido">
-        <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-          <path d="M5 7h14M5 12h14M5 17h14" />
-        </svg>
-      </button>
-      <div class="dropdown quick-dropdown" id="menuDropdown">
-        <a href="admin.php">Panel Admin</a>
-        <a href="admin_orders.php">Pedidos</a>
-        <a href="admin_inventory.php">Inventario</a>
-        <a href="admin_products.php">Productos</a>
-      </div>
-    </div>
   </div>
 </header>
 
@@ -328,41 +315,17 @@ document.querySelectorAll('.toggle-availability').forEach(function(btn) {
     });
 });
 
-function toggleMenu() {
-    var d = document.getElementById('menuDropdown');
-    if (d) d.classList.toggle('show');
-}
-
 function toggleProfile() {
     var d = document.getElementById('profileDropdown');
     if (d) d.classList.toggle('show');
 }
 
 document.addEventListener('click', function(e) {
-    var d = document.getElementById('menuDropdown');
-    if (d && !e.target.closest('.quick-menu-section')) {
-        d.classList.remove('show');
-    }
     var p = document.getElementById('profileDropdown');
     if (p && !e.target.closest('.profile-section')) {
         p.classList.remove('show');
     }
 });
-
-var profileBtn = document.getElementById('profileBtn');
-var dropdownMenu = document.getElementById('dropdownMenu');
-
-if (profileBtn && dropdownMenu) {
-    profileBtn.addEventListener('click', function() {
-        dropdownMenu.classList.toggle('show');
-    });
-
-    document.addEventListener('click', function(e) {
-        if (!profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-            dropdownMenu.classList.remove('show');
-        }
-    });
-}
 </script>
 </body>
 </html>

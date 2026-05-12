@@ -393,24 +393,32 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="styles.css?v=20260317-1">
 </head>
 <body>
+<?php
+$display_name = trim($_SESSION['nombre'] ?? '');
+if ($display_name === '') {
+    $display_name = strstr($_SESSION['email'] ?? '', '@', true) ?: ($_SESSION['email'] ?? '');
+}
+?>
 <header class="landing-header">
   <div class="landing-bar">
+    <div class="profile-section">
+      <button class="profile-btn" onclick="toggleProfile()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="white">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c1.52 0 5.1 1.34 5.1 5v1H6.9v-1c0-3.66 3.58-5 5.1-5z"/>
+        </svg>
+      </button>
+      <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
+      <div class="dropdown" id="profileDropdown">
+          <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
+          <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
+          <a href="logout.php" data-i18n="nav.logout">Cerrar sesión</a>
+        </div>
+    </div>
+
     <a href="usuario.php" class="landing-logo">
       <span class="landing-logo-text">Zyma</span>
     </a>
 
-    <div class="quick-menu-section">
-      <button class="quick-menu-btn" onclick="toggleMenu()" aria-label="Menú rápido">
-        <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-          <path d="M5 7h14M5 12h14M5 17h14" />
-        </svg>
-      </button>
-      <div class="dropdown quick-dropdown" id="menuDropdown">
-        <a href="admin_orders.php">Pedidos</a>
-        <a href="admin_inventory.php">Inventario</a>
-        <a href="admin_products.php">Productos</a>
-      </div>
-    </div>
     <div class="notification-section">
       <a href="admin_notifications.php" class="notification-link">
         <span class="bell-icon">🔔</span>
@@ -628,14 +636,14 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <?php include 'cookie_popup.php'; ?>
 
 <script>
-function toggleMenu() {
-    var d = document.getElementById('menuDropdown');
+function toggleProfile() {
+    var d = document.getElementById('profileDropdown');
     if (d) d.classList.toggle('show');
 }
 
 document.addEventListener('click', function(e) {
-    var d = document.getElementById('menuDropdown');
-    if (d && !e.target.closest('.quick-menu-section')) {
+    var d = document.getElementById('profileDropdown');
+    if (d && !e.target.closest('.profile-section')) {
         d.classList.remove('show');
     }
 });

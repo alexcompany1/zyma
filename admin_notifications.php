@@ -71,19 +71,6 @@ $unreadCount = getUnreadNotificationsCount($pdo, (int)$_SESSION['user_id']);
       </div>
     </div>
     <a href="admin.php" class="landing-logo"><span class="landing-logo-text">Zyma</span></a>
-        <div class="quick-menu-section">
-      <button class="quick-menu-btn" onclick="toggleMenu()" aria-label="Menú rápido">
-        <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-          <path d="M5 7h14M5 12h14M5 17h14" />
-        </svg>
-      </button>
-      <div class="dropdown quick-dropdown" id="menuDropdown">
-        <a href="admin.php">Panel Admin</a>
-        <a href="admin_orders.php">Pedidos</a>
-        <a href="admin_inventory.php">Inventario</a>
-        <a href="admin_products.php">Productos</a>
-      </div>
-    </div>
   </div>
 </header>
 
@@ -131,21 +118,12 @@ $unreadCount = getUnreadNotificationsCount($pdo, (int)$_SESSION['user_id']);
 </div>
 
 <script>
-function toggleMenu() {
-    var d = document.getElementById('menuDropdown');
-    if (d) d.classList.toggle('show');
-}
-
 function toggleProfile() {
     var d = document.getElementById('profileDropdown');
     if (d) d.classList.toggle('show');
 }
 
 document.addEventListener('click', function(e) {
-    var d = document.getElementById('menuDropdown');
-    if (d && !e.target.closest('.quick-menu-section')) {
-        d.classList.remove('show');
-    }
     var p = document.getElementById('profileDropdown');
     if (p && !e.target.closest('.profile-section')) {
         p.classList.remove('show');
