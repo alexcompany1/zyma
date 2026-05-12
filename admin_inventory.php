@@ -118,13 +118,13 @@ if ($display_name === '') {
 <header class="landing-header">
   <div class="landing-bar">
     <div class="profile-section">
-      <button class="profile-btn" id="profileBtn">
+      <button class="profile-btn" onclick="toggleProfile()">
         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="white">
           <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c1.52 0 5.1 1.34 5.1 5v1H6.9v-1c0-3.66 3.58-5 5.1-5z"/>
         </svg>
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
-      <div class="dropdown" id="dropdownMenu">
+      <div class="dropdown" id="profileDropdown">
           <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
           <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
           <a href="logout.php" data-i18n="nav.logout">Cerrar sesión</a>
@@ -243,27 +243,21 @@ function toggleMenu() {
     if (d) d.classList.toggle('show');
 }
 
+function toggleProfile() {
+    var d = document.getElementById('profileDropdown');
+    if (d) d.classList.toggle('show');
+}
+
 document.addEventListener('click', function(e) {
     var d = document.getElementById('menuDropdown');
     if (d && !e.target.closest('.quick-menu-section')) {
         d.classList.remove('show');
     }
+    var p = document.getElementById('profileDropdown');
+    if (p && !e.target.closest('.profile-section')) {
+        p.classList.remove('show');
+    }
 });
-
-var profileBtn = document.getElementById('profileBtn');
-var dropdownMenu = document.getElementById('dropdownMenu');
-
-if (profileBtn && dropdownMenu) {
-    profileBtn.addEventListener('click', function() {
-        dropdownMenu.classList.toggle('show');
-    });
-
-    document.addEventListener('click', function(e) {
-        if (!profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-            dropdownMenu.classList.remove('show');
-        }
-    });
-}
 </script>
 </body>
 </html>
