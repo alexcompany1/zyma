@@ -391,10 +391,6 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link rel="shortcut icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="styles.css?v=20260317-1">
-    <style>
-    .landing-bar.mobile-ready .profile-section { display: flex !important; }
-    .landing-bar.mobile-ready .quick-menu-section { display: flex !important; }
-    </style>
 </head>
 <body>
 <?php
@@ -703,6 +699,5 @@ async function refreshDashboardStats() {
 
 setInterval(refreshDashboardStats, 30000);
 </script>
-<script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
 </html>

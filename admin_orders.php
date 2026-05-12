@@ -101,8 +101,6 @@ try {
 .form-inline { display:flex; gap:.75rem; flex-wrap:wrap; align-items:center; }
 .form-inline button { white-space:nowrap; }
 .badge-small { padding: .3rem .7rem; border-radius: 999px; font-size:.8rem; }
-.landing-bar.mobile-ready .profile-section { display: flex !important; }
-.landing-bar.mobile-ready .quick-menu-section { display: flex !important; }
 </style>
 </head>
 <body>
@@ -233,6 +231,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-<script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
 </html>

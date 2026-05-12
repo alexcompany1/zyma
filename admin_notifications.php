@@ -46,8 +46,6 @@ $unreadCount = getUnreadNotificationsCount($pdo, (int)$_SESSION['user_id']);
 .notification-card small { color:#666; }
 .notification-actions { display:flex; gap:.75rem; flex-wrap:wrap; margin-top:1rem; }
 .notification-actions form { display:inline-block; }
-.landing-bar.mobile-ready .profile-section { display: flex !important; }
-.landing-bar.mobile-ready .quick-menu-section { display: flex !important; }
 </style>
 </head>
 <body>
@@ -162,6 +160,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-<script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
 </html>

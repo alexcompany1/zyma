@@ -145,9 +145,6 @@ try {
 #editBox input { width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing:border-box; }
 #editBox label { display:flex; align-items:center; gap:8px; }
 #editBoxButtons { display:flex; justify-content:flex-end; gap:10px; margin-top:15px; }
-
-.landing-bar.mobile-ready .profile-section { display: flex !important; }
-.landing-bar.mobile-ready .quick-menu-section { display: flex !important; }
 </style>
 </head>
 <body>
@@ -360,6 +357,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-<script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
 </html>

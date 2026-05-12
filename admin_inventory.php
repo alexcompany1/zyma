@@ -107,8 +107,6 @@ notifyCriticalIngredients($pdo, (int)$_SESSION['user_id']);
 .inv-actions button { padding:4px 8px; font-size:.8rem; white-space:nowrap; }
 .inv-actions input[type=number] { width:55px; padding:3px 5px; font-size:.8rem; border:1px solid #ccc; border-radius:4px; }
 small { color:#555; }
-.landing-bar.mobile-ready .profile-section { display: flex !important; }
-.landing-bar.mobile-ready .quick-menu-section { display: flex !important; }
 </style>
 </head>
 <body>
@@ -309,6 +307,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-<script src="assets/mobile-header.js?v=20260211-6"></script>
 </body>
 </html>
