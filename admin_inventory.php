@@ -57,9 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 ':unidad' => $unit ?: 'unidades'
             ]);
             $message = 'Ingrediente añadido correctamente.';
-            // Reload ingredients
             $stmt = $pdo->query(
-                "SELECT id, nombre, cantidad, unidad AS unit, stock_minimo, COALESCE(unit, 'unidades') AS safe_unit, COALESCE(stock_minimo, 1) AS safe_min
+                "SELECT id, nombre, cantidad, unidad, stock_minimo, COALESCE(unidad, 'unidades') AS safe_unit, COALESCE(stock_minimo, 1) AS safe_min
                  FROM ingredientes
                  ORDER BY nombre ASC"
             );
@@ -70,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
 try {
     $stmt = $pdo->query(
-        "SELECT id, nombre, cantidad, unidad AS unit, stock_minimo, COALESCE(unit, 'unidades') AS safe_unit, COALESCE(stock_minimo, 1) AS safe_min
+        "SELECT id, nombre, cantidad, unidad, stock_minimo, COALESCE(unidad, 'unidades') AS safe_unit, COALESCE(stock_minimo, 1) AS safe_min
          FROM ingredientes
          ORDER BY nombre ASC"
     );
@@ -98,11 +97,14 @@ notifyCriticalIngredients($pdo, (int)$_SESSION['user_id']);
 .stock-rojo { background:#e74c3c; }
 .stock-gris { background:#95a5a6; }
 .table-scroll { overflow-x:auto; width:100%; }
-.inventory-table { width:100%; border-collapse: collapse; min-width:850px; }
-.inventory-table th, .inventory-table td { padding:.85rem .75rem; border:1px solid #e7e7e7; text-align:left; white-space:nowrap; }
+.inventory-table { width:100%; border-collapse: collapse; min-width:700px; }
+.inventory-table th, .inventory-table td { padding:.7rem .6rem; border:1px solid #e7e7e7; text-align:left; white-space:nowrap; }
 .inventory-table th { background:#f9f9f9; }
-.inventory-actions { display:flex; align-items:center; gap:.35rem; flex-wrap:wrap; }
-.inventory-actions input, .inventory-actions button { flex-shrink:0; }
+.inv-actions { display:flex; gap:6px; flex-wrap:wrap; }
+.inv-actions .inv-row { display:flex; gap:6px; }
+.inv-actions form { display:flex; align-items:center; gap:4px; }
+.inv-actions button { padding:4px 8px; font-size:.8rem; white-space:nowrap; }
+.inv-actions input[type=number] { width:55px; padding:3px 5px; font-size:.8rem; border:1px solid #ccc; border-radius:4px; }
 small { color:#555; }
 </style>
 </head>
@@ -116,32 +118,19 @@ if ($display_name === '') {
 <header class="landing-header">
   <div class="landing-bar">
     <div class="profile-section">
-      <button class="profile-btn" id="profileBtn">
+      <button class="profile-btn" onclick="toggleProfile()">
         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="white">
           <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c1.52 0 5.1 1.34 5.1 5v1H6.9v-1c0-3.66 3.58-5 5.1-5z"/>
         </svg>
       </button>
       <span class="user-name"><?= htmlspecialchars($display_name) ?></span>
-      <div class="dropdown" id="dropdownMenu">
-          <a href="perfil.php">Mi perfil</a>
-          <a href="politica_cookies.php" class="open-cookie-preferences">Personalizar cookies</a>
-          <a href="logout.php">Cerrar Sesión</a>
+      <div class="dropdown" id="profileDropdown">
+          <a href="perfil.php" data-i18n="nav.myProfile">Mi perfil</a>
+          <a href="politica_cookies.php" class="open-cookie-preferences" data-i18n="nav.customizeCookies">Personalizar cookies</a>
+          <a href="logout.php" data-i18n="nav.logout">Cerrar sesión</a>
       </div>
     </div>
     <a href="admin.php" class="landing-logo"><span class="landing-logo-text">Zyma</span></a>
-        <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido">
-        <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-          <path d="M5 7h14M5 12h14M5 17h14" />
-        </svg>
-      </button>
-      <div class="dropdown quick-dropdown" id="quickDropdown">
-        <a href="admin.php">Panel Admin</a>
-        <a href="admin_orders.php">Pedidos</a>
-        <a href="admin_inventory.php">Inventario</a>
-        <a href="admin_products.php">Productos</a>
-      </div>
-    </div>
   </div>
 </header>
 
@@ -189,23 +178,25 @@ if ($display_name === '') {
                             <td><?= $quantity ?></td>
                             <td><?= $minQuantity ?></td>
                             <td><span class="stock-badge stock-<?= htmlspecialchars($status) ?>"><?= Ingredient::stockLabel($status) ?></span></td>
-                            <td>
-                                <form method="POST" class="inventory-actions" onsubmit="return confirm('¿Eliminar este ingrediente?');" style="display:inline;">
+                            <td class="inv-actions">
+                                <div class="inv-row">
+                                    <form method="POST" class="inv-form">
+                                        <input type="hidden" name="action" value="edit_threshold">
+                                        <input type="hidden" name="ingredient_id" value="<?= (int)$ingredient['id'] ?>">
+                                        <input type="number" step="0.1" name="min_quantity" value="<?= htmlspecialchars($minQuantity) ?>">
+                                        <button type="submit" class="btn-add-cart">Umbral</button>
+                                    </form>
+                                    <form method="POST" class="inv-form">
+                                        <input type="hidden" name="action" value="update_stock">
+                                        <input type="hidden" name="ingredient_id" value="<?= (int)$ingredient['id'] ?>">
+                                        <input type="number" step="0.1" name="change" placeholder="+/-">
+                                        <button type="submit" class="btn-add-cart">Stock</button>
+                                    </form>
+                                </div>
+                                <form method="POST" onsubmit="return confirm('¿Eliminar este ingrediente?');">
                                     <input type="hidden" name="action" value="delete_ingredient">
                                     <input type="hidden" name="ingredient_id" value="<?= (int)$ingredient['id'] ?>">
-                                    <button type="submit" class="remove-item-btn" style="padding:4px 8px;font-size:.8rem;">Borrar</button>
-                                </form>
-                                <form method="POST" class="inventory-actions" style="display:inline;">
-                                    <input type="hidden" name="action" value="edit_threshold">
-                                    <input type="hidden" name="ingredient_id" value="<?= (int)$ingredient['id'] ?>">
-                                    <input type="number" step="0.1" name="min_quantity" placeholder="Umbral" style="width:60px;padding:3px 5px;font-size:.8rem;" value="<?= htmlspecialchars($minQuantity) ?>" required>
-                                    <button type="submit" class="btn-add-cart" style="padding:4px 8px;font-size:.8rem;">Guardar</button>
-                                </form>
-                                <form method="POST" class="inventory-actions" style="display:inline;">
-                                    <input type="hidden" name="action" value="update_stock">
-                                    <input type="hidden" name="ingredient_id" value="<?= (int)$ingredient['id'] ?>">
-                                    <input type="number" step="0.1" name="change" placeholder="+/-" style="width:60px;padding:3px 5px;font-size:.8rem;" required>
-                                    <button type="submit" class="btn-add-cart" style="padding:4px 8px;font-size:.8rem;">Actualizar</button>
+                                    <button type="submit" class="remove-item-btn">Borrar</button>
                                 </form>
                             </td>
                         </tr>
@@ -234,30 +225,15 @@ if ($display_name === '') {
 </div>
 
 <script>
-const profileBtn = document.getElementById('profileBtn');
-const dropdownMenu = document.getElementById('dropdownMenu');
-const quickBtn = document.getElementById('quickMenuBtn');
-const quickDropdown = document.getElementById('quickDropdown');
-
-if (profileBtn && dropdownMenu) {
-    profileBtn.addEventListener('click', () => dropdownMenu.classList.toggle('show'));
-    window.addEventListener('click', e => {
-        if (!profileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-            dropdownMenu.classList.remove('show');
-        }
-    });
+function toggleProfile() {
+    var d = document.getElementById('profileDropdown');
+    if (d) d.classList.toggle('show');
 }
 
-if (quickBtn && quickDropdown) {
-    quickBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        quickDropdown.classList.toggle('show');
-    });
-}
-
-window.addEventListener('click', (e) => {
-    if (quickBtn && quickDropdown && !quickBtn.contains(e.target) && !quickDropdown.contains(e.target)) {
-        quickDropdown.classList.remove('show');
+document.addEventListener('click', function(e) {
+    var p = document.getElementById('profileDropdown');
+    if (p && !e.target.closest('.profile-section')) {
+        p.classList.remove('show');
     }
 });
 </script>
