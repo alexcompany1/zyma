@@ -746,6 +746,7 @@ if ($is_logged_in) {
 <?php endif; ?>
 
 
+<?php include 'cookie_popup.php'; ?>
 <?php require_once 'language_selector.php'; ?>
 </body>
 </html>

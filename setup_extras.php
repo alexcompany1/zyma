@@ -36,6 +36,11 @@ runStep($pdo, 'Crear product_allergens', "
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 ", $log, $errors);
 
+// 1b. Añadir columna extras a pedido_items si no existe
+runStep($pdo, 'Anadir columna extras a pedido_items', "
+    ALTER TABLE pedido_items ADD COLUMN extras TEXT NULL AFTER precio_unitario
+", $log, $errors);
+
 runStep($pdo, 'Crear producto_extras', "
     CREATE TABLE IF NOT EXISTS producto_extras (
         id INT(11) NOT NULL AUTO_INCREMENT,

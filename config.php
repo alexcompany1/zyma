@@ -77,8 +77,12 @@ try {
 
 function zymaCartTotalItems(): int {
     $total = 0;
-    foreach (($_SESSION['cart'] ?? []) as $item) {
-        $total += (int)($item['quantity'] ?? 1);
+    foreach (($_SESSION['cart'] ?? []) as $key => $val) {
+        if (is_array($val) && isset($val['quantity'])) {
+            $total += (int)$val['quantity'];
+        } else {
+            $total += (int)$val;
+        }
     }
     return $total;
 }

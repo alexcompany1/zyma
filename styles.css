@@ -3877,6 +3877,10 @@ tr:hover td {
   animation: fadeIn 0.4s ease;
 }
 
+.popup-overlay[hidden] {
+  display: none !important;
+}
+
 .popup-card {
   background: white;
   padding: 2.5rem;

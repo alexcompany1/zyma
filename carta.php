@@ -28,6 +28,25 @@ if (!$guestMode && !isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
 
+// Cargar extras disponibles
+$allExtras = [];
+$productExtrasMap = [];
+if (!$guestMode) {
+    try {
+        $stmt = $pdo->query("SELECT id, nombre, precio_adicional FROM product_extras WHERE activo = 1 ORDER BY nombre");
+        $allExtras = $stmt->fetchAll();
+        $stmt = $pdo->query("SELECT id_producto, id_extra FROM producto_extras ORDER BY id_producto");
+        foreach ($stmt->fetchAll() as $row) {
+            $pid = (int)$row['id_producto'];
+            if (!isset($productExtrasMap[$pid])) $productExtrasMap[$pid] = [];
+            $productExtrasMap[$pid][] = (int)$row['id_extra'];
+        }
+    } catch (Exception $e) {
+        $allExtras = [];
+        $productExtrasMap = [];
+    }
+}
+
 $show_cookie_popup = false;
 $cookie_preferences = [];
 if (!$guestMode) {
@@ -136,19 +155,6 @@ if ($selectedProductId > 0) {
     }));
 }
 
-if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
-    $pid = (int)($_POST['product_id'] ?? 0);
-    if ($pid > 0) {
-        $_SESSION['cart'][$pid] = ($_SESSION['cart'][$pid] ?? 0) + 1;
-        $_SESSION['toast_message'] = [
-            'text' => 'Producto agregado al carrito',
-            'icon' => 'OK'
-        ];
-    }
-
-    header('Location: carta.php');
-    exit;
-}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -277,10 +283,7 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
           <a href="login.php" class="btn-add-cart">Inicia Sesión para pedir</a>
           <a href="login.php" class="btn-valorar">Valorar producto</a>
         <?php else: ?>
-          <form method="POST">
-            <input type="hidden" name="product_id" value="<?= (int)$product['id'] ?>">
-            <button type="submit" name="add_to_cart" class="btn-add-cart">Añadir al carrito</button>
-          </form>
+          <button type="button" class="btn-add-cart" onclick="openCustomizer(<?= (int)$product['id'] ?>)">Personalizar</button>
           <a href="valoraciones.php?producto=<?= (int)$product['id'] ?>" class="btn-valorar">Valorar producto</a>
         <?php endif; ?>
       </div>
@@ -288,6 +291,29 @@ if (!$guestMode && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to
     <?php endforeach; ?>
   </div>
 </div>
+
+<?php if ($guestMode): ?>
+<div class="popup-overlay" id="customizerModal" hidden>
+  <div class="popup-card" style="max-width:480px;text-align:left;padding:1.8rem;position:relative;">
+    <button type="button" onclick="closeCustomizer()" style="position:absolute;top:10px;right:14px;background:none;border:none;font-size:1.6rem;cursor:pointer;color:#888;line-height:1;">&times;</button>
+    <div id="customizerContent"></div>
+  </div>
+</div>
+<?php else: ?>
+<div class="popup-overlay" id="customizerModal" hidden>
+  <div class="popup-card" style="max-width:480px;text-align:left;padding:1.8rem;position:relative;">
+    <button type="button" onclick="closeCustomizer()" style="position:absolute;top:10px;right:14px;background:none;border:none;font-size:1.6rem;cursor:pointer;color:#888;line-height:1;">&times;</button>
+    <form method="POST" action="procesar_pedido_personalizado.php" id="customizerForm">
+      <input type="hidden" name="product_id" id="customProductId" value="0">
+      <div id="customizerContent"></div>
+      <div style="display:flex;gap:10px;margin-top:16px;">
+        <button type="submit" class="btn-add-cart" style="flex:1;">Anadir al carrito</button>
+        <button type="button" class="btn-valorar" onclick="closeCustomizer()" style="flex:1;text-align:center;">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+<?php endif; ?>
 
 <?php if (!$guestMode && isset($_SESSION['toast_message'])): ?>
 <div class="toast-notification" id="toastNotification">
@@ -312,6 +338,95 @@ if (profileBtn && dropdownMenu) {
     }
   });
 }
+
+const productExtras = <?= json_encode($productExtrasMap, JSON_UNESCAPED_UNICODE) ?>;
+const extrasData = <?= json_encode($allExtras, JSON_UNESCAPED_UNICODE) ?>;
+const productsData = <?= json_encode(array_map(function($p) {
+    return ['id' => $p['id'], 'name' => $p['name'], 'price' => $p['price'], 'image' => $p['image']];
+}, $products), JSON_UNESCAPED_UNICODE) ?>;
+
+const modal = document.getElementById('customizerModal');
+const content = document.getElementById('customizerContent');
+const productIdInput = document.getElementById('customProductId');
+
+let currentQty = 1;
+let currentProductId = 0;
+
+function openCustomizer(productId) {
+  currentProductId = productId;
+  currentQty = 1;
+  productIdInput.value = productId;
+
+  const prod = productsData.find(p => p.id === productId);
+  if (!prod) return;
+
+  const extraIds = productExtras[productId] || [];
+  const available = extrasData.filter(e => extraIds.indexOf(e.id) !== -1);
+
+  let html = '<div style="display:flex;gap:14px;align-items:center;margin-bottom:14px;">';
+  html += '<img src="' + prod.image + '" alt="' + prod.name + '" style="width:70px;height:70px;object-fit:cover;border-radius:10px;" onerror="this.src=\'assets/default-product.png\';">';
+  html += '<div><h3 style="margin:0;color:#45050C;">' + prod.name + '</h3>';
+  html += '<p style="margin:4px 0 0;color:#888;" id="customBasePrice">EUR ' + prod.price.toFixed(2).replace('.', ',') + '</p></div></div>';
+
+  html += '<div style="margin-bottom:14px;"><label style="font-weight:600;color:#45050C;">Cantidad</label>';
+  html += '<div style="display:flex;align-items:center;gap:10px;margin-top:6px;">';
+  html += '<button type="button" class="quantity-btn" onclick="changeQty(-1)">-</button>';
+  html += '<span id="customQty" class="quantity-value">1</span>';
+  html += '<button type="button" class="quantity-btn" onclick="changeQty(1)">+</button>';
+  html += '</div></div>';
+
+  if (available.length > 0) {
+    html += '<div style="margin-bottom:10px;"><label style="font-weight:600;color:#45050C;">Extras</label>';
+    html += '<div style="margin-top:6px;display:flex;flex-direction:column;gap:6px;">';
+    available.forEach(function(ex) {
+      var priceStr = parseFloat(ex.precio_adicional) > 0 ? ' (+' + parseFloat(ex.precio_adicional).toFixed(2).replace('.', ',') + ' EUR)' : '';
+      html += '<label style="display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid #e0d6ce;border-radius:8px;cursor:pointer;">';
+      html += '<input type="checkbox" name="extras[]" value="' + ex.id + '" onchange="updateTotal()">';
+      html += '<span style="flex:1;">' + ex.nombre + '</span>';
+      html += '<span style="color:#888;font-size:.9rem;">' + priceStr + '</span>';
+      html += '</label>';
+    });
+    html += '</div></div>';
+  }
+
+  html += '<div style="border-top:1px solid #eee;padding-top:12px;margin-top:6px;text-align:right;">';
+  html += '<span style="font-size:.9rem;color:#888;">Total: </span>';
+  html += '<span id="customTotal" style="font-size:1.3rem;font-weight:800;color:#45050C;">EUR ' + prod.price.toFixed(2).replace('.', ',') + '</span>';
+  html += '</div>';
+
+  content.innerHTML = html;
+  modal.hidden = false;
+}
+
+function closeCustomizer() {
+  modal.hidden = true;
+}
+
+function changeQty(delta) {
+  var el = document.getElementById('customQty');
+  var newQty = parseInt(el.textContent) + delta;
+  if (newQty < 1) newQty = 1;
+  el.textContent = newQty;
+  updateTotal();
+}
+
+function updateTotal() {
+  var prod = productsData.find(p => p.id === currentProductId);
+  if (!prod) return;
+  var qty = parseInt(document.getElementById('customQty').textContent);
+  var base = prod.price;
+  var extrasTotal = 0;
+  document.querySelectorAll('#customizerForm input[name=\"extras[]\"]:checked').forEach(function(cb) {
+    var ex = extrasData.find(function(e) { return e.id == cb.value; });
+    if (ex) extrasTotal += parseFloat(ex.precio_adicional);
+  });
+  var total = (base + extrasTotal) * qty;
+  document.getElementById('customTotal').textContent = 'EUR ' + total.toFixed(2).replace('.', ',');
+}
+
+modal.addEventListener('click', function(e) {
+  if (e.target === modal) closeCustomizer();
+});
 <?php endif; ?>
 
 const toast = document.getElementById('toastNotification');
