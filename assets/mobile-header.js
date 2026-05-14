@@ -31,6 +31,12 @@
       addLink('usuario.php', 'Inicio');
       addLink('carta.php', 'Carta');
       addLink('carrito.php', 'Carrito');
+      const quickDropdown = bar.querySelector('.quick-dropdown');
+      if (quickDropdown) {
+        quickDropdown.querySelectorAll('a').forEach(a => {
+          addLink(a.getAttribute('href'), a.textContent.trim());
+        });
+      }
       addLink('perfil.php', 'Mi perfil');
       addLink('notificaciones.php', 'Notificaciones');
       addLink('politica_cookies.php', 'Personalizar cookies');
@@ -51,6 +57,18 @@
     let drawer = bar.querySelector('.landing-actions');
     if (drawer) {
       drawer.classList.add('mobile-drawer');
+      const hasButtons = !!drawer.querySelector('.quick-menu-section, .cart-section');
+      if (hasButtons) {
+        const links = buildMenuLinks(bar);
+        Array.from(drawer.children).forEach(child => child.remove());
+        links.forEach((item) => {
+          const a = document.createElement('a');
+          a.href = item.href;
+          a.textContent = item.text;
+          a.className = item.text.toLowerCase().includes('crear') ? 'landing-cta' : 'landing-link';
+          drawer.appendChild(a);
+        });
+      }
       return drawer;
     }
 
