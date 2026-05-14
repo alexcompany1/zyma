@@ -66,6 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $_SESSION['nombre'] = $user['nombre'] ?? '';
                         $_SESSION['email'] = $user['email'];
                         $_SESSION['worker_code'] = $user['worker_code'];
+                        $_SESSION['user_role'] = $user['worker_code'] === 'ADMIN' ? 'admin' : 'worker';
                         prepararConsentimientoCookiesSesion($pdo, (int)$user['id']);
                         if ($user['worker_code'] === 'ADMIN') {
                             header('Location: admin.php');
@@ -80,6 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['nombre'] = $user['nombre'] ?? '';
                     $_SESSION['email'] = $user['email'];
                     $_SESSION['worker_code'] = $user['worker_code'];
+                    $_SESSION['user_role'] = 'client';
                     prepararConsentimientoCookiesSesion($pdo, (int)$user['id']);
                     header('Location: usuario.php');
                     exit;
