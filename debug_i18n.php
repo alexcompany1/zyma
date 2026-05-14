@@ -19,6 +19,8 @@ echo "<!DOCTYPE html>
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>Debug i18n - Idioma: $lang</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png">
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; }
         .container { max-width: 800px; margin: 0 auto; }

@@ -58,6 +58,8 @@ if ($basePath === '.' || $basePath === '/') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zyma</title>
+  <link rel="icon" type="image/png" href="<?= $basePath ?>/assets/favicon.png">
+  <link rel="shortcut icon" type="image/png" href="<?= $basePath ?>/assets/favicon.png">
   <link rel="stylesheet" href="<?= $basePath ?>/styles.css?v=20260513-1">
 </head>
 <body class="page-enter">

@@ -122,6 +122,8 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zyma - Valoraciones y Opiniones</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="styles.css?v=20260513-1">
     <style>
         /* Estilos para las estrellas de valoración */
@@ -567,9 +569,6 @@ if ($is_logged_in) {
                 .then(result => {
                     if (result.success) {
                         showMessage('¡' + productName + ' valorado! Gracias por tu opinión.', 'success', rateMessage);
-                        setTimeout(() => {
-                            location.reload();
-                        }, 2000);
                     } else {
                         const errorMsg = result.error || 'Error al guardar la valoración';
                         showMessage(errorMsg, 'error', rateMessage);

@@ -87,7 +87,8 @@ try {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin - Pedidos</title>
-<link rel="icon" type="image/png" href="assets/fabiconig.png">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="shortcut icon" type="image/png" href="assets/favicon.png">
 <link rel="shortcut icon" type="image/png" href="assets/fabiconig.png">
 <link rel="stylesheet" href="styles.css?v=20260513-1">
 <style>
@@ -137,7 +138,7 @@ if ($display_name === '') {
                 <p class="lead">Gestiona el flujo de pedidos en un solo lugar.</p>
             </div>
             <div>
-                <a href="usuario.php" class="landing-link">Volver a inicio</a>
+                <a href="admin.php" class="landing-link">Volver a inicio</a>
             </div>
         </div>
         <?php if ($message): ?>
