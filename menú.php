@@ -50,6 +50,8 @@ $result_productos = $stmt->get_result();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Menú - Restaurante</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png" />
     <link rel="stylesheet" href="styles.css?v=20260513-1" />
     <script src="script.js" defer></script> <!-- JS del carrito -->
 </head>

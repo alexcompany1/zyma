@@ -343,7 +343,13 @@ if ($display_name === '') {
     </a>
     
     <div class="quick-menu-section">
-      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
+      <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido">
+        <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <line x1="5" y1="7" x2="19" y2="7" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <line x1="5" y1="17" x2="19" y2="17" />
+        </svg>
+      </button>
       <div class="dropdown quick-dropdown" id="quickDropdown">
         <a href="trabajador.php">Panel</a>
         <a href="gestionar_pedidos.php">Pedidos</a>
@@ -357,7 +363,7 @@ if ($display_name === '') {
 <div class="container">
   <div class="main-content">
     <h2 style="font-size: 2rem; font-weight: 800; color: var(--deep-red); margin-bottom: 0.5rem;">
-      📊 Dashboard de Estadísticas
+      Dashboard de Estadísticas
     </h2>
     <p style="color: #6b7280; margin-bottom: 2rem;">Visualiza el estado de inventario y pedidos en tiempo real</p>
     
@@ -373,8 +379,7 @@ if ($display_name === '') {
     <div class="stats-visual-grid">
       <!-- Pedidos Pendientes -->
       <div class="stat-visual-card critical">
-        <div class="stat-visual-icon">🚨</div>
-        <div class="stat-visual-value"><?= $pedidosPendientes ?></div>
+        <div class="stat-visual-value" id="statPendientes"><?= $pedidosPendientes ?></div>
         <div class="stat-visual-label">Pedidos Pendientes</div>
         <?php if ($pedidosPendientes > 0): ?>
           <span class="stat-visual-badge badge-critical">Requiere atención</span>
@@ -383,8 +388,7 @@ if ($display_name === '') {
       
       <!-- Pedidos en Proceso -->
       <div class="stat-visual-card warning">
-        <div class="stat-visual-icon">⏳</div>
-        <div class="stat-visual-value"><?= $pedidosEnProceso ?></div>
+        <div class="stat-visual-value" id="statEnProceso"><?= $pedidosEnProceso ?></div>
         <div class="stat-visual-label">En Preparación</div>
         <?php if ($pedidosEnProceso > 0): ?>
           <span class="stat-visual-badge badge-warning">En curso</span>
@@ -393,16 +397,14 @@ if ($display_name === '') {
       
       <!-- Pedidos Hoy -->
       <div class="stat-visual-card info">
-        <div class="stat-visual-icon">📅</div>
-        <div class="stat-visual-value"><?= $pedidosHoy ?></div>
+        <div class="stat-visual-value" id="statPedidosHoy"><?= $pedidosHoy ?></div>
         <div class="stat-visual-label">Pedidos Hoy</div>
         <span class="stat-visual-badge badge-success">Día actual</span>
       </div>
       
       <!-- Ventas Hoy -->
       <div class="stat-visual-card success">
-        <div class="stat-visual-icon">💰</div>
-        <div class="stat-visual-value" style="font-size: 1.8rem;">€<?= number_format($ventasHoy, 2, ',', '.') ?></div>
+        <div class="stat-visual-value" style="font-size: 1.8rem;" id="statVentasHoy">€<?= number_format($ventasHoy, 2, ',', '.') ?></div>
         <div class="stat-visual-label">Ventas Hoy</div>
         <span class="stat-visual-badge badge-success">Ingresos</span>
       </div>
@@ -412,12 +414,12 @@ if ($display_name === '') {
     <div class="inventory-visual-section">
       <div class="inventory-header">
         <div>
-          <h3 class="inventory-title">📦 Inventario de Ingredientes</h3>
+          <h3 class="inventory-title">Inventario de Ingredientes</h3>
           <p style="color: #6b7280; margin-top: 0.3rem;">Estado actualizado de stock en tiempo real</p>
         </div>
         <div class="stock-overview">
           <div style="text-align: center;">
-            <div class="stock-percentage"><?= $porcentajeStock ?>%</div>
+            <div class="stock-percentage" id="stockPercentage"><?= $porcentajeStock ?>%</div>
             <div style="font-size: 0.85rem; color: #6b7280;">Stock saludable</div>
           </div>
         </div>
@@ -448,7 +450,7 @@ if ($display_name === '') {
         </div>
       <?php else: ?>
         <div class="empty-state" style="text-align: center; padding: 3rem;">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
+          <div style="font-size: 3rem; margin-bottom: 1rem;"></div>
           <p style="color: #6b7280; font-size: 1.1rem;">No hay ingredientes registrados en la base de datos.</p>
         </div>
       <?php endif; ?>
@@ -457,7 +459,7 @@ if ($display_name === '') {
     <!-- Resumen de stock bajo -->
     <?php if ($ingredientesBajoStock > 0): ?>
       <div class="alert alert-error" style="border-radius: 12px; padding: 1.2rem; margin-top: 1rem;">
-        <strong>⚠️ Atención:</strong> Hay <?= $ingredientesBajoStock ?> ingrediente<?= $ingredientesBajoStock > 1 ? 's' : '' ?> con stock bajo o crítico que requiere reposición.
+        <strong>Atención:</strong> Hay <span id="bajoStockCount"><?= $ingredientesBajoStock ?></span> ingrediente<?= $ingredientesBajoStock > 1 ? 's' : '' ?> con stock bajo o crítico que requiere reposición.
       </div>
     <?php endif; ?>
   </div>
@@ -484,14 +486,24 @@ if (quickDropdown) {
   }
 }
 
-// Auto-refresh cada 30 segundos
-const AUTO_REFRESH_MS = 30000;
-setInterval(() => {
+// Actualizar estadísticas vía AJAX cada 15 segundos
+async function actualizarEstadisticas() {
   if (document.hidden) return;
-  if (dropdownMenu && dropdownMenu.classList.contains('show')) return;
-  if (quickDropdown && quickDropdown.classList.contains('show')) return;
-  window.location.reload();
-}, AUTO_REFRESH_MS);
+  try {
+    const res = await fetch('api_estadisticas.php');
+    if (!res.ok) return;
+    const json = await res.json();
+    if (!json.success) return;
+    const d = json.data;
+    document.getElementById('statPendientes').textContent = d.pedidosPendientes;
+    document.getElementById('statEnProceso').textContent = d.pedidosEnProceso;
+    document.getElementById('statPedidosHoy').textContent = d.pedidosHoy;
+    document.getElementById('statVentasHoy').textContent = '€' + Number(d.ventasHoy).toFixed(2).replace('.', ',');
+    document.getElementById('stockPercentage').textContent = d.porcentajeStock + '%';
+    document.getElementById('bajoStockCount').textContent = d.ingredientesBajoStock;
+  } catch (_) {}
+}
+setInterval(actualizarEstadisticas, 15000);
 </script>
 
 <script src="assets/mobile-header.js?v=20260513-1"></script>

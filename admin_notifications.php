@@ -82,7 +82,7 @@ $unreadCount = getUnreadNotificationsCount($pdo, (int)$_SESSION['user_id']);
                 <p class="lead">Tienes <?= $unreadCount ?> notificación<?= $unreadCount === 1 ? '' : 'es' ?> sin leer.</p>
             </div>
             <div>
-                <a href="usuario.php" class="landing-link">Volver a inicio</a>
+                <a href="admin.php" class="landing-link">Volver a inicio</a>
             </div>
         </div>
         <?php if ($message): ?>

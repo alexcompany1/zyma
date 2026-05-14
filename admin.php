@@ -402,7 +402,7 @@ if ($display_name === '') {
 <header class="landing-header">
   <div class="landing-bar">
     <div class="profile-section">
-      <button class="profile-btn" onclick="toggleProfile()">
+      <button class="profile-btn" id="profileBtn">
         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="white">
           <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c1.52 0 5.1 1.34 5.1 5v1H6.9v-1c0-3.66 3.58-5 5.1-5z"/>
         </svg>
@@ -415,28 +415,67 @@ if ($display_name === '') {
         </div>
     </div>
 
-    <a href="usuario.php" class="landing-logo">
+    <a href="admin.php" class="landing-logo">
       <span class="landing-logo-text">Zyma</span>
     </a>
 
-    <div class="notification-section">
-      <a href="admin_notifications.php" class="notification-link">
-        <span class="bell-icon">🔔</span>
+    <div class="landing-actions">
+      <a href="admin_notifications.php" class="notif-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="white">
+          <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6V11c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5S10.5 3.17 10.5 4v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+        </svg>
         <?php if ($notificationsTable && $unreadNotifications > 0): ?>
-            <span class="notification-count"><?= $unreadNotifications ?></span>
+            <span class="notif-count"><?= $unreadNotifications ?></span>
         <?php endif; ?>
       </a>
+      <div class="quick-menu-section">
+        <button class="quick-menu-btn" id="quickBtn" aria-label="Menú rápido">
+          <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <line x1="5" y1="7" x2="19" y2="7" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <line x1="5" y1="17" x2="19" y2="17" />
+          </svg>
+        </button>
+        <div class="dropdown quick-dropdown" id="quickDropdown">
+          <a href="admin_orders.php">Pedidos</a>
+          <a href="admin_inventory.php">Inventario</a>
+          <a href="admin_products.php">Productos</a>
+          <a href="admin_notifications.php">Notificaciones</a>
+        </div>
+      </div>
     </div>
   </div>
 </header>
 
+<script>
+(function() {
+    var btn = document.getElementById('profileBtn');
+    if (btn) btn.onclick = function() {
+        var d = document.getElementById('profileDropdown');
+        if (d) d.classList.toggle('show');
+    };
+    btn = document.getElementById('quickBtn');
+    if (btn) btn.onclick = function() {
+        var d = document.getElementById('quickDropdown');
+        if (d) d.classList.toggle('show');
+    };
+    document.addEventListener('click', function(e) {
+        var pd = document.getElementById('profileDropdown');
+        if (pd && !e.target.closest('.profile-section')) pd.classList.remove('show');
+        var qd = document.getElementById('quickDropdown');
+        if (qd && !e.target.closest('.quick-menu-section')) qd.classList.remove('show');
+    });
+})();
+</script>
+
 <div class="container">
     <?= $msg ?>
 
-    <div class="section-card">
+    <div class="section-card section-card-hero">
         <div class="row-between section-head">
             <div>
-                <h2>Panel administrativo</h2>
+                <span class="admin-hero-kicker">Panel de control</span>
+                <h2>Bienvenido, <?= htmlspecialchars(explode(' ', $display_name)[0]) ?></h2>
                 <p class="lead">Resumen de pedidos, inventario y usuarios. Accede rápidamente a las secciones principales.</p>
             </div>
             <div class="action-links">
@@ -447,45 +486,45 @@ if ($display_name === '') {
         </div>
 
         <div class="stats-grid">
-            <div class="stat-card">
+            <div class="stat-card stat-card-orders">
                 <h3>Pedidos del día</h3>
                 <p class="stat-number" id="todayOrdersValue"><?= $hasFechaHora ? $todayOrders : 'N/D' ?></p>
-                <span><?= $hasFechaHora ? 'Pedidos registrados hoy' : 'Fecha no disponible' ?></span>
+                <span class="stat-label"><?= $hasFechaHora ? 'Pedidos registrados hoy' : 'Fecha no disponible' ?></span>
             </div>
-            <div class="stat-card">
+            <div class="stat-card stat-card-revenue">
                 <h3>Ingresos del día</h3>
                 <p class="stat-number" id="todayRevenueValue">€<?= number_format($todayRevenue, 2, ',', '.') ?></p>
-                <span><?= $hasFechaHora ? 'Ventas de hoy' : 'Fecha no disponible' ?></span>
+                <span class="stat-label"><?= $hasFechaHora ? 'Ventas de hoy' : 'Fecha no disponible' ?></span>
             </div>
-            <div class="stat-card">
+            <div class="stat-card stat-card-active">
                 <h3>Pedidos activos</h3>
                 <p class="stat-number" id="activeOrdersValue"><?= $activeOrderCount ?></p>
-                <span>Pedidos en curso</span>
+                <span class="stat-label">Pedidos en curso</span>
             </div>
-            <div class="stat-card">
-                <h3>Pedidos en preparación</h3>
+            <div class="stat-card stat-card-preparing">
+                <h3>En preparación</h3>
                 <p class="stat-number"><?= $preparingOrders ?></p>
-                <span>En proceso ahora</span>
+                <span class="stat-label">En proceso ahora</span>
             </div>
-            <div class="stat-card">
+            <div class="stat-card stat-card-stock">
                 <h3>Ingredientes en rojo</h3>
                 <p class="stat-number" id="redIngredientsValue"><?= $ingredientsTable ? $redIngredients : 'N/D' ?></p>
-                <span><?= $ingredientsTable ? 'Inventario crítico' : 'Inventario no detectado' ?></span>
+                <span class="stat-label"><?= $ingredientsTable ? 'Inventario crítico' : 'Inventario no detectado' ?></span>
             </div>
-            <div class="stat-card">
-                <h3>Producto más vendido</h3>
+            <div class="stat-card stat-card-top">
+                <h3>Más vendido</h3>
                 <p class="stat-number" id="topProductValue"><?= htmlspecialchars($topSellingProduct) ?></p>
-                <span><?= $productCount > 0 ? 'Resumen de ventas' : 'Sin productos' ?></span>
+                <span class="stat-label"><?= $productCount > 0 ? 'Producto estrella hoy' : 'Sin productos' ?></span>
             </div>
-            <div class="stat-card">
-                <h3>Notificaciones internas</h3>
+            <div class="stat-card stat-card-notif">
+                <h3>Notificaciones</h3>
                 <p class="stat-number" id="notificationsValue"><?= $notificationsTable ? $unreadNotifications : 'N/D' ?></p>
-                <span><?= $notificationsTable ? 'No leídas' : 'Notificaciones no detectadas' ?></span>
+                <span class="stat-label"><?= $notificationsTable ? 'Sin leer' : 'No detectadas' ?></span>
             </div>
-            <div class="stat-card">
-                <h3>Usuarios registrados</h3>
+            <div class="stat-card stat-card-users">
+                <h3>Usuarios</h3>
                 <p class="stat-number"><?= count($usuarios) ?></p>
-                <span>Clientes, empleados y administradores</span>
+                <span class="stat-label">Registrados en la plataforma</span>
             </div>
         </div>
     </div>
@@ -493,14 +532,17 @@ if ($display_name === '') {
     <div class="section-card">
         <div class="row-between section-head">
             <h2>Pedidos en tiempo real</h2>
-            <span class="badge-status badge-estado-pendiente">Actualizado</span>
+            <div class="section-head-badges">
+                <span class="badge-status badge-estado-pendiente" id="liveBadge">● En vivo</span>
+                <a href="admin_orders.php" class="landing-link">Gestionar pedidos →</a>
+            </div>
         </div>
         <?php if (!empty($activeOrders)): ?>
             <div class="admin-table-wrap">
-                <table class="admin-users-table table-compact">
+                <table class="admin-users-table table-compact table-hover">
                     <thead>
                         <tr>
-                            <th>ID Pedido</th>
+                            <th>ID</th>
                             <th>Estado</th>
                             <th>Total</th>
                             <th>Fecha</th>
@@ -509,13 +551,13 @@ if ($display_name === '') {
                     <tbody>
                         <?php foreach ($activeOrders as $order): ?>
                         <tr>
-                            <td><?= (int)$order['id_pedido'] ?></td>
+                            <td><strong>#<?= (int)$order['id_pedido'] ?></strong></td>
                             <td>
                                 <span class="badge-status badge-estado-<?= htmlspecialchars($order['estado'] ?? 'pendiente') ?>">
                                     <?= htmlspecialchars(ucfirst($order['estado'] ?? 'pendiente')) ?>
                                 </span>
                             </td>
-                            <td>€<?= number_format((float)$order['total'], 2, ',', '.') ?></td>
+                            <td><strong>€<?= number_format((float)$order['total'], 2, ',', '.') ?></strong></td>
                             <td><?= htmlspecialchars($order['fecha_hora'] ?? '-') ?></td>
                         </tr>
                         <?php endforeach; ?>
@@ -531,27 +573,51 @@ if ($display_name === '') {
     <?php endif; ?>
 
     <div class="section-card">
-        <h2>Añadir usuario</h2>
-
-        <form method="POST">
-            <input type="text" name="nombre" placeholder="Nombre" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Contraseña" required>
-            <select name="role" required>
-                <option value="cliente">Cliente</option>
-                <option value="trabajador">Trabajador</option>
-                <option value="admin">Admin</option>
-            </select>
-            <input type="text" name="worker_code" placeholder="Código de trabajador (opcional)">
-            <button type="submit" name="add">Crear usuario</button>
+        <div class="row-between section-head">
+            <h2>Añadir usuario</h2>
+            <span class="badge-status badge-estado-listo">Nuevo</span>
+        </div>
+        <form method="POST" class="admin-add-form">
+            <div class="admin-add-form-grid">
+                <div>
+                    <label for="add_nombre">Nombre</label>
+                    <input type="text" name="nombre" id="add_nombre" placeholder="Nombre completo" required>
+                </div>
+                <div>
+                    <label for="add_email">Email</label>
+                    <input type="email" name="email" id="add_email" placeholder="correo@ejemplo.com" required>
+                </div>
+                <div>
+                    <label for="add_password">Contraseña</label>
+                    <input type="password" name="password" id="add_password" placeholder="Mínimo 6 caracteres" required>
+                </div>
+                <div>
+                    <label for="add_role">Rol</label>
+                    <select name="role" id="add_role" required>
+                        <option value="cliente">Cliente</option>
+                        <option value="trabajador">Trabajador</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="add_worker_code">Código de trabajador</label>
+                    <input type="text" name="worker_code" id="add_worker_code" placeholder="Opcional">
+                </div>
+                <div class="admin-add-form-btn">
+                    <button type="submit" name="add">Crear usuario</button>
+                </div>
+            </div>
         </form>
     </div>
 
     <div class="section-card">
-        <h2>Usuarios registrados (<?= count($usuarios) ?>)</h2>
+        <div class="row-between section-head">
+            <h2>Usuarios registrados</h2>
+            <span class="badge-status badge-estado-info"><?= count($usuarios) ?> usuarios</span>
+        </div>
         <div class="admin-table-wrap">
-            <table class="admin-users-table">
-                <thead>
+            <table class="admin-users-table table-hover">
+                <thead class="table-head-dark">
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
@@ -636,18 +702,6 @@ if ($display_name === '') {
 <?php include 'cookie_popup.php'; ?>
 
 <script>
-function toggleProfile() {
-    var d = document.getElementById('profileDropdown');
-    if (d) d.classList.toggle('show');
-}
-
-document.addEventListener('click', function(e) {
-    var d = document.getElementById('profileDropdown');
-    if (d && !e.target.closest('.profile-section')) {
-        d.classList.remove('show');
-    }
-});
-
 async function refreshDashboardStats() {
   try {
     const response = await fetch('admin_dashboard_stats.php');

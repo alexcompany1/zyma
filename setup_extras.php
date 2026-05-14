@@ -148,6 +148,8 @@ $success = empty($errors);
 <head>
 <meta charset="UTF-8">
 <title>Setup Extras - Zyma</title>
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="shortcut icon" type="image/png" href="assets/favicon.png">
 <link rel="stylesheet" href="styles.css?v=20260428-1">
 <style>
 body{padding:30px}

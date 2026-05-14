@@ -58,12 +58,12 @@ function requireRoles(array $roles): void
     }
 
     if (!isset($_SESSION['user_id'])) {
-        die("<h2 class='page-error'>Acceso denegado. Debes iniciar sesión.</h2>");
+        die("<h2 class='page-error'>Acceso denegado. Debes iniciar sesiï¿½n.</h2>");
     }
 
     $role = getCurrentUserRole();
     if (!in_array($role, $roles, true)) {
-        die("<h2 class='page-error'>Acceso denegado. No tienes permisos para ver esta página.</h2>");
+        die("<h2 class='page-error'>Acceso denegado. No tienes permisos para ver esta pï¿½gina.</h2>");
     }
 }
 
@@ -180,13 +180,13 @@ function notifyCriticalIngredient(PDO $pdo, int $ingredientId, int $userId): voi
         return;
     }
 
-    $title = 'Ingrediente crítico: ' . $ingredient['nombre'];
+    $title = 'Ingrediente crï¿½tico: ' . $ingredient['nombre'];
     if (hasUnreadNotificationByTitle($pdo, $userId, $title)) {
         return;
     }
 
     $unitLabel = trim((string)($ingredient['unidad'] ?? ''));
-    $message = 'El ingrediente ' . $ingredient['nombre'] . ' está en estado crítico (' . $quantity . ' ' . $unitLabel . '). Debes comprar más cuanto antes.';
+    $message = 'El ingrediente ' . $ingredient['nombre'] . ' estï¿½ en estado crï¿½tico (' . $quantity . ' ' . $unitLabel . '). Debes comprar mï¿½s cuanto antes.';
     createNotification($pdo, $userId, $title, $message, 'admin_inventory.php', 'warning');
 }
 
@@ -244,7 +244,7 @@ function decrementStockForOrder(PDO $pdo, int $orderId): void
                     $pdo,
                     $_SESSION['user_id'] ?? 0,
                     'Stock bajo de ' . $ingredientInfo['nombre'],
-                    'El ingrediente ' . $ingredientInfo['nombre'] . ' está por debajo del mínimo (' . $ingredientInfo['cantidad'] . ' ' . ($ingredientInfo['unidad'] ?? '') . ').',
+                    'El ingrediente ' . $ingredientInfo['nombre'] . ' estï¿½ por debajo del mï¿½nimo (' . $ingredientInfo['cantidad'] . ' ' . ($ingredientInfo['unidad'] ?? '') . ').',
                     'admin_inventory.php',
                     'warning'
                 );
@@ -365,7 +365,7 @@ function getDashboardStats(PDO $pdo): array
 
 function getHomeLink(): string
 {
-    return 'usuario.php';
+    return 'admin.php';
 }
 
 function renderHomeButton(): string
@@ -470,7 +470,7 @@ class Order
     {
         return match ($status) {
             self::STATUS_PENDING => 'Pendiente',
-            self::STATUS_PREPARING => 'En preparación',
+            self::STATUS_PREPARING => 'En preparaciï¿½n',
             self::STATUS_READY => 'Listo',
             self::STATUS_DELIVERED => 'Entregado',
             default => 'Desconocido',
@@ -519,7 +519,7 @@ class Ingredient
         return match ($status) {
             'verde' => 'Suficiente',
             'amarillo' => 'Bajo',
-            'rojo' => 'Crítico',
+            'rojo' => 'Crï¿½tico',
             default => 'Desconocido',
         };
     }

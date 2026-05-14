@@ -66,7 +66,13 @@ if ($show_notif && $is_logged_in) {
 
       <?php if ($is_logged_in): ?>
         <div class="quick-menu-section">
-          <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
+          <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido">
+            <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+              <line x1="5" y1="7" x2="19" y2="7" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <line x1="5" y1="17" x2="19" y2="17" />
+            </svg>
+          </button>
           <div class="dropdown quick-dropdown" id="quickDropdown">
             <a href="usuario.php" data-i18n="nav.home">Inicio</a>
             <a href="carta.php" data-i18n="nav.viewMenu">Ver carta</a>

@@ -221,14 +221,14 @@ try {
     $emails = [];
 }
 
-?>
-
-<!DOCTYPE html>
+?><!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zyma - Gestionar Pedidos</title>
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="shortcut icon" type="image/png" href="assets/favicon.png">
 <link rel="stylesheet" href="styles.css?v=20260513-1">
 </head>
 <body>
@@ -257,7 +257,13 @@ try {
       <span class="landing-logo-text">Zyma</span>
     </a>
                 <div class="quick-menu-section">
-            <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido"></button>
+            <button class="quick-menu-btn" id="quickMenuBtn" aria-label="Menú rápido">
+              <svg class="quick-menu-icon" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                <line x1="5" y1="7" x2="19" y2="7" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <line x1="5" y1="17" x2="19" y2="17" />
+              </svg>
+            </button>
             <div class="dropdown quick-dropdown" id="quickDropdown">
                 <a href="usuario.php">Inicio</a>
                 <a href="carta.php">Ver carta</a>
@@ -275,6 +281,7 @@ try {
 </header>
 
 <div class="container">
+    <div id="refresh-area">
     <div class="main-content">
         <h2 class="welcome">Gestionar Pedidos</h2>
         
@@ -323,6 +330,7 @@ try {
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
+    </div>
 </div>
 
 <script>
@@ -336,29 +344,24 @@ window.addEventListener('click', e => {
     }
 });
 
-// Auto-refresh para mantener datos al día sin interrumpir interacciones.
-const AUTO_REFRESH_MS = 800;
-let hasPendingInput = false;
-
-document.querySelectorAll('form input, form textarea, form select').forEach((el) => {
-    el.addEventListener('input', () => { hasPendingInput = true; });
-    el.addEventListener('change', () => { hasPendingInput = true; });
-    el.addEventListener('blur', () => { hasPendingInput = false; });
-});
-
-document.querySelectorAll('form').forEach((form) => {
-    form.addEventListener('submit', () => { hasPendingInput = false; });
-});
-
-setInterval(() => {
+// Actualizar pedidos vía AJAX cada 8 segundos sin recargar la página
+async function actualizarPedidos() {
     if (document.hidden) return;
-    if (hasPendingInput) return;
     if (dropdownMenu && dropdownMenu.classList.contains('show')) return;
     if (quickDropdown && quickDropdown.classList.contains('show')) return;
-    const active = document.activeElement;
-    if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT')) return;
-    window.location.reload();
-}, AUTO_REFRESH_MS);
+    try {
+        const res = await fetch(window.location.href);
+        if (!res.ok) return;
+        const html = await res.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const nuevo = doc.getElementById('refresh-area');
+        if (nuevo) {
+            document.getElementById('refresh-area').innerHTML = nuevo.innerHTML;
+        }
+    } catch (_) {}
+}
+setInterval(actualizarPedidos, 8000);
 </script>
 <script src="assets/mobile-header.js?v=20260513-1"></script>
 <footer>
