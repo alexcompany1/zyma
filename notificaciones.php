@@ -98,7 +98,7 @@ $unread_count = (int)$stmt->fetchColumn();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zyma - Notificaciones</title>
-  <link rel="stylesheet" href="styles.css?v=20260512-1">
+  <link rel="stylesheet" href="styles.css?v=20260513-1">
 </head>
 <body>
 <?php
@@ -206,18 +206,73 @@ if (profileBtn && dropdownMenu) {
   });
 }
 
-const AUTO_REFRESH_MS = 800;
-setInterval(() => {
+const notifContainer = document.querySelector('.section');
+const unreadSpan = document.querySelector('.row-between .muted strong');
+
+async function fetchNotificaciones() {
   if (document.hidden) return;
   if (dropdownMenu && dropdownMenu.classList.contains('show')) return;
-    if (quickDropdown && quickDropdown.classList.contains('show')) return;
-  window.location.reload();
-}, AUTO_REFRESH_MS);
+  if (quickDropdown && quickDropdown.classList.contains('show')) return;
+
+  try {
+    const res = await fetch('api_notificaciones.php');
+    if (!res.ok) return;
+    const data = await res.json();
+
+    if (unreadSpan) unreadSpan.textContent = data.unread_count;
+
+    const readAllLink = document.querySelector('.row-between a[href*="read_all"]');
+    if (readAllLink) {
+      readAllLink.style.display = data.unread_count > 0 ? '' : 'none';
+    }
+
+    let html = '';
+    if (data.notificaciones.length === 0) {
+      html = '<div class="empty-state">No tienes notificaciones todavía.</div>';
+    } else {
+      for (const n of data.notificaciones) {
+        html += `
+          <div class="notif-item ${n.leida ? '' : 'notif-unread'}">
+            <div>
+              <p class="notif-message">${escapeHtml(n.mensaje)}</p>
+              <p class="muted notif-date">${escapeHtml(n.fecha)}</p>
+            </div>
+            ${n.leida ? '<span class="badge-status badge-estado-listo">Leída</span>'
+              : `<a class="btn-seguir-comprando" href="#" data-read-id="${n.notif_id}">Marcar como leída</a>`}
+          </div>`;
+      }
+    }
+    notifContainer.innerHTML = html;
+
+    notifContainer.querySelectorAll('[data-read-id]').forEach(link => {
+      link.addEventListener('click', async (e) => {
+        e.preventDefault();
+        await fetch(`api_notificaciones.php?action=read&id=${link.dataset.readId}`);
+        fetchNotificaciones();
+      });
+    });
+  } catch (_) {}
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+document.querySelector('a[href*="read_all"]')?.addEventListener('click', async (e) => {
+  e.preventDefault();
+  await fetch('api_notificaciones.php?action=read_all');
+  fetchNotificaciones();
+});
+
+setInterval(fetchNotificaciones, 2000);
+fetchNotificaciones();
 </script>
-<script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/mobile-header.js?v=20260513-1"></script>
 
 <?php require_once 'language_selector.php'; ?>
-  <script src="assets/animations.js?v=20260512-3" defer></script>
+  <script src="assets/animations.js?v=20260513-1" defer></script>
 </body>
 </html>
 

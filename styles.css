@@ -609,40 +609,40 @@ input[type="number"] {
 .password-field input {
   display: block;
   width: 100%;
-  padding-right: 3.8rem;
+  padding-right: 3.2rem;
 }
 
 .password-toggle {
-  all: unset;
-  position: absolute;
-  top: 50%;
-  right: 1rem;
-  left: auto;
-  transform: translateY(-50%);
-  width: 2rem;
-  height: 2rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 2rem;
-  margin: 0;
-  padding: 0;
-  color: var(--dark-red);
-  cursor: pointer;
-  line-height: 1;
-  z-index: 2;
+  position: absolute !important;
+  top: 50% !important;
+  right: 6px !important;
+  left: auto !important;
+  transform: translateY(-50%) !important;
+  width: 2rem !important;
+  height: 2rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: rgba(238, 207, 109, 0.15) !important;
+  color: var(--dark-red) !important;
+  cursor: pointer !important;
+  z-index: 2 !important;
+  border-radius: 6px !important;
 }
 
 .password-toggle:hover {
-  transform: translateY(-50%);
-  box-shadow: none;
-  background: transparent;
+  transform: translateY(-50%) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+  background: rgba(238, 207, 109, 0.3) !important;
 }
 
 .password-toggle:focus-visible {
-  border-radius: 999px;
-  outline: 2px solid var(--gold);
-  outline-offset: 2px;
+  border-radius: 6px !important;
+  outline: 2px solid var(--gold) !important;
+  outline-offset: 2px !important;
 }
 
 .password-toggle svg {
@@ -658,17 +658,18 @@ input[type="number"] {
 .profile-form .password-field > .password-toggle {
   position: absolute !important;
   top: 50% !important;
-  right: 1rem !important;
+  right: 6px !important;
   left: auto !important;
   width: 2rem !important;
   height: 2rem !important;
   min-width: 2rem !important;
   padding: 0 !important;
   margin: 0 !important;
-  border: 0 !important;
-  background: transparent !important;
+  border: none !important;
+  background: rgba(238, 207, 109, 0.15) !important;
   box-shadow: none !important;
   transform: translateY(-50%) !important;
+  border-radius: 6px !important;
 }
 
 input:focus,

@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registrarse - Zyma</title>
-  <link rel="stylesheet" href="styles.css?v=20260512-1">
+  <link rel="stylesheet" href="styles.css?v=20260513-1">
 </head>
 <body class="page-enter">
   <div class="container">
@@ -83,15 +83,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="POST" action="registro.php" class="reveal">
-      <h2>Crea tu cuenta</h2>
+      <h2 data-i18n="register.title">Crea tu cuenta</h2>
 
       <label for="email">
-        Email <span class="required">*</span>
+        <span data-i18n="auth.email">Email</span> <span class="required">*</span>
         <input type="email" id="email" name="email" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
       </label>
 
       <label for="password">
-        Contraseña <span class="required">*</span>
+        <span data-i18n="register.passwordLabel">Contraseña</span> <span class="required">*</span>
         <div class="password-field">
           <input type="password" id="password" name="password" required minlength="6">
           <button type="button" class="password-toggle" data-password-toggle="password" aria-label="Mostrar contraseña" aria-pressed="false">
@@ -101,11 +101,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </svg>
           </button>
         </div>
-        <span class="optional-label">Mínimo 6 caracteres.</span>
+        <span class="optional-label" data-i18n="register.passwordMin">Mínimo 6 caracteres.</span>
       </label>
 
       <label for="confirmPassword">
-        Confirmar contraseña <span class="required">*</span>
+        <span data-i18n="register.confirmPassword">Confirmar contraseña</span> <span class="required">*</span>
         <div class="password-field">
           <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
           <button type="button" class="password-toggle" data-password-toggle="confirmPassword" aria-label="Mostrar contraseña" aria-pressed="false">
@@ -115,20 +115,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </svg>
           </button>
         </div>
-        <span class="optional-label">Repite tu contraseña para confirmar.</span>
+        <span class="optional-label" data-i18n="register.repeatHint">Repite tu contraseña para confirmar.</span>
       </label>
 
       <label for="workerCode">
-        Código de trabajador (opcional)
+        <span data-i18n="common.workerCode">Código de trabajador (opcional)</span>
         <input type="text" id="workerCode" name="workerCode" value="<?= htmlspecialchars($_POST['workerCode'] ?? '') ?>">
-        <span class="optional-label">Si lo tienes, accederás a funciones especiales.</span>
+        <span class="optional-label" data-i18n="register.workerHint">Si lo tienes, accederás a funciones especiales.</span>
       </label>
 
-      <button type="submit">Registrarse</button>
+      <button type="submit" data-i18n="register.submit">Registrarse</button>
     </form>
 
     <div style="text-align: center; margin-top: 1.8rem;">
-      <a href="login.php">¿Ya tienes cuenta? Inicia sesión</a>
+      <a href="login.php" data-i18n="register.hasAccount">¿Ya tienes cuenta? Inicia sesión</a>
     </div>
   </div>
 
@@ -216,10 +216,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     });
   </script>
   <?php endif; ?>
-  <script src="assets/mobile-header.js?v=20260211-6"></script>
-  <script src="assets/animations.js?v=20260512-3" defer></script>
+  <script src="assets/mobile-header.js?v=20260513-1"></script>
+  <script src="assets/animations.js?v=20260513-1" defer></script>
   <script>
     document.querySelectorAll('[data-password-toggle]').forEach((button) => {
+      const svgEl = button.querySelector('svg');
+      const openHTML = '<path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle>';
+      const closedHTML = openHTML + '<line x1="4" y1="4" x2="20" y2="20" stroke="currentColor" stroke-width="2.5"></line>';
+
       button.addEventListener('click', () => {
         const input = document.getElementById(button.dataset.passwordToggle);
         if (!input) return;
@@ -227,6 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         input.type = showPassword ? 'text' : 'password';
         button.setAttribute('aria-label', showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
         button.setAttribute('aria-pressed', showPassword ? 'true' : 'false');
+        if (svgEl) svgEl.innerHTML = showPassword ? closedHTML : openHTML;
       });
     });
   </script>

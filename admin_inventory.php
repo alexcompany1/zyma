@@ -90,7 +90,7 @@ notifyCriticalIngredients($pdo, (int)$_SESSION['user_id']);
 <title>Admin - Inventario</title>
 <link rel="icon" type="image/png" href="assets/fabiconig.png">
 <link rel="shortcut icon" type="image/png" href="assets/fabiconig.png">
-<link rel="stylesheet" href="styles.css?v=20260211-5">
+<link rel="stylesheet" href="styles.css?v=20260513-1">
 <style>
 .stock-badge { display:inline-block; min-width:72px; padding:.35rem .7rem; border-radius:999px; color:#fff; font-size:.85rem; }
 .stock-verde { background:#2ecc71; }

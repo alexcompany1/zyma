@@ -1,4 +1,4 @@
-Ôªø<?php
+<?php
 if (!headers_sent()) {
     header('Content-Type: text/html; charset=UTF-8');
 }
@@ -58,12 +58,12 @@ function requireRoles(array $roles): void
     }
 
     if (!isset($_SESSION['user_id'])) {
-        die("<h2 class='page-error'>Acceso denegado. Debes iniciar sesi√≥n.</h2>");
+        die("<h2 class='page-error'>Acceso denegado. Debes iniciar sesiÛn.</h2>");
     }
 
     $role = getCurrentUserRole();
     if (!in_array($role, $roles, true)) {
-        die("<h2 class='page-error'>Acceso denegado. No tienes permisos para ver esta p√°gina.</h2>");
+        die("<h2 class='page-error'>Acceso denegado. No tienes permisos para ver esta p·gina.</h2>");
     }
 }
 
@@ -180,13 +180,13 @@ function notifyCriticalIngredient(PDO $pdo, int $ingredientId, int $userId): voi
         return;
     }
 
-    $title = 'Ingrediente cr√≠tico: ' . $ingredient['nombre'];
+    $title = 'Ingrediente crÌtico: ' . $ingredient['nombre'];
     if (hasUnreadNotificationByTitle($pdo, $userId, $title)) {
         return;
     }
 
     $unitLabel = trim((string)($ingredient['unidad'] ?? ''));
-    $message = 'El ingrediente ' . $ingredient['nombre'] . ' est√° en estado cr√≠tico (' . $quantity . ' ' . $unitLabel . '). Debes comprar m√°s cuanto antes.';
+    $message = 'El ingrediente ' . $ingredient['nombre'] . ' est· en estado crÌtico (' . $quantity . ' ' . $unitLabel . '). Debes comprar m·s cuanto antes.';
     createNotification($pdo, $userId, $title, $message, 'admin_inventory.php', 'warning');
 }
 
@@ -244,7 +244,7 @@ function decrementStockForOrder(PDO $pdo, int $orderId): void
                     $pdo,
                     $_SESSION['user_id'] ?? 0,
                     'Stock bajo de ' . $ingredientInfo['nombre'],
-                    'El ingrediente ' . $ingredientInfo['nombre'] . ' est√° por debajo del m√≠nimo (' . $ingredientInfo['cantidad'] . ' ' . ($ingredientInfo['unidad'] ?? '') . ').',
+                    'El ingrediente ' . $ingredientInfo['nombre'] . ' est· por debajo del mÌnimo (' . $ingredientInfo['cantidad'] . ' ' . ($ingredientInfo['unidad'] ?? '') . ').',
                     'admin_inventory.php',
                     'warning'
                 );
@@ -384,7 +384,7 @@ function getUnreadNotificationBadge(PDO $pdo): int
 function getNotificationIconHtml(PDO $pdo): string
 {
     $count = getUnreadNotificationBadge($pdo);
-    return '<a href="admin_notifications.php" class="notification-link">üîî' .
+    return '<a href="admin_notifications.php" class="notification-link">??' .
            ($count > 0 ? '<span class="notification-count">' . $count . '</span>' : '') .
            '</a>';
 }
@@ -470,7 +470,7 @@ class Order
     {
         return match ($status) {
             self::STATUS_PENDING => 'Pendiente',
-            self::STATUS_PREPARING => 'En preparaci√≥n',
+            self::STATUS_PREPARING => 'En preparaciÛn',
             self::STATUS_READY => 'Listo',
             self::STATUS_DELIVERED => 'Entregado',
             default => 'Desconocido',
@@ -519,7 +519,7 @@ class Ingredient
         return match ($status) {
             'verde' => 'Suficiente',
             'amarillo' => 'Bajo',
-            'rojo' => 'Cr√≠tico',
+            'rojo' => 'CrÌtico',
             default => 'Desconocido',
         };
     }

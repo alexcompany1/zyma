@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Recuperar Contraseña - Zyma</title>
-  <link rel="stylesheet" href="styles.css?v=20260512-1">
+  <link rel="stylesheet" href="styles.css?v=20260513-1">
 </head>
 <body>
   <div class="container">
@@ -125,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </p></footer>
 
 <?php require_once 'language_selector.php'; ?>
-  <script src="assets/animations.js?v=20260512-3" defer></script>
+  <script src="assets/animations.js?v=20260513-1" defer></script>
 </body>
 </html>
 

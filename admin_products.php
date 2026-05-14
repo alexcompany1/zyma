@@ -111,7 +111,7 @@ try {
 <title>Admin - Productos</title>
 <link rel="icon" type="image/png" href="assets/fabiconig.png">
 <link rel="shortcut icon" type="image/png" href="assets/fabiconig.png">
-<link rel="stylesheet" href="styles.css?v=20260211-5">
+<link rel="stylesheet" href="styles.css?v=20260513-1">
 <style>
 .table-compact { width:100%; border-collapse:collapse; }
 .table-compact th, .table-compact td { padding:.85rem .75rem; border:1px solid #e7e7e7; }

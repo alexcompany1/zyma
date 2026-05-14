@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * config.php
  * Configuracion de base de datos y conexion PDO.

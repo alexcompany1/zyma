@@ -108,7 +108,7 @@ try {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zyma - Bienvenido</title>
-  <link rel="stylesheet" href="styles.css?v=20260512-1">
+  <link rel="stylesheet" href="styles.css?v=20260513-1">
 </head>
 <body>
 <header class="landing-header">
@@ -323,10 +323,10 @@ if (profileBtn && dropdownMenu) {
   });
 }
 </script>
-<script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/mobile-header.js?v=20260513-1"></script>
 
 <?php require_once 'language_selector.php'; ?>
-  <script src="assets/animations.js?v=20260512-3" defer></script>
+  <script src="assets/animations.js?v=20260513-1" defer></script>
 </body>
 </html>
 

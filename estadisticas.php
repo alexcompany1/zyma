@@ -74,7 +74,7 @@ if ($display_name === '') {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zyma - Estadísticas</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
-<link rel="stylesheet" href="styles.css?v=20260512-1">
+<link rel="stylesheet" href="styles.css?v=20260513-1">
 <style>
 /* Estilos específicos para estadísticas visuales */
 .stats-visual-grid {
@@ -494,7 +494,7 @@ setInterval(() => {
 }, AUTO_REFRESH_MS);
 </script>
 
-<script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/mobile-header.js?v=20260513-1"></script>
 
 <footer>
   <p>&copy; 2025 Zyma. Todos los derechos reservados.</p>
@@ -508,6 +508,6 @@ setInterval(() => {
 </footer>
 
 <?php require_once 'language_selector.php'; ?>
-  <script src="assets/animations.js?v=20260512-3" defer></script>
+  <script src="assets/animations.js?v=20260513-1" defer></script>
 </body>
 </html>

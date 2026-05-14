@@ -89,7 +89,7 @@ try {
 <title>Admin - Pedidos</title>
 <link rel="icon" type="image/png" href="assets/fabiconig.png">
 <link rel="shortcut icon" type="image/png" href="assets/fabiconig.png">
-<link rel="stylesheet" href="styles.css?v=20260211-5">
+<link rel="stylesheet" href="styles.css?v=20260513-1">
 <style>
 .card-grid { display: grid; gap: 1.2rem; }
 .order-card { border: 1px solid #ddd; border-radius: 12px; padding: 1.2rem; background:#fff; box-shadow:0 8px 18px rgba(0,0,0,.05); }

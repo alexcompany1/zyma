@@ -58,7 +58,7 @@ if ($basePath === '.' || $basePath === '/') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zyma</title>
-  <link rel="stylesheet" href="<?= $basePath ?>/styles.css?v=20260512-1">
+  <link rel="stylesheet" href="<?= $basePath ?>/styles.css?v=20260513-1">
 </head>
 <body class="page-enter">
   <header class="landing-header">
@@ -222,8 +222,8 @@ if ($basePath === '.' || $basePath === '/') {
       </p>
     </footer>
   </div>
-  <script src="<?= $basePath ?>/assets/mobile-header.js?v=20260211-6"></script>
-  <script src="<?= $basePath ?>/assets/animations.js?v=20260512-3" defer></script>
+  <script src="<?= $basePath ?>/assets/mobile-header.js?v=20260513-1"></script>
+  <script src="<?= $basePath ?>/assets/animations.js?v=20260513-1" defer></script>
 <?php require_once 'language_selector.php'; ?>
 </body>
 </html>

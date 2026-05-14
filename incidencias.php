@@ -117,7 +117,7 @@ if ($display_name === '') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Incidencias - Zyma</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
-    <link rel="stylesheet" href="styles.css?v=20260320-3">
+    <link rel="stylesheet" href="styles.css?v=20260513-1">
 </head>
 <body>
 <header class="landing-header">
@@ -311,7 +311,7 @@ if (profileBtn && dropdownMenu) {
   });
 }
 </script>
-<script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/mobile-header.js?v=20260513-1"></script>
 <?php require_once 'language_selector.php'; ?>
 </body>
 </html>

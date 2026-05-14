@@ -351,7 +351,15 @@
   };
 
   function normalize(value) {
-    return (value || '').replace(/\s+/g, ' ').trim();
+    return (value || '')
+      .replace(/[áàäâ]/g, 'a')
+      .replace(/[éèëê]/g, 'e')
+      .replace(/[íìïî]/g, 'i')
+      .replace(/[óòöô]/g, 'o')
+      .replace(/[úùüû]/g, 'u')
+      .replace(/ñ/g, 'n')
+      .replace(/ç/g, 'c')
+      .replace(/\s+/g, ' ').trim();
   }
 
   function getLang() {
@@ -494,7 +502,7 @@
       if (!extra.hasOwnProperty(lang)) continue;
       translations[lang] = translations[lang] || {};
       for (var key in extra[lang]) {
-        if (extra[lang].hasOwnProperty(key) && !translations[lang][key]) {
+        if (extra[lang].hasOwnProperty(key)) {
           translations[lang][key] = extra[lang][key];
         }
       }

@@ -39,7 +39,7 @@ $bizumConcept = BIZUM_CONCEPT_PREFIX . ' #' . $orderId;
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zyma - Instrucciones Bizum</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
-<link rel="stylesheet" href="styles.css?v=20260512-1">
+<link rel="stylesheet" href="styles.css?v=20260513-1">
 <style>
 .bizum-box{max-width:760px;margin:24px auto;padding:28px;border-radius:24px;background:#fff;box-shadow:0 18px 40px rgba(0,0,0,.08)}
 .bizum-steps{margin:18px 0 0;padding-left:18px}
@@ -119,7 +119,7 @@ if (profileBtn && dropdownMenu) {
   });
 }
 </script>
-<script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/mobile-header.js?v=20260513-1"></script>
 <footer>
   <p data-i18n="footer.rights">&copy; 2025 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
@@ -132,6 +132,6 @@ if (profileBtn && dropdownMenu) {
 </footer>
 
 <?php require_once 'language_selector.php'; ?>
-  <script src="assets/animations.js?v=20260512-3" defer></script>
+  <script src="assets/animations.js?v=20260513-1" defer></script>
 </body>
 </html>

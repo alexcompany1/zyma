@@ -8,8 +8,8 @@ if ($basePath === '.' || $basePath === '') {
   $basePath = '';
 }
 ?>
-<script src="assets/translations.js?v=20260512-6"></script>
-<script src="assets/lang-data.js?v=20260512-6"></script>
+<script src="assets/translations.js?v=20260513-1" charset="UTF-8"></script>
+<script src="assets/lang-data.js?v=20260513-1" charset="UTF-8"></script>
 
 <div class="zyma-lang-selector" id="zymaLangSelector">
   <button class="zyma-lang-toggle" id="zymaLangToggle" aria-label="Cambiar idioma">

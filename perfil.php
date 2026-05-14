@@ -112,7 +112,7 @@ if ($initials === '') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zyma - Mi Perfil</title>
-  <link rel="stylesheet" href="styles.css?v=20260512-1">
+  <link rel="stylesheet" href="styles.css?v=20260513-1">
 </head>
 <body>
 <header class="landing-header">
@@ -317,9 +317,13 @@ if (profileBtn && dropdownMenu) {
   });
 }
 </script>
-<script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/mobile-header.js?v=20260513-1"></script>
 <script>
 document.querySelectorAll('[data-password-toggle]').forEach((button) => {
+  const svgEl = button.querySelector('svg');
+  const openHTML = '<path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path><circle cx="12" cy="12" r="3"></circle>';
+  const closedHTML = openHTML + '<line x1="4" y1="4" x2="20" y2="20" stroke="currentColor" stroke-width="2.5"></line>';
+
   button.addEventListener('click', () => {
     const input = document.getElementById(button.dataset.passwordToggle);
     if (!input) return;
@@ -328,6 +332,7 @@ document.querySelectorAll('[data-password-toggle]').forEach((button) => {
     input.type = showPassword ? 'text' : 'password';
     button.setAttribute('aria-label', showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
     button.setAttribute('aria-pressed', showPassword ? 'true' : 'false');
+    if (svgEl) svgEl.innerHTML = showPassword ? closedHTML : openHTML;
   });
 });
 </script>
@@ -343,6 +348,6 @@ document.querySelectorAll('[data-password-toggle]').forEach((button) => {
 </footer>
 
 <?php require_once 'language_selector.php'; ?>
-  <script src="assets/animations.js?v=20260512-3" defer></script>
+  <script src="assets/animations.js?v=20260513-1" defer></script>
 </body>
 </html>

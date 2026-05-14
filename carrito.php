@@ -109,7 +109,7 @@ if ($displayName === '') {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zyma - Tu Carrito</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
-<link rel="stylesheet" href="styles.css?v=20260512-1">
+<link rel="stylesheet" href="styles.css?v=20260513-1">
 <style>
 .payment-methods{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:14px 0 18px}
 .payment-option{position:relative;display:block;cursor:pointer}
@@ -346,8 +346,8 @@ methodRadios.forEach((radio) => {
 });
 togglePaymentFields();
 </script>
- <script src="assets/mobile-header.js?v=20260211-6"></script>
- <script src="assets/animations.js?v=20260512-3" defer></script>
+ <script src="assets/mobile-header.js?v=20260513-1"></script>
+ <script src="assets/animations.js?v=20260513-1" defer></script>
 <?php require_once 'language_selector.php'; ?>
 </body>
 </html>

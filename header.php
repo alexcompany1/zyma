@@ -113,5 +113,5 @@ if ($show_notif && $is_logged_in) {
     }
   });
 </script>
-<script src="assets/animations.js?v=20260512-3" defer></script>
+<script src="assets/animations.js?v=20260513-1" defer></script>
 

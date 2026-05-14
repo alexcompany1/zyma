@@ -81,7 +81,7 @@ try {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zyma - <?= htmlspecialchars($title) ?></title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
-<link rel="stylesheet" href="styles.css?v=20260512-1">
+<link rel="stylesheet" href="styles.css?v=20260513-1">
 <style>
 .stripe-box{max-width:760px;margin:24px auto;padding:28px;border-radius:24px;background:#fff;box-shadow:0 18px 40px rgba(0,0,0,.08)}
 .stripe-box.is-error{border:1px solid rgba(114,14,7,.18);background:#fff8f5}
@@ -151,7 +151,7 @@ if (profileBtn && dropdownMenu) {
   });
 }
 </script>
-<script src="assets/mobile-header.js?v=20260211-6"></script>
+<script src="assets/mobile-header.js?v=20260513-1"></script>
 <footer>
   <p data-i18n="footer.rights">&copy; 2026 Zyma. Todos los derechos reservados.</p>
   <p class="footer-legal-links">
@@ -164,6 +164,6 @@ if (profileBtn && dropdownMenu) {
 </footer>
 
 <?php require_once 'language_selector.php'; ?>
-  <script src="assets/animations.js?v=20260512-3" defer></script>
+  <script src="assets/animations.js?v=20260513-1" defer></script>
 </body>
 </html>
