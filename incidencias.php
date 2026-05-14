@@ -313,6 +313,7 @@ if (profileBtn && dropdownMenu) {
 </script>
 <script src="assets/mobile-header.js?v=20260513-1"></script>
 <?php require_once 'language_selector.php'; ?>
+<?php include 'cookie_popup.php'; ?>
 </body>
 </html>
 

@@ -57,16 +57,27 @@ function zymaCreateOrderFromCart(PDO $pdo, int $userId, array $cartItems, string
         ]);
 
         $insertItem = $pdo->prepare(
-            'INSERT INTO pedido_items (id, id_pedido, id_producto, cantidad, precio_unitario) VALUES (?, ?, ?, ?, ?)'
+            'INSERT INTO pedido_items (id, id_pedido, id_producto, cantidad, precio_unitario, extras) VALUES (?, ?, ?, ?, ?, ?)'
         );
         $nextItemId = zymaGetNextId($pdo, 'pedido_items', 'id');
         foreach ($cartItems as $item) {
+            $extrasJson = null;
+            if (!empty($item['extras'])) {
+                $extrasJson = json_encode(array_map(function($ex) {
+                    return [
+                        'id' => (int)($ex['id'] ?? 0),
+                        'name' => $ex['name'] ?? '',
+                        'price' => (float)($ex['price'] ?? 0),
+                    ];
+                }, $item['extras']), JSON_UNESCAPED_UNICODE);
+            }
             $insertItem->execute([
                 $nextItemId++,
                 $orderId,
                 (int) $item['id'],
                 (int) $item['quantity'],
                 (float) $item['price'],
+                $extrasJson,
             ]);
         }
 

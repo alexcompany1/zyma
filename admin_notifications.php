@@ -130,5 +130,6 @@ document.addEventListener('click', function(e) {
     }
 });
 </script>
+<?php include 'cookie_popup.php'; ?>
 </body>
 </html>

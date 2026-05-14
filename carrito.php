@@ -13,27 +13,55 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $products = [
-    ['id' => 1, 'name' => 'Nachos con Queso', 'price' => 6.00, 'image' => 'assets/nachos.png'],
-    ['id' => 2, 'name' => 'Patatas Fritas', 'price' => 3.50, 'image' => 'assets/fries.png'],
-    ['id' => 3, 'name' => 'Hotdog BBQ', 'price' => 7.50, 'image' => 'assets/bbq_hotdog.png'],
-    ['id' => 4, 'name' => 'Hotdog Clasico', 'price' => 5.99, 'image' => 'assets/hotdog.png'],
-    ['id' => 5, 'name' => 'Hotdog Vegano', 'price' => 6.50, 'image' => 'assets/vegan-hotdog.png'],
-    ['id' => 6, 'name' => 'Refresco Cola', 'price' => 2.00, 'image' => 'assets/soda.png'],
-    ['id' => 7, 'name' => 'Agua Mineral', 'price' => 1.50, 'image' => 'assets/water.png'],
+    1 => ['id' => 1, 'name' => 'Nachos con Queso', 'price' => 6.00, 'image' => 'assets/nachos.png'],
+    2 => ['id' => 2, 'name' => 'Patatas Fritas', 'price' => 3.50, 'image' => 'assets/fries.png'],
+    3 => ['id' => 3, 'name' => 'Hotdog BBQ', 'price' => 7.50, 'image' => 'assets/bbq_hotdog.png'],
+    4 => ['id' => 4, 'name' => 'Hotdog Clasico', 'price' => 5.99, 'image' => 'assets/hotdog.png'],
+    5 => ['id' => 5, 'name' => 'Hotdog Vegano', 'price' => 6.50, 'image' => 'assets/vegan-hotdog.png'],
+    6 => ['id' => 6, 'name' => 'Refresco Cola', 'price' => 2.00, 'image' => 'assets/soda.png'],
+    7 => ['id' => 7, 'name' => 'Agua Mineral', 'price' => 1.50, 'image' => 'assets/water.png'],
 ];
 
 $cartItems = [];
 $total = 0.0;
 
-foreach ($_SESSION['cart'] ?? [] as $id => $qty) {
-    foreach ($products as $product) {
-        if ((int) $product['id'] === (int) $id) {
-            $product['quantity'] = (int) $qty;
-            $product['subtotal'] = (float) $product['price'] * (int) $qty;
-            $cartItems[] = $product;
-            $total += $product['subtotal'];
+// Convert old-format cart items to new format for consistency
+if (!empty($_SESSION['cart'])) {
+    $normalized = [];
+    foreach ($_SESSION['cart'] as $key => $val) {
+        if (is_array($val) && isset($val['id'])) {
+            $normalized[] = $val;
+        } else {
+            $pid = (int)$key;
+            if (!isset($products[$pid])) continue;
+            $normalized[] = [
+                'id' => $pid,
+                'quantity' => max(1, (int)$val),
+                'extras' => [],
+            ];
         }
     }
+    $_SESSION['cart'] = $normalized;
+}
+
+foreach ($_SESSION['cart'] ?? [] as $item) {
+    $pid = (int)$item['id'];
+    if (!isset($products[$pid])) continue;
+    $base = $products[$pid];
+    $item['name'] = $base['name'];
+    $item['image'] = $base['image'];
+    $item['price'] = (float)($item['price'] ?? $base['price']);
+    $item['quantity'] = max(1, (int)($item['quantity'] ?? 1));
+    $extrasTotal = 0;
+    if (!empty($item['extras'])) {
+        foreach ($item['extras'] as $ex) {
+            $extrasTotal += (float)($ex['price'] ?? 0);
+        }
+    }
+    $item['subtotal'] = ($item['price'] + $extrasTotal) * $item['quantity'];
+    $item['extras_total'] = $extrasTotal;
+    $cartItems[] = $item;
+    $total += $item['subtotal'];
 }
 
 $error = null;
@@ -165,7 +193,7 @@ if ($displayName === '') {
     <div class="cart-section">
       <a href="carrito.php" class="cart-btn">
         <img src="assets/cart-icon.png" alt="Carrito">
-        <span class="cart-count"><?= count($_SESSION['cart'] ?? []) ?></span>
+        <span class="cart-count"><?= zymaCartTotalItems() ?></span>
       </a>
     </div>
   </div>
@@ -185,24 +213,41 @@ if ($displayName === '') {
       </div>
     <?php else: ?>
       <div class="reveal-stagger" data-stagger-delay="100">
-      <?php foreach ($cartItems as $item): ?>
+      <?php foreach ($cartItems as $idx => $item): ?>
       <div class="cart-item-row hover-lift">
         <img src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="cart-item-img">
 
         <div class="cart-item-info">
-          <div class="cart-item-name" data-i18n="product.<?= (int) $item['id'] ?>"><?= htmlspecialchars($item['name']) ?></div>
-          <div class="cart-item-meta" id="desc-<?= (int) $item['id'] ?>">
+          <div class="cart-item-name"><?= htmlspecialchars($item['name']) ?></div>
+          <div class="cart-item-meta" id="desc-<?= $idx ?>">
             EUR <?= number_format((float) $item['price'], 2, ',', '.') ?> x <?= (int) $item['quantity'] ?>
           </div>
-          <div class="cart-item-subtotal" id="subtotal-<?= (int) $item['id'] ?>">
+          <?php if (!empty($item['extras'])): ?>
+          <div class="cart-item-extras" style="font-size:.85rem;color:#888;margin-top:4px;">
+            Extras: <?php
+              $parts = [];
+              foreach ($item['extras'] as $ex) {
+                $exName = htmlspecialchars($ex['name'] ?? '');
+                $exPrice = (float)($ex['price'] ?? 0);
+                if ($exPrice > 0) {
+                  $parts[] = $exName . ' (+' . number_format($exPrice, 2, ',', '.') . ' EUR)';
+                } else {
+                  $parts[] = $exName;
+                }
+              }
+              echo implode(', ', $parts);
+            ?>
+          </div>
+          <?php endif; ?>
+          <div class="cart-item-subtotal" id="subtotal-<?= $idx ?>">
             EUR <?= number_format((float) $item['subtotal'], 2, ',', '.') ?>
           </div>
         </div>
 
         <div class="quantity-controls">
-          <button class="quantity-btn" onclick="changeQuantity(<?= (int) $item['id'] ?>, -1)">-</button>
-          <span class="quantity-value" id="qty-<?= (int) $item['id'] ?>"><?= (int) $item['quantity'] ?></span>
-          <button class="quantity-btn" onclick="changeQuantity(<?= (int) $item['id'] ?>, 1)">+</button>
+          <button class="quantity-btn" onclick="changeQuantity(<?= $idx ?>, -1)">-</button>
+          <span class="quantity-value" id="qty-<?= $idx ?>"><?= (int) $item['quantity'] ?></span>
+          <button class="quantity-btn" onclick="changeQuantity(<?= $idx ?>, 1)">+</button>
         </div>
       </div>
       <?php endforeach; ?>
@@ -292,40 +337,67 @@ window.addEventListener('click', (e) => {
   }
 });
 
-function changeQuantity(productId, delta) {
-  const qtyElement = document.getElementById('qty-' + productId);
-  const descElement = document.getElementById('desc-' + productId);
-  const subtotalElement = document.getElementById('subtotal-' + productId);
+const cartData = <?= json_encode(array_map(function($item) {
+    $extrasTotal = 0;
+    if (!empty($item['extras'])) {
+        foreach ($item['extras'] as $ex) {
+            $extrasTotal += (float)($ex['price'] ?? 0);
+        }
+    }
+    return [
+        'price' => (float)$item['price'],
+        'extras_total' => (float)($item['extras_total'] ?? $extrasTotal),
+        'quantity' => (int)$item['quantity'],
+    ];
+}, $cartItems), JSON_UNESCAPED_UNICODE) ?>;
+
+function changeQuantity(idx, delta) {
+  const qtyElement = document.getElementById('qty-' + idx);
+  const descElement = document.getElementById('desc-' + idx);
+  const subtotalElement = document.getElementById('subtotal-' + idx);
   const totalElement = document.getElementById('total-amount');
 
   let currentQty = parseInt(qtyElement.textContent, 10);
 
   if (delta === -1 && currentQty === 1) {
-    window.location.href = 'eliminar_producto.php?id=' + productId;
+    window.location.href = 'eliminar_producto.php?index=' + idx;
     return;
   }
 
   if (currentQty + delta < 1) return;
 
-  currentQty += delta;
-  qtyElement.textContent = currentQty;
+  fetch('actualizar_cantidad.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ index: idx, delta: delta })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (!data.success) return;
+    if (data.removed) {
+      window.location.reload();
+      return;
+    }
+    currentQty = data.quantity;
+    qtyElement.textContent = currentQty;
+    cartData[idx].quantity = currentQty;
 
-  const prices = [0, 6.00, 3.50, 7.50, 5.99, 6.50, 2.00, 1.50];
+    const item = cartData[idx];
+    const unitPrice = (item.price + item.extras_total);
+    descElement.innerHTML = 'EUR ' + item.price.toFixed(2).replace('.', ',') + ' x ' + currentQty;
+    const subtotal = unitPrice * currentQty;
+    subtotalElement.innerHTML = 'EUR ' + subtotal.toFixed(2).replace('.', ',');
 
-  descElement.innerHTML = 'EUR ' + prices[productId].toFixed(2).replace('.', ',') + ' x ' + currentQty;
-  const subtotal = prices[productId] * currentQty;
-  subtotalElement.innerHTML = 'EUR ' + subtotal.toFixed(2).replace('.', ',');
-
-  let total = 0;
-  <?php foreach ($cartItems as $item): ?>
-  if (<?= (int) $item['id'] ?> === productId) {
-    total += <?= (float) $item['price'] ?> * currentQty;
-  } else {
-    total += <?= (float) $item['price'] ?> * <?= (int) $item['quantity'] ?>;
-  }
-  <?php endforeach; ?>
-
-  totalElement.innerHTML = 'Total: EUR ' + total.toFixed(2).replace('.', ',');
+    let total = 0;
+    cartData.forEach(function(data, i) {
+      var unit = data.price + data.extras_total;
+      total += unit * data.quantity;
+    });
+    totalElement.innerHTML = 'Total: EUR ' + total.toFixed(2).replace('.', ',');
+  })
+  .catch(function() {
+    window.location.reload();
+  });
 }
 
 const methodRadios = document.querySelectorAll('input[name="metodo_pago"]');
@@ -349,5 +421,6 @@ togglePaymentFields();
  <script src="assets/mobile-header.js?v=20260513-1"></script>
  <script src="assets/animations.js?v=20260513-1" defer></script>
 <?php require_once 'language_selector.php'; ?>
+<?php include 'cookie_popup.php'; ?>
 </body>
 </html>

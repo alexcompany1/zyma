@@ -85,5 +85,5 @@ $_SESSION['toast_message'] = [
     'icon' => 'OK'
 ];
 
-header('Location: carrito.php');
+header('Location: carta.php');
 exit;

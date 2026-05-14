@@ -133,5 +133,6 @@ if (profileBtn && dropdownMenu) {
 
 <?php require_once 'language_selector.php'; ?>
   <script src="assets/animations.js?v=20260513-1" defer></script>
+<?php include 'cookie_popup.php'; ?>
 </body>
 </html>
